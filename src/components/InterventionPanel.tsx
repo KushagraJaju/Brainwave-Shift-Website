@@ -59,7 +59,12 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
   if (activeInterventions.length === 0) {
     return (
       <div className="bg-white rounded-xl shadow-lg p-6">
-        <h2 className="text-heading-2 text-calm-800 mb-6">Wellness Interventions</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-heading-2 text-calm-800">Wellness Interventions</h2>
+          <span className="bg-wellness-100 text-wellness-800 text-label font-medium px-3 py-1 rounded-full">
+            All complete
+          </span>
+        </div>
         <div className="text-center py-8">
           <CheckCircle className="w-16 h-16 text-wellness-500 mx-auto mb-4" />
           <h3 className="text-heading-4 text-calm-800 mb-2">All Caught Up!</h3>
