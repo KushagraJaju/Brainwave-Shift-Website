@@ -59,11 +59,11 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
   if (activeInterventions.length === 0) {
     return (
       <div className="bg-white rounded-xl shadow-lg p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Wellness Interventions</h2>
+        <h2 className="text-heading-2 text-calm-800 mb-6">Wellness Interventions</h2>
         <div className="text-center py-8">
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <p className="text-gray-600">All caught up! No interventions needed right now.</p>
-          <p className="text-sm text-gray-500 mt-2">We'll notify you when it's time for a break.</p>
+          <CheckCircle className="w-16 h-16 text-wellness-500 mx-auto mb-4" />
+          <h3 className="text-heading-4 text-calm-800 mb-2">All Caught Up!</h3>
+          <p className="text-body text-calm-600">No interventions needed right now. We'll notify you when it's time for a break.</p>
         </div>
       </div>
     );
@@ -72,8 +72,8 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">Wellness Interventions</h2>
-        <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded-full">
+        <h2 className="text-heading-2 text-calm-800">Wellness Interventions</h2>
+        <span className="bg-focus-100 text-focus-800 text-label font-medium px-3 py-1 rounded-full">
           {activeInterventions.length} pending
         </span>
       </div>
@@ -90,13 +90,10 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                   {getInterventionIcon(intervention.type)}
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800 mb-1">
+                  <h3 className="text-heading-4 text-calm-800 mb-1">
                     {intervention.title}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-2">
-                    {intervention.description}
-                  </p>
-                  <div className="flex items-center space-x-4 text-xs text-gray-500">
+                  <div className="flex items-center space-x-4 text-body-small text-calm-500">
                     <span>• {intervention.duration} min</span>
                     <span>• {intervention.priority} priority</span>
                     <span>• {intervention.timestamp.toLocaleTimeString()}</span>
@@ -106,15 +103,17 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => onComplete(intervention.id)}
-                  className="p-2 text-green-600 hover:bg-green-100 rounded-full transition-colors duration-200"
+                  className="p-2 text-wellness-600 hover:bg-wellness-100 rounded-full transition-colors duration-200 focus-ring"
                   title="Complete intervention"
+                  aria-label="Complete intervention"
                 >
                   <CheckCircle className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => onDismiss(intervention.id)}
-                  className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                  className="p-2 text-calm-400 hover:bg-calm-100 rounded-full transition-colors duration-200 focus-ring"
                   title="Dismiss intervention"
+                  aria-label="Dismiss intervention"
                 >
                   <X className="w-5 h-5" />
                 </button>
