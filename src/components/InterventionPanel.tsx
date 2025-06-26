@@ -84,15 +84,20 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
             key={intervention.id}
             className={`border-2 rounded-lg p-4 transition-all duration-200 ${getPriorityColor(intervention.priority)}`}
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className={`${getIconColor(intervention.priority)}`}>
+            <div className="flex items-start justify-between">
+              <div className="flex items-start space-x-3">
+                <div className={`${getIconColor(intervention.priority)} mt-1`}>
                   {getInterventionIcon(intervention.type)}
                 </div>
                 <div className="flex-1">
                   <h3 className="text-heading-4 text-calm-800 mb-1">
                     {intervention.title}
                   </h3>
+                  <div className="flex items-center space-x-4 text-body-small text-calm-500">
+                    <span>{intervention.duration} min</span>
+                    <span>{intervention.priority} priority</span>
+                    <span>{intervention.timestamp.toLocaleTimeString()}</span>
+                  </div>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
