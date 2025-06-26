@@ -51,36 +51,36 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
     const isExpanded = expandedSections.has(id);
     
     return (
-      <div className="bg-white rounded-xl shadow-lg border border-calm-200 transition-all duration-300 hover:shadow-gentle">
+      <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark border border-calm-200 dark:border-calm-700 transition-all duration-300 hover:shadow-gentle dark:hover:shadow-soft-dark">
         <button
           onClick={() => toggleSection(id)}
-          className="w-full p-6 text-left focus-ring rounded-t-xl hover:bg-calm-50 transition-colors duration-200"
+          className="w-full p-6 text-left focus-ring rounded-t-xl hover:bg-calm-50 dark:hover:bg-calm-700 transition-colors duration-200"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-wellness-100 rounded-lg text-wellness-600">
+              <div className="p-2 bg-wellness-100 dark:bg-wellness-900/30 rounded-lg text-wellness-600 dark:text-wellness-400">
                 {icon}
               </div>
               <div>
-                <h3 className="text-heading-3 text-calm-800">{title}</h3>
-                <p className="text-body-small text-calm-600 mt-1">{description}</p>
+                <h3 className="text-heading-3 text-calm-800 dark:text-calm-200">{title}</h3>
+                <p className="text-body-small text-calm-600 dark:text-calm-400 mt-1">{description}</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
               {id === 'digital-wellness' && digitalWellnessData.dailySocialMediaTime > 0 && (
-                <div className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-medium">
+                <div className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-full text-xs font-medium border border-purple-200 dark:border-purple-800">
                   {Math.round(digitalWellnessData.dailySocialMediaTime / (1000 * 60))}m today
                 </div>
               )}
               {id === 'interventions' && interventions.filter(i => !i.completed).length > 0 && (
-                <div className="bg-wellness-100 text-wellness-700 px-2 py-1 rounded-full text-xs font-medium">
+                <div className="bg-wellness-100 dark:bg-wellness-900/30 text-wellness-700 dark:text-wellness-300 px-2 py-1 rounded-full text-xs font-medium border border-wellness-200 dark:border-wellness-800">
                   {interventions.filter(i => !i.completed).length} pending
                 </div>
               )}
               {isExpanded ? (
-                <ChevronUp className="w-5 h-5 text-calm-500" />
+                <ChevronUp className="w-5 h-5 text-calm-500 dark:text-calm-400" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-calm-500" />
+                <ChevronDown className="w-5 h-5 text-calm-500 dark:text-calm-400" />
               )}
             </div>
           </div>
@@ -88,7 +88,7 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
         
         {isExpanded && (
           <div className="px-6 pb-6 animate-fade-in">
-            <div className="border-t border-calm-200 pt-6">
+            <div className="border-t border-calm-200 dark:border-calm-700 pt-6">
               {children}
             </div>
           </div>
@@ -100,35 +100,35 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Wellness Overview Header */}
-      <div className="bg-gradient-to-r from-wellness-600 to-wellness-700 rounded-xl shadow-soft p-6 text-white">
+      <div className="bg-gradient-to-r from-wellness-600 to-wellness-700 dark:from-wellness-700 dark:to-wellness-800 rounded-xl shadow-soft dark:shadow-gentle-dark p-6 text-white">
         <h1 className="text-heading-1 mb-2 tracking-tight">Wellness & Digital Health</h1>
-        <p className="text-body text-wellness-100 leading-relaxed">
+        <p className="text-body text-wellness-100 dark:text-wellness-200 leading-relaxed">
           Comprehensive wellness tools to maintain peak cognitive performance and healthy digital habits.
         </p>
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+          <div className="bg-white bg-opacity-20 dark:bg-white dark:bg-opacity-10 rounded-lg p-4 backdrop-blur-sm border border-white border-opacity-20">
             <div className="flex items-center space-x-2 mb-2">
               <Smartphone className="w-5 h-5" />
               <span className="text-label font-medium">Digital Wellness</span>
             </div>
             <div className="text-display font-bold">{digitalWellnessData.cognitiveImpactScore}</div>
-            <div className="text-body-small text-wellness-100">Impact Score</div>
+            <div className="text-body-small text-wellness-100 dark:text-wellness-200">Impact Score</div>
           </div>
-          <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+          <div className="bg-white bg-opacity-20 dark:bg-white dark:bg-opacity-10 rounded-lg p-4 backdrop-blur-sm border border-white border-opacity-20">
             <div className="flex items-center space-x-2 mb-2">
               <Heart className="w-5 h-5" />
               <span className="text-label font-medium">Mindful Breaks</span>
             </div>
             <div className="text-display font-bold">{digitalWellnessData.mindfulBreaksTaken}</div>
-            <div className="text-body-small text-wellness-100">Today</div>
+            <div className="text-body-small text-wellness-100 dark:text-wellness-200">Today</div>
           </div>
-          <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+          <div className="bg-white bg-opacity-20 dark:bg-white dark:bg-opacity-10 rounded-lg p-4 backdrop-blur-sm border border-white border-opacity-20">
             <div className="flex items-center space-x-2 mb-2">
               <Activity className="w-5 h-5" />
               <span className="text-label font-medium">Active Interventions</span>
             </div>
             <div className="text-display font-bold">{interventions.filter(i => !i.completed).length}</div>
-            <div className="text-body-small text-wellness-100">Pending</div>
+            <div className="text-body-small text-wellness-100 dark:text-wellness-200">Pending</div>
           </div>
         </div>
       </div>
@@ -154,12 +154,12 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
           description="Guided breathing exercises and mindfulness practices"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-lg border border-blue-200">
-              <h4 className="text-heading-4 text-calm-800 mb-3 flex items-center space-x-2">
-                <Target className="w-5 h-5 text-blue-500" />
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-800">
+              <h4 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-3 flex items-center space-x-2">
+                <Target className="w-5 h-5 text-blue-500 dark:text-blue-400" />
                 <span>4-7-8 Breathing</span>
               </h4>
-              <p className="text-body-small text-calm-600 mb-4">
+              <p className="text-body-small text-calm-600 dark:text-calm-400 mb-4">
                 Inhale for 4, hold for 7, exhale for 8. Perfect for stress relief and focus.
               </p>
               <button className="btn-primary w-full">
@@ -167,12 +167,12 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
               </button>
             </div>
             
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-lg border border-green-200">
-              <h4 className="text-heading-4 text-calm-800 mb-3 flex items-center space-x-2">
-                <Clock className="w-5 h-5 text-green-500" />
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-lg border border-green-200 dark:border-green-800">
+              <h4 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-3 flex items-center space-x-2">
+                <Clock className="w-5 h-5 text-green-500 dark:text-green-400" />
                 <span>Box Breathing</span>
               </h4>
-              <p className="text-body-small text-calm-600 mb-4">
+              <p className="text-body-small text-calm-600 dark:text-calm-400 mb-4">
                 Equal counts for inhale, hold, exhale, hold. Great for maintaining calm focus.
               </p>
               <button className="btn-primary w-full">
@@ -204,31 +204,31 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
           description="Personalized insights and recommendations for optimal wellness"
         >
           <div className="space-y-4">
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-100">
-              <h4 className="font-semibold text-calm-800 mb-2">Today's Wellness Summary</h4>
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
+              <h4 className="font-semibold text-calm-800 dark:text-calm-200 mb-2">Today's Wellness Summary</h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                 <div>
-                  <span className="text-calm-600">Cognitive State:</span>
-                  <span className="ml-2 font-medium text-calm-800">{cognitiveState.focusLevel}</span>
+                  <span className="text-calm-600 dark:text-calm-400">Cognitive State:</span>
+                  <span className="ml-2 font-medium text-calm-800 dark:text-calm-200">{cognitiveState.focusLevel}</span>
                 </div>
                 <div>
-                  <span className="text-calm-600">Digital Wellness:</span>
-                  <span className="ml-2 font-medium text-calm-800">
+                  <span className="text-calm-600 dark:text-calm-400">Digital Wellness:</span>
+                  <span className="ml-2 font-medium text-calm-800 dark:text-calm-200">
                     {digitalWellnessData.cognitiveImpactScore >= 80 ? 'Excellent' :
                      digitalWellnessData.cognitiveImpactScore >= 60 ? 'Good' : 'Needs Attention'}
                   </span>
                 </div>
                 <div>
-                  <span className="text-calm-600">Mindful Breaks:</span>
-                  <span className="ml-2 font-medium text-calm-800">{digitalWellnessData.mindfulBreaksTaken}</span>
+                  <span className="text-calm-600 dark:text-calm-400">Mindful Breaks:</span>
+                  <span className="ml-2 font-medium text-calm-800 dark:text-calm-200">{digitalWellnessData.mindfulBreaksTaken}</span>
                 </div>
               </div>
             </div>
             
             {digitalWellnessData.cognitiveImpactScore < 60 && (
-              <div className="bg-orange-50 border border-orange-200 p-4 rounded-lg">
-                <h5 className="font-medium text-orange-800 mb-2">Recommendation</h5>
-                <p className="text-sm text-orange-700">
+              <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 p-4 rounded-lg">
+                <h5 className="font-medium text-orange-800 dark:text-orange-300 mb-2">Recommendation</h5>
+                <p className="text-sm text-orange-700 dark:text-orange-400">
                   Your digital wellness score suggests high social media usage may be impacting cognitive performance. 
                   Consider taking more frequent breaks or setting usage limits.
                 </p>
@@ -236,18 +236,18 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
             )}
             
             {cognitiveState.emotionalState === 'Stressed' && (
-              <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
-                <h5 className="font-medium text-red-800 mb-2">Stress Alert</h5>
-                <p className="text-sm text-red-700">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-lg">
+                <h5 className="font-medium text-red-800 dark:text-red-300 mb-2">Stress Alert</h5>
+                <p className="text-sm text-red-700 dark:text-red-400">
                   Elevated stress detected. Try a breathing exercise or take a short walk to reset your mental state.
                 </p>
               </div>
             )}
             
             {digitalWellnessData.mindfulBreaksTaken > 3 && (
-              <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
-                <h5 className="font-medium text-green-800 mb-2">Great Progress!</h5>
-                <p className="text-sm text-green-700">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-4 rounded-lg">
+                <h5 className="font-medium text-green-800 dark:text-green-300 mb-2">Great Progress!</h5>
+                <p className="text-sm text-green-700 dark:text-green-400">
                   Excellent job taking mindful breaks today. This conscious approach to digital wellness 
                   is helping maintain your cognitive performance.
                 </p>

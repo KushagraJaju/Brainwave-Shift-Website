@@ -31,26 +31,26 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
   const getPriorityColor = (priority: Intervention['priority']) => {
     switch (priority) {
       case 'High':
-        return 'border-red-300 bg-red-50';
+        return 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20';
       case 'Medium':
-        return 'border-yellow-300 bg-yellow-50';
+        return 'border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20';
       case 'Low':
-        return 'border-blue-300 bg-blue-50';
+        return 'border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20';
       default:
-        return 'border-gray-300 bg-gray-50';
+        return 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/20';
     }
   };
 
   const getIconColor = (priority: Intervention['priority']) => {
     switch (priority) {
       case 'High':
-        return 'text-red-500';
+        return 'text-red-500 dark:text-red-400';
       case 'Medium':
-        return 'text-yellow-500';
+        return 'text-yellow-500 dark:text-yellow-400';
       case 'Low':
-        return 'text-blue-500';
+        return 'text-blue-500 dark:text-blue-400';
       default:
-        return 'text-gray-500';
+        return 'text-gray-500 dark:text-gray-400';
     }
   };
 
@@ -59,9 +59,9 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
   if (activeInterventions.length === 0) {
     return (
       <div className="text-center py-8">
-        <CheckCircle className="w-16 h-16 text-wellness-500 mx-auto mb-4" />
-        <h3 className="text-heading-4 text-calm-800 mb-2">All Caught Up!</h3>
-        <p className="text-body text-calm-600">No interventions needed right now. We'll notify you when it's time for a break.</p>
+        <CheckCircle className="w-16 h-16 text-wellness-500 dark:text-wellness-400 mx-auto mb-4" />
+        <h3 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-2">All Caught Up!</h3>
+        <p className="text-body text-calm-600 dark:text-calm-400">No interventions needed right now. We'll notify you when it's time for a break.</p>
       </div>
     );
   }
@@ -69,8 +69,8 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-heading-3 text-calm-800">Active Recommendations</h3>
-        <span className="bg-wellness-100 text-wellness-800 text-label font-medium px-3 py-1 rounded-full">
+        <h3 className="text-heading-3 text-calm-800 dark:text-calm-200">Active Recommendations</h3>
+        <span className="bg-wellness-100 dark:bg-wellness-900/30 text-wellness-800 dark:text-wellness-300 text-label font-medium px-3 py-1 rounded-full border border-wellness-200 dark:border-wellness-800">
           {activeInterventions.length} pending
         </span>
       </div>
@@ -87,10 +87,13 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                   {getInterventionIcon(intervention.type)}
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-heading-4 text-calm-800 mb-1">
+                  <h4 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-1">
                     {intervention.title}
                   </h4>
-                  <div className="flex items-center space-x-4 text-body-small text-calm-500">
+                  <p className="text-body-small text-calm-600 dark:text-calm-400 mb-2">
+                    {intervention.description}
+                  </p>
+                  <div className="flex items-center space-x-4 text-body-small text-calm-500 dark:text-calm-400">
                     <span>{intervention.duration} min</span>
                     <span>{intervention.priority} priority</span>
                     <span>{intervention.timestamp.toLocaleTimeString()}</span>
@@ -100,7 +103,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => onComplete(intervention.id)}
-                  className="p-2 text-wellness-600 hover:bg-wellness-100 rounded-full transition-colors duration-200 focus-ring"
+                  className="p-2 text-wellness-600 dark:text-wellness-400 hover:bg-wellness-100 dark:hover:bg-wellness-900/30 rounded-full transition-colors duration-200 focus-ring"
                   title="Complete intervention"
                   aria-label="Complete intervention"
                 >
@@ -108,7 +111,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                 </button>
                 <button
                   onClick={() => onDismiss(intervention.id)}
-                  className="p-2 text-calm-400 hover:bg-calm-100 rounded-full transition-colors duration-200 focus-ring"
+                  className="p-2 text-calm-400 dark:text-calm-500 hover:bg-calm-100 dark:hover:bg-calm-700 rounded-full transition-colors duration-200 focus-ring"
                   title="Dismiss intervention"
                   aria-label="Dismiss intervention"
                 >
