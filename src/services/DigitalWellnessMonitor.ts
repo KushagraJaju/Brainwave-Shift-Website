@@ -10,15 +10,52 @@ export interface SocialMediaActivity {
   engagementScore: number; // 0-100, higher = more intentional
 }
 
+export interface DailyDigitalData {
+  date: string; // YYYY-MM-DD format
+  totalSocialMediaTime: number;
+  platformBreakdown: Map<string, number>;
+  mindlessScrollingSessions: number;
+  mindfulBreaksTaken: number;
+  longestSession: number;
+  averageSessionLength: number;
+  cognitiveImpactScore: number;
+  peakUsageHours: number[];
+  sessionCount: number;
+}
+
+export interface WeeklyDigitalTrends {
+  averageDailyUsage: number;
+  totalWeeklyUsage: number;
+  mostUsedPlatform: string;
+  mostUsedDay: string;
+  leastUsedDay: string;
+  weeklyMindfulBreaks: number;
+  weeklyMindlessSessions: number;
+  averageCognitiveImpact: number;
+  usageTrend: 'increasing' | 'decreasing' | 'stable';
+  peakUsageDays: string[];
+  platformTrends: Map<string, { trend: 'up' | 'down' | 'stable'; change: number }>;
+}
+
 export interface DigitalWellnessData {
+  // Current day data
   dailySocialMediaTime: number;
   platformBreakdown: Map<string, number>;
   mindlessScrollingSessions: number;
   mindfulBreaksTaken: number;
   longestSession: number;
   averageSessionLength: number;
-  cognitiveImpactScore: number; // How social media affects cognitive state
+  cognitiveImpactScore: number;
   lastUpdate: Date;
+  
+  // Weekly historical data
+  weeklyData: DailyDigitalData[];
+  weeklyTrends: WeeklyDigitalTrends;
+  
+  // Additional analytics
+  peakUsageHours: number[];
+  sessionCount: number;
+  averageEngagementScore: number;
 }
 
 export interface DigitalWellnessSettings {
@@ -60,10 +97,12 @@ export class DigitalWellnessMonitor {
   private scrollBuffer: { timestamp: number; scrollY: number }[] = [];
   private lastInterventionTime: Date = new Date(0);
   private interventionEscalationLevel: number = 0;
+  private sessionEngagementScores: number[] = [];
 
   constructor() {
     this.dailyData = this.getInitialData();
     this.settings = this.getDefaultSettings();
+    this.loadHistoricalData();
     this.setupEventListeners();
   }
 
@@ -76,8 +115,190 @@ export class DigitalWellnessMonitor {
       longestSession: 0,
       averageSessionLength: 0,
       cognitiveImpactScore: 0,
-      lastUpdate: new Date()
+      lastUpdate: new Date(),
+      weeklyData: [],
+      weeklyTrends: this.getInitialWeeklyTrends(),
+      peakUsageHours: [],
+      sessionCount: 0,
+      averageEngagementScore: 0
     };
+  }
+
+  private getInitialWeeklyTrends(): WeeklyDigitalTrends {
+    return {
+      averageDailyUsage: 0,
+      totalWeeklyUsage: 0,
+      mostUsedPlatform: '',
+      mostUsedDay: '',
+      leastUsedDay: '',
+      weeklyMindfulBreaks: 0,
+      weeklyMindlessSessions: 0,
+      averageCognitiveImpact: 0,
+      usageTrend: 'stable',
+      peakUsageDays: [],
+      platformTrends: new Map()
+    };
+  }
+
+  private loadHistoricalData(): void {
+    // Generate realistic weekly data for the past 7 days
+    const weeklyData: DailyDigitalData[] = [];
+    const today = new Date();
+    
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateString = date.toISOString().split('T')[0];
+      
+      // Generate realistic usage patterns
+      const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+      const baseUsage = isWeekend ? 90 : 60; // Weekend vs weekday usage
+      const variance = Math.random() * 40 - 20; // ±20 minutes variance
+      const totalTime = Math.max(0, (baseUsage + variance) * 60 * 1000); // Convert to milliseconds
+      
+      // Generate platform breakdown
+      const platformBreakdown = new Map();
+      const platforms = ['Instagram', 'YouTube', 'Twitter', 'TikTok', 'Reddit'];
+      let remainingTime = totalTime;
+      
+      platforms.forEach((platform, index) => {
+        if (index === platforms.length - 1) {
+          platformBreakdown.set(platform, remainingTime);
+        } else {
+          const platformTime = Math.random() * (remainingTime * 0.4);
+          platformBreakdown.set(platform, platformTime);
+          remainingTime -= platformTime;
+        }
+      });
+      
+      // Generate other metrics
+      const sessionCount = Math.floor(totalTime / (15 * 60 * 1000)) + Math.floor(Math.random() * 3); // ~15min per session
+      const mindlessRatio = 0.2 + Math.random() * 0.3; // 20-50% mindless sessions
+      const mindfulBreaks = Math.floor(Math.random() * 5) + (i === 0 ? this.dailyData.mindfulBreaksTaken : 0);
+      
+      weeklyData.push({
+        date: dateString,
+        totalSocialMediaTime: totalTime,
+        platformBreakdown,
+        mindlessScrollingSessions: Math.floor(sessionCount * mindlessRatio),
+        mindfulBreaksTaken: mindfulBreaks,
+        longestSession: totalTime > 0 ? Math.max(15 * 60 * 1000, totalTime * (0.3 + Math.random() * 0.4)) : 0,
+        averageSessionLength: sessionCount > 0 ? totalTime / sessionCount : 0,
+        cognitiveImpactScore: Math.max(20, Math.min(100, 80 - (totalTime / (60 * 60 * 1000)) * 15)), // Decreases with usage
+        peakUsageHours: this.generatePeakHours(isWeekend),
+        sessionCount
+      });
+    }
+    
+    this.dailyData.weeklyData = weeklyData;
+    this.calculateWeeklyTrends();
+  }
+
+  private generatePeakHours(isWeekend: boolean): number[] {
+    const peakHours: number[] = [];
+    
+    if (isWeekend) {
+      // Weekend patterns: late morning, afternoon, evening
+      if (Math.random() > 0.3) peakHours.push(10, 11); // Late morning
+      if (Math.random() > 0.4) peakHours.push(14, 15, 16); // Afternoon
+      if (Math.random() > 0.2) peakHours.push(20, 21, 22); // Evening
+    } else {
+      // Weekday patterns: lunch break, evening
+      if (Math.random() > 0.5) peakHours.push(12, 13); // Lunch break
+      if (Math.random() > 0.3) peakHours.push(18, 19, 20); // After work
+      if (Math.random() > 0.6) peakHours.push(22, 23); // Late evening
+    }
+    
+    return peakHours;
+  }
+
+  private calculateWeeklyTrends(): void {
+    const weeklyData = this.dailyData.weeklyData;
+    if (weeklyData.length === 0) return;
+
+    // Calculate basic weekly stats
+    const totalWeeklyUsage = weeklyData.reduce((sum, day) => sum + day.totalSocialMediaTime, 0);
+    const averageDailyUsage = totalWeeklyUsage / weeklyData.length;
+    const weeklyMindfulBreaks = weeklyData.reduce((sum, day) => sum + day.mindfulBreaksTaken, 0);
+    const weeklyMindlessSessions = weeklyData.reduce((sum, day) => sum + day.mindlessScrollingSessions, 0);
+    const averageCognitiveImpact = weeklyData.reduce((sum, day) => sum + day.cognitiveImpactScore, 0) / weeklyData.length;
+
+    // Find most/least used days
+    const sortedByUsage = [...weeklyData].sort((a, b) => b.totalSocialMediaTime - a.totalSocialMediaTime);
+    const mostUsedDay = this.formatDayName(sortedByUsage[0].date);
+    const leastUsedDay = this.formatDayName(sortedByUsage[sortedByUsage.length - 1].date);
+
+    // Calculate usage trend
+    const firstHalf = weeklyData.slice(0, Math.ceil(weeklyData.length / 2));
+    const secondHalf = weeklyData.slice(Math.floor(weeklyData.length / 2));
+    const firstHalfAvg = firstHalf.reduce((sum, day) => sum + day.totalSocialMediaTime, 0) / firstHalf.length;
+    const secondHalfAvg = secondHalf.reduce((sum, day) => sum + day.totalSocialMediaTime, 0) / secondHalf.length;
+    
+    let usageTrend: 'increasing' | 'decreasing' | 'stable' = 'stable';
+    const trendThreshold = 0.15; // 15% change threshold
+    const changeRatio = (secondHalfAvg - firstHalfAvg) / firstHalfAvg;
+    
+    if (changeRatio > trendThreshold) usageTrend = 'increasing';
+    else if (changeRatio < -trendThreshold) usageTrend = 'decreasing';
+
+    // Find peak usage days (above average)
+    const peakUsageDays = weeklyData
+      .filter(day => day.totalSocialMediaTime > averageDailyUsage * 1.2)
+      .map(day => this.formatDayName(day.date));
+
+    // Calculate most used platform
+    const platformTotals = new Map<string, number>();
+    weeklyData.forEach(day => {
+      day.platformBreakdown.forEach((time, platform) => {
+        platformTotals.set(platform, (platformTotals.get(platform) || 0) + time);
+      });
+    });
+    
+    const mostUsedPlatform = Array.from(platformTotals.entries())
+      .sort(([,a], [,b]) => b - a)[0]?.[0] || '';
+
+    // Calculate platform trends
+    const platformTrends = new Map<string, { trend: 'up' | 'down' | 'stable'; change: number }>();
+    platformTotals.forEach((_, platform) => {
+      const firstHalfPlatform = firstHalf.reduce((sum, day) => sum + (day.platformBreakdown.get(platform) || 0), 0);
+      const secondHalfPlatform = secondHalf.reduce((sum, day) => sum + (day.platformBreakdown.get(platform) || 0), 0);
+      
+      if (firstHalfPlatform > 0) {
+        const platformChange = ((secondHalfPlatform - firstHalfPlatform) / firstHalfPlatform) * 100;
+        let trend: 'up' | 'down' | 'stable' = 'stable';
+        
+        if (platformChange > 20) trend = 'up';
+        else if (platformChange < -20) trend = 'down';
+        
+        platformTrends.set(platform, { trend, change: Math.round(platformChange) });
+      }
+    });
+
+    this.dailyData.weeklyTrends = {
+      averageDailyUsage,
+      totalWeeklyUsage,
+      mostUsedPlatform,
+      mostUsedDay,
+      leastUsedDay,
+      weeklyMindfulBreaks,
+      weeklyMindlessSessions,
+      averageCognitiveImpact,
+      usageTrend,
+      peakUsageDays,
+      platformTrends
+    };
+  }
+
+  private formatDayName(dateString: string): string {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) return 'Today';
+    if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    
+    return date.toLocaleDateString('en-US', { weekday: 'long' });
   }
 
   private getDefaultSettings(): DigitalWellnessSettings {
@@ -159,6 +380,27 @@ export class DigitalWellnessMonitor {
     setInterval(() => {
       this.checkFocusMode();
     }, 30000); // Check every 30 seconds
+
+    // Update peak usage hours
+    setInterval(() => {
+      this.updatePeakUsageHours();
+    }, 60000); // Check every minute
+  }
+
+  private updatePeakUsageHours(): void {
+    if (!this.currentActivity) return;
+    
+    const currentHour = new Date().getHours();
+    if (!this.dailyData.peakUsageHours.includes(currentHour)) {
+      // Add hour if we've been active for more than 10 minutes this hour
+      const hourStart = new Date();
+      hourStart.setMinutes(0, 0, 0);
+      const timeInCurrentHour = Date.now() - hourStart.getTime();
+      
+      if (timeInCurrentHour > 10 * 60 * 1000) { // 10 minutes
+        this.dailyData.peakUsageHours.push(currentHour);
+      }
+    }
   }
 
   private handleUrlChange(oldUrl: string, newUrl: string): void {
@@ -204,6 +446,8 @@ export class DigitalWellnessMonitor {
       engagementScore: 50 // Start neutral
     };
 
+    this.dailyData.sessionCount++;
+
     // Start session timer
     const sessionTimer = setInterval(() => {
       if (!this.currentActivity) {
@@ -231,6 +475,10 @@ export class DigitalWellnessMonitor {
     if (sessionLength > this.dailyData.longestSession) {
       this.dailyData.longestSession = sessionLength;
     }
+
+    // Track engagement scores
+    this.sessionEngagementScores.push(this.currentActivity.engagementScore);
+    this.dailyData.averageEngagementScore = this.sessionEngagementScores.reduce((a, b) => a + b, 0) / this.sessionEngagementScores.length;
 
     // Check if session was mindless
     if (this.currentActivity.engagementScore < 30 && sessionLength > 5 * 60 * 1000) {
@@ -442,16 +690,14 @@ export class DigitalWellnessMonitor {
   }
 
   private calculateAverageSessionLength(): void {
-    const platforms = Array.from(this.dailyData.platformBreakdown.values());
-    const totalSessions = platforms.length;
-    const totalTime = platforms.reduce((sum, time) => sum + time, 0);
-    
-    this.dailyData.averageSessionLength = totalSessions > 0 ? totalTime / totalSessions : 0;
+    if (this.dailyData.sessionCount > 0) {
+      this.dailyData.averageSessionLength = this.dailyData.dailySocialMediaTime / this.dailyData.sessionCount;
+    }
   }
 
   private calculateCognitiveImpactScore(): void {
     const totalTime = this.dailyData.dailySocialMediaTime / (1000 * 60); // minutes
-    const mindlessRatio = this.dailyData.mindlessScrollingSessions / Math.max(1, this.dailyData.platformBreakdown.size);
+    const mindlessRatio = this.dailyData.sessionCount > 0 ? this.dailyData.mindlessScrollingSessions / this.dailyData.sessionCount : 0;
     
     // Higher time and mindless ratio = lower cognitive impact score
     let impactScore = 100;
@@ -461,6 +707,10 @@ export class DigitalWellnessMonitor {
     else if (totalTime > 30) impactScore -= 10; // 30+ minutes
     
     impactScore -= mindlessRatio * 20;
+    
+    // Factor in engagement score
+    if (this.dailyData.averageEngagementScore < 40) impactScore -= 15;
+    else if (this.dailyData.averageEngagementScore > 70) impactScore += 10;
     
     this.dailyData.cognitiveImpactScore = Math.max(0, Math.min(100, impactScore));
   }
@@ -499,6 +749,15 @@ export class DigitalWellnessMonitor {
   public recordMindfulBreak(): void {
     this.dailyData.mindfulBreaksTaken++;
     this.interventionEscalationLevel = Math.max(0, this.interventionEscalationLevel - 1);
+    
+    // Update today's data in weekly array
+    const today = new Date().toISOString().split('T')[0];
+    const todayIndex = this.dailyData.weeklyData.findIndex(day => day.date === today);
+    if (todayIndex >= 0) {
+      this.dailyData.weeklyData[todayIndex].mindfulBreaksTaken = this.dailyData.mindfulBreaksTaken;
+    }
+    
+    this.calculateWeeklyTrends();
     this.notifyListeners();
   }
 
@@ -523,6 +782,8 @@ export class DigitalWellnessMonitor {
   public resetDaily(): void {
     this.dailyData = this.getInitialData();
     this.interventionEscalationLevel = 0;
+    this.sessionEngagementScores = [];
+    this.loadHistoricalData(); // Reload weekly data
     this.notifyListeners();
   }
 }
