@@ -58,18 +58,18 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
     trend?: 'up' | 'down' | 'stable';
     trendValue?: string;
   }> = ({ icon, title, value, subtitle, color, trend, trendValue }) => (
-    <div className="bg-white rounded-lg shadow-md p-6 transition-all duration-200 hover:shadow-lg">
+    <div className="bg-white dark:bg-calm-800 rounded-lg shadow-md dark:shadow-gentle-dark p-6 transition-all duration-200 hover:shadow-lg dark:hover:shadow-soft-dark border border-calm-200 dark:border-calm-700">
       <div className="flex items-center justify-between mb-4">
         <div className={`p-3 rounded-full ${color}`}>
           {icon}
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-gray-800">{value}</p>
-          <p className="text-sm text-gray-600">{title}</p>
+          <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{value}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{title}</p>
           {trend && trendValue && (
             <div className={`flex items-center justify-end space-x-1 mt-1 ${
-              trend === 'up' ? 'text-green-600' : 
-              trend === 'down' ? 'text-red-600' : 'text-gray-500'
+              trend === 'up' ? 'text-green-600 dark:text-green-400' : 
+              trend === 'down' ? 'text-red-600 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'
             }`}>
               {trend === 'up' ? <ArrowUp className="w-3 h-3" /> : 
                trend === 'down' ? <ArrowDown className="w-3 h-3" /> : 
@@ -79,7 +79,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
           )}
         </div>
       </div>
-      <p className="text-xs text-gray-500">{subtitle}</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400">{subtitle}</p>
     </div>
   );
 
@@ -128,44 +128,44 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'increasing': return <TrendingUp className="w-4 h-4 text-red-500" />;
-      case 'decreasing': return <TrendingDown className="w-4 h-4 text-green-500" />;
-      default: return <Minus className="w-4 h-4 text-gray-500" />;
+      case 'increasing': return <TrendingUp className="w-4 h-4 text-red-500 dark:text-red-400" />;
+      case 'decreasing': return <TrendingDown className="w-4 h-4 text-green-500 dark:text-green-400" />;
+      default: return <Minus className="w-4 h-4 text-gray-500 dark:text-gray-400" />;
     }
   };
 
   const getTrendColor = (trend: string) => {
     switch (trend) {
-      case 'increasing': return 'text-red-600';
-      case 'decreasing': return 'text-green-600';
-      default: return 'text-gray-500';
+      case 'increasing': return 'text-red-600 dark:text-red-400';
+      case 'decreasing': return 'text-green-600 dark:text-green-400';
+      default: return 'text-gray-500 dark:text-gray-400';
     }
   };
 
   return (
     <div className="space-y-6">
       {/* Enhanced Header with Digital Wellness */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-xl shadow-lg p-6 text-white">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-700 dark:from-blue-700 dark:to-purple-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 text-white">
         <h2 className="text-xl font-semibold mb-2">Performance & Digital Wellness Analytics</h2>
-        <p className="text-blue-100 mb-4">
+        <p className="text-blue-100 dark:text-blue-200 mb-4">
           Comprehensive analysis of your cognitive performance and digital habits over the past week
         </p>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white bg-opacity-20 rounded-lg p-3 backdrop-blur-sm">
             <div className="text-2xl font-bold">{analyticsData.averageFocusQuality}%</div>
-            <div className="text-sm text-blue-100">Avg Focus Quality</div>
+            <div className="text-sm text-blue-100 dark:text-blue-200">Avg Focus Quality</div>
           </div>
           <div className="bg-white bg-opacity-20 rounded-lg p-3 backdrop-blur-sm">
             <div className="text-2xl font-bold">{formatTimeShort(totalSocialMediaMinutes)}</div>
-            <div className="text-sm text-blue-100">Social Media Today</div>
+            <div className="text-sm text-blue-100 dark:text-blue-200">Social Media Today</div>
           </div>
           <div className="bg-white bg-opacity-20 rounded-lg p-3 backdrop-blur-sm">
             <div className="text-2xl font-bold">{analyticsData.digitalWellnessScore}</div>
-            <div className="text-sm text-blue-100">Digital Wellness</div>
+            <div className="text-sm text-blue-100 dark:text-blue-200">Digital Wellness</div>
           </div>
           <div className="bg-white bg-opacity-20 rounded-lg p-3 backdrop-blur-sm">
             <div className="text-2xl font-bold">{formatTimeMs(weeklyTrends.totalWeeklyUsage)}</div>
-            <div className="text-sm text-blue-100">Weekly Total</div>
+            <div className="text-sm text-blue-100 dark:text-blue-200">Weekly Total</div>
           </div>
         </div>
       </div>
@@ -204,9 +204,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
       </div>
 
       {/* Weekly Digital Wellness Overview */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center space-x-2">
-          <Calendar className="w-5 h-5 text-purple-500" />
+      <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-calm-200 dark:border-calm-700">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-6 flex items-center space-x-2">
+          <Calendar className="w-5 h-5 text-purple-500 dark:text-purple-400" />
           <span>Weekly Digital Wellness Overview</span>
         </h3>
         
@@ -252,8 +252,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
 
         {/* Weekly Usage Trend Chart */}
         <div className="mb-6">
-          <h4 className="font-semibold text-gray-800 mb-4">Daily Usage Trend (Past 7 Days)</h4>
-          <div className="bg-gray-50 rounded-lg p-4">
+          <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-4">Daily Usage Trend (Past 7 Days)</h4>
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
             <div className="flex items-end justify-between space-x-2 h-32">
               {digitalData.weeklyData.map((day, index) => {
                 const dayMinutes = Math.round(day.totalSocialMediaTime / (1000 * 60));
@@ -263,13 +263,13 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
                 
                 return (
                   <div key={day.date} className="flex flex-col items-center flex-1">
-                    <div className="w-full bg-purple-200 rounded-t-lg relative" style={{ height: '100px' }}>
+                    <div className="w-full bg-purple-200 dark:bg-purple-800 rounded-t-lg relative" style={{ height: '100px' }}>
                       <div 
-                        className="bg-purple-500 rounded-t-lg w-full absolute bottom-0 transition-all duration-500"
+                        className="bg-purple-500 dark:bg-purple-400 rounded-t-lg w-full absolute bottom-0 transition-all duration-500"
                         style={{ height: `${height}%` }}
                       ></div>
                     </div>
-                    <div className="text-xs text-gray-600 mt-2 text-center">
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
                       <div className="font-medium">{dayName}</div>
                       <div>{dayMinutes}m</div>
                     </div>
@@ -282,22 +282,22 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
 
         {/* Weekly Insights */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 border border-blue-100">
-            <h5 className="font-semibold text-gray-800 mb-3 flex items-center space-x-2">
-              <TrendingUp className="w-4 h-4 text-blue-500" />
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-4 border border-blue-100 dark:border-blue-800">
+            <h5 className="font-semibold text-gray-800 dark:text-gray-200 mb-3 flex items-center space-x-2">
+              <TrendingUp className="w-4 h-4 text-blue-500 dark:text-blue-400" />
               <span>Usage Patterns</span>
             </h5>
             <div className="space-y-2 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Peak usage day:</span>
-                <span className="font-medium text-gray-800">{weeklyTrends.mostUsedDay}</span>
+                <span className="text-gray-600 dark:text-gray-400">Peak usage day:</span>
+                <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.mostUsedDay}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Lowest usage day:</span>
-                <span className="font-medium text-gray-800">{weeklyTrends.leastUsedDay}</span>
+                <span className="text-gray-600 dark:text-gray-400">Lowest usage day:</span>
+                <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.leastUsedDay}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Weekly trend:</span>
+                <span className="text-gray-600 dark:text-gray-400">Weekly trend:</span>
                 <div className="flex items-center space-x-1">
                   {getTrendIcon(weeklyTrends.usageTrend)}
                   <span className={`font-medium capitalize ${getTrendColor(weeklyTrends.usageTrend)}`}>
@@ -308,23 +308,23 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-100">
-            <h5 className="font-semibold text-gray-800 mb-3 flex items-center space-x-2">
-              <Heart className="w-4 h-4 text-green-500" />
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-4 border border-green-100 dark:border-green-800">
+            <h5 className="font-semibold text-gray-800 dark:text-gray-200 mb-3 flex items-center space-x-2">
+              <Heart className="w-4 h-4 text-green-500 dark:text-green-400" />
               <span>Wellness Metrics</span>
             </h5>
             <div className="space-y-2 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Mindless sessions:</span>
-                <span className="font-medium text-gray-800">{weeklyTrends.weeklyMindlessSessions}</span>
+                <span className="text-gray-600 dark:text-gray-400">Mindless sessions:</span>
+                <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.weeklyMindlessSessions}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Mindful breaks:</span>
-                <span className="font-medium text-gray-800">{weeklyTrends.weeklyMindfulBreaks}</span>
+                <span className="text-gray-600 dark:text-gray-400">Mindful breaks:</span>
+                <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.weeklyMindfulBreaks}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Peak usage days:</span>
-                <span className="font-medium text-gray-800">{weeklyTrends.peakUsageDays.length}</span>
+                <span className="text-gray-600 dark:text-gray-400">Peak usage days:</span>
+                <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.peakUsageDays.length}</span>
               </div>
             </div>
           </div>
@@ -332,9 +332,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
       </div>
 
       {/* Today's Digital Wellness Metrics */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center space-x-2">
-          <Smartphone className="w-5 h-5 text-purple-500" />
+      <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-calm-200 dark:border-calm-700">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-6 flex items-center space-x-2">
+          <Smartphone className="w-5 h-5 text-purple-500 dark:text-purple-400" />
           <span>Today's Digital Wellness Analysis</span>
         </h3>
         
@@ -383,7 +383,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
         {/* Platform Usage Breakdown */}
         {platformBreakdownArray.length > 0 && (
           <div className="mb-6">
-            <h4 className="font-semibold text-gray-800 mb-4">Today's Platform Usage Breakdown</h4>
+            <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-4">Today's Platform Usage Breakdown</h4>
             <div className="space-y-3">
               {platformBreakdownArray.map(([platform, time]) => {
                 const minutes = Math.round(time / (1000 * 60));
@@ -395,14 +395,14 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
                 const platformTrend = weeklyTrends.platformTrends.get(platform);
                 
                 return (
-                  <div key={platform} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={platform} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                      <span className="font-medium text-gray-700">{platform}</span>
+                      <span className="font-medium text-gray-700 dark:text-gray-300">{platform}</span>
                       {platformTrend && (
                         <div className={`flex items-center space-x-1 text-xs ${
-                          platformTrend.trend === 'up' ? 'text-red-600' : 
-                          platformTrend.trend === 'down' ? 'text-green-600' : 'text-gray-500'
+                          platformTrend.trend === 'up' ? 'text-red-600 dark:text-red-400' : 
+                          platformTrend.trend === 'down' ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'
                         }`}>
                           {platformTrend.trend === 'up' ? <ArrowUp className="w-3 h-3" /> : 
                            platformTrend.trend === 'down' ? <ArrowDown className="w-3 h-3" /> : 
@@ -412,16 +412,16 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
                       )}
                     </div>
                     <div className="flex items-center space-x-4">
-                      <div className="w-32 bg-gray-200 rounded-full h-2">
+                      <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div 
                           className="bg-purple-500 h-2 rounded-full transition-all duration-500"
                           style={{ width: `${percentage}%` }}
                         ></div>
                       </div>
-                      <span className="text-sm font-medium text-gray-800 min-w-[40px] text-right">
+                      <span className="text-sm font-medium text-gray-800 dark:text-gray-200 min-w-[40px] text-right">
                         {formatTimeShort(minutes)}
                       </span>
-                      <span className="text-xs text-gray-500 min-w-[35px] text-right">
+                      <span className="text-xs text-gray-500 dark:text-gray-400 min-w-[35px] text-right">
                         {Math.round(percentage)}%
                       </span>
                     </div>
@@ -433,61 +433,61 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
         )}
 
         {/* Digital Habits Insights */}
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 border border-purple-100">
-          <h4 className="font-semibold text-gray-800 mb-3 flex items-center space-x-2">
-            <TrendingUp className="w-4 h-4 text-purple-500" />
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg p-4 border border-purple-100 dark:border-purple-800">
+          <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3 flex items-center space-x-2">
+            <TrendingUp className="w-4 h-4 text-purple-500 dark:text-purple-400" />
             <span>Digital Habits Analysis</span>
           </h4>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-800">{formatTimeShort(averageSessionMinutes)}</div>
-              <div className="text-sm text-gray-600">Average Session</div>
+              <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">{formatTimeShort(averageSessionMinutes)}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Average Session</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-800">{formatTimeShort(longestSessionMinutes)}</div>
-              <div className="text-sm text-gray-600">Longest Session</div>
+              <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">{formatTimeShort(longestSessionMinutes)}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Longest Session</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-800">
+              <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                 {digitalData.sessionCount}
               </div>
-              <div className="text-sm text-gray-600">Total Sessions</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Total Sessions</div>
             </div>
           </div>
 
           {/* Correlation Insight */}
           <div className={`p-3 rounded-lg border ${
             correlationInsight.type === 'positive' || correlationInsight.type === 'excellent' 
-              ? 'bg-green-50 border-green-200' 
+              ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
               : correlationInsight.type === 'negative' 
-                ? 'bg-red-50 border-red-200' 
-                : 'bg-blue-50 border-blue-200'
+                ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' 
+                : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
           }`}>
             <div className="flex items-start space-x-2">
               {correlationInsight.type === 'positive' || correlationInsight.type === 'excellent' ? (
-                <TrendingUp className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                <TrendingUp className="w-4 h-4 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
               ) : correlationInsight.type === 'negative' ? (
-                <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                <AlertTriangle className="w-4 h-4 text-red-500 dark:text-red-400 mt-0.5 flex-shrink-0" />
               ) : (
-                <BarChart3 className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                <BarChart3 className="w-4 h-4 text-blue-500 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               )}
               <div>
                 <p className={`text-sm font-medium ${
                   correlationInsight.type === 'positive' || correlationInsight.type === 'excellent' 
-                    ? 'text-green-700' 
+                    ? 'text-green-700 dark:text-green-300' 
                     : correlationInsight.type === 'negative' 
-                      ? 'text-red-700' 
-                      : 'text-blue-700'
+                      ? 'text-red-700 dark:text-red-300' 
+                      : 'text-blue-700 dark:text-blue-300'
                 }`}>
                   {correlationInsight.message}
                 </p>
                 <p className={`text-xs mt-1 ${
                   correlationInsight.type === 'positive' || correlationInsight.type === 'excellent' 
-                    ? 'text-green-600' 
+                    ? 'text-green-600 dark:text-green-400' 
                     : correlationInsight.type === 'negative' 
-                      ? 'text-red-600' 
-                      : 'text-blue-600'
+                      ? 'text-red-600 dark:text-red-400' 
+                      : 'text-blue-600 dark:text-blue-400'
                 }`}>
                   {correlationInsight.recommendation}
                 </p>
@@ -500,23 +500,23 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
       {/* Traditional Analytics Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Peak Performance Hours */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Peak Performance Hours</h3>
+        <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-calm-200 dark:border-calm-700">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Peak Performance Hours</h3>
           <div className="space-y-3">
             {analyticsData.peakHours.length > 0 ? (
               analyticsData.peakHours.map((hour, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                  <span className="font-medium text-gray-700">
+                <div key={index} className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <span className="font-medium text-gray-700 dark:text-gray-300">
                     {hour}:00 - {hour + 1}:00
                   </span>
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <span className="text-sm text-gray-600">High Focus</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">High Focus</span>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-center py-4">
+              <p className="text-gray-500 dark:text-gray-400 text-center py-4">
                 Keep working to identify your peak hours!
               </p>
             )}
@@ -524,15 +524,15 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
         </div>
 
         {/* Common Distractions */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Common Distractions</h3>
+        <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-calm-200 dark:border-calm-700">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Common Distractions</h3>
           <div className="space-y-3">
             {analyticsData.distractionTriggers.map((trigger, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
-                <span className="font-medium text-gray-700">{trigger}</span>
+              <div key={index} className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                <span className="font-medium text-gray-700 dark:text-gray-300">{trigger}</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <span className="text-sm text-gray-600">Trigger</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Trigger</span>
                 </div>
               </div>
             ))}

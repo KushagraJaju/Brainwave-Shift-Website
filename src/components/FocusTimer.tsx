@@ -139,16 +139,16 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   return (
     <div className="space-y-6">
       {/* Main Timer Component */}
-      <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+      <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 transition-all duration-300 hover:shadow-xl dark:hover:shadow-soft-dark border border-calm-200 dark:border-calm-700">
         {/* Header Section - Consistent with other dashboard sections */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">Focus Timer</h2>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Focus Timer</h2>
           <div className="flex items-center space-x-3">
-            <Timer className="w-5 h-5 text-blue-500" />
+            <Timer className="w-5 h-5 text-blue-500 dark:text-blue-400" />
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${
               sessionType === 'Focus' 
-                ? 'bg-blue-100 text-blue-800' 
-                : 'bg-green-100 text-green-800'
+                ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300' 
+                : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
             }`}>
               {sessionType} Session
             </span>
@@ -167,7 +167,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                 stroke="currentColor"
                 strokeWidth="8"
                 fill="none"
-                className="text-gray-200"
+                className="text-gray-200 dark:text-gray-700"
               />
               <circle
                 cx="80"
@@ -178,7 +178,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                 fill="none"
                 strokeDasharray={`${progress * 4.4} 440`}
                 className={`transition-all duration-1000 ease-out ${
-                  sessionType === 'Focus' ? 'text-blue-500' : 'text-green-500'
+                  sessionType === 'Focus' ? 'text-blue-500 dark:text-blue-400' : 'text-green-500 dark:text-green-400'
                 }`}
                 strokeLinecap="round"
                 style={{
@@ -187,10 +187,10 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-mono font-bold text-gray-800 mb-1">
+              <span className="text-3xl font-mono font-bold text-gray-800 dark:text-gray-200 mb-1">
                 {formatTime(time)}
               </span>
-              <span className="text-xs text-gray-500 uppercase tracking-wide">
+              <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 {sessionType} Time
               </span>
             </div>
@@ -202,22 +202,22 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               onClick={toggleTimer}
               className={`flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
                 isActive
-                  ? 'bg-red-500 hover:bg-red-600 text-white'
-                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+                  ? 'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white'
+                  : 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white'
               }`}
             >
               {isActive ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
             </button>
             <button
               onClick={resetTimer}
-              className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-500 hover:bg-gray-600 text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+              className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
             >
               <Square className="w-5 h-5" />
             </button>
           </div>
 
           {/* Status Text - More subtle */}
-          <div className="text-gray-600">
+          <div className="text-gray-600 dark:text-gray-400">
             {isActive ? (
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -231,18 +231,18 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
 
         {/* Settings Section - Better integrated */}
         {preferences && (
-          <div className="border-t border-gray-100 pt-4">
+          <div className="border-t border-gray-100 dark:border-gray-700 pt-4">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center space-x-2">
-                <Settings className="w-4 h-4 text-gray-500" />
-                <span className="text-gray-600">Current Settings:</span>
+                <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                <span className="text-gray-600 dark:text-gray-400">Current Settings:</span>
               </div>
               <div className="flex items-center space-x-4">
-                <span className="font-medium text-gray-800">
+                <span className="font-medium text-gray-800 dark:text-gray-200">
                   {preferences.focusSessionLength}m focus / {preferences.breakLength || 5}m break
                 </span>
                 {preferences.breakReminders && (
-                  <div className="flex items-center space-x-1 text-green-600">
+                  <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <span className="text-xs">Notifications on</span>
                   </div>
@@ -255,7 +255,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
 
       {/* Session Presets - Now positioned below the timer */}
       {preferences && onUpdatePreferences && (
-        <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+        <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 transition-all duration-300 hover:shadow-xl dark:hover:shadow-soft-dark border border-calm-200 dark:border-calm-700">
           <FocusPresets
             selectedPreset={preferences.selectedPreset}
             onPresetSelect={handlePresetSelect}

@@ -34,106 +34,106 @@ export const MonitoringMetrics: React.FC = () => {
     const colorSchemes = {
       focus: {
         high: {
-          bg: 'bg-gradient-to-br from-blue-50 to-teal-50',
-          border: 'border-blue-300',
-          text: 'text-blue-700',
+          bg: 'bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-900/20 dark:to-teal-900/20',
+          border: 'border-blue-300 dark:border-blue-700',
+          text: 'text-blue-700 dark:text-blue-300',
           progress: '#0ea5e9', // blue-500
           sparkline: '#0ea5e9',
-          shadow: 'shadow-blue-100'
+          shadow: 'shadow-blue-100 dark:shadow-blue-900/20'
         },
         medium: {
-          bg: 'bg-gradient-to-br from-blue-25 to-teal-25',
-          border: 'border-blue-200',
-          text: 'text-blue-600',
+          bg: 'bg-gradient-to-br from-blue-25 to-teal-25 dark:from-blue-900/10 dark:to-teal-900/10',
+          border: 'border-blue-200 dark:border-blue-800',
+          text: 'text-blue-600 dark:text-blue-400',
           progress: '#38bdf8', // blue-400
           sparkline: '#38bdf8',
-          shadow: 'shadow-blue-50'
+          shadow: 'shadow-blue-50 dark:shadow-blue-900/10'
         },
         low: {
-          bg: 'bg-gradient-to-br from-slate-50 to-blue-50',
-          border: 'border-slate-200',
-          text: 'text-slate-600',
+          bg: 'bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900/20 dark:to-blue-900/20',
+          border: 'border-slate-200 dark:border-slate-700',
+          text: 'text-slate-600 dark:text-slate-400',
           progress: '#94a3b8', // slate-400
           sparkline: '#94a3b8',
-          shadow: 'shadow-slate-100'
+          shadow: 'shadow-slate-100 dark:shadow-slate-900/20'
         }
       },
       load: {
         high: {
-          bg: 'bg-gradient-to-br from-purple-50 to-violet-50',
-          border: 'border-purple-300',
-          text: 'text-purple-700',
+          bg: 'bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20',
+          border: 'border-purple-300 dark:border-purple-700',
+          text: 'text-purple-700 dark:text-purple-300',
           progress: '#a855f7', // purple-500
           sparkline: '#a855f7',
-          shadow: 'shadow-purple-100'
+          shadow: 'shadow-purple-100 dark:shadow-purple-900/20'
         },
         medium: {
-          bg: 'bg-gradient-to-br from-purple-25 to-violet-25',
-          border: 'border-purple-200',
-          text: 'text-purple-600',
+          bg: 'bg-gradient-to-br from-purple-25 to-violet-25 dark:from-purple-900/10 dark:to-violet-900/10',
+          border: 'border-purple-200 dark:border-purple-800',
+          text: 'text-purple-600 dark:text-purple-400',
           progress: '#c084fc', // purple-400
           sparkline: '#c084fc',
-          shadow: 'shadow-purple-50'
+          shadow: 'shadow-purple-50 dark:shadow-purple-900/10'
         },
         low: {
-          bg: 'bg-gradient-to-br from-slate-50 to-purple-50',
-          border: 'border-slate-200',
-          text: 'text-slate-600',
+          bg: 'bg-gradient-to-br from-slate-50 to-purple-50 dark:from-slate-900/20 dark:to-purple-900/20',
+          border: 'border-slate-200 dark:border-slate-700',
+          text: 'text-slate-600 dark:text-slate-400',
           progress: '#94a3b8', // slate-400
           sparkline: '#94a3b8',
-          shadow: 'shadow-slate-100'
+          shadow: 'shadow-slate-100 dark:shadow-slate-900/20'
         }
       },
       stress: {
         high: {
-          bg: 'bg-gradient-to-br from-red-50 to-rose-50',
-          border: 'border-red-300',
-          text: 'text-red-700',
+          bg: 'bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20',
+          border: 'border-red-300 dark:border-red-700',
+          text: 'text-red-700 dark:text-red-300',
           progress: '#ef4444', // red-500
           sparkline: '#ef4444',
-          shadow: 'shadow-red-100'
+          shadow: 'shadow-red-100 dark:shadow-red-900/20'
         },
         medium: {
-          bg: 'bg-gradient-to-br from-orange-50 to-red-50',
-          border: 'border-orange-200',
-          text: 'text-orange-600',
+          bg: 'bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20',
+          border: 'border-orange-200 dark:border-orange-700',
+          text: 'text-orange-600 dark:text-orange-400',
           progress: '#f97316', // orange-500
           sparkline: '#f97316',
-          shadow: 'shadow-orange-50'
+          shadow: 'shadow-orange-50 dark:shadow-orange-900/20'
         },
         low: {
-          bg: 'bg-gradient-to-br from-slate-50 to-orange-50',
-          border: 'border-slate-200',
-          text: 'text-slate-600',
+          bg: 'bg-gradient-to-br from-slate-50 to-orange-50 dark:from-slate-900/20 dark:to-orange-900/20',
+          border: 'border-slate-200 dark:border-slate-700',
+          text: 'text-slate-600 dark:text-slate-400',
           progress: '#94a3b8', // slate-400
           sparkline: '#94a3b8',
-          shadow: 'shadow-slate-100'
+          shadow: 'shadow-slate-100 dark:shadow-slate-900/20'
         }
       },
       overall: {
         high: {
-          bg: 'bg-gradient-to-br from-emerald-50 to-green-50',
-          border: 'border-emerald-300',
-          text: 'text-emerald-700',
+          bg: 'bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20',
+          border: 'border-emerald-300 dark:border-emerald-700',
+          text: 'text-emerald-700 dark:text-emerald-300',
           progress: '#10b981', // emerald-500
           sparkline: '#10b981',
-          shadow: 'shadow-emerald-100'
+          shadow: 'shadow-emerald-100 dark:shadow-emerald-900/20'
         },
         medium: {
-          bg: 'bg-gradient-to-br from-green-50 to-emerald-50',
-          border: 'border-green-200',
-          text: 'text-green-600',
+          bg: 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20',
+          border: 'border-green-200 dark:border-green-700',
+          text: 'text-green-600 dark:text-green-400',
           progress: '#22c55e', // green-500
           sparkline: '#22c55e',
-          shadow: 'shadow-green-50'
+          shadow: 'shadow-green-50 dark:shadow-green-900/20'
         },
         low: {
-          bg: 'bg-gradient-to-br from-slate-50 to-green-50',
-          border: 'border-slate-200',
-          text: 'text-slate-600',
+          bg: 'bg-gradient-to-br from-slate-50 to-green-50 dark:from-slate-900/20 dark:to-green-900/20',
+          border: 'border-slate-200 dark:border-slate-700',
+          text: 'text-slate-600 dark:text-slate-400',
           progress: '#94a3b8', // slate-400
           sparkline: '#94a3b8',
-          shadow: 'shadow-slate-100'
+          shadow: 'shadow-slate-100 dark:shadow-slate-900/20'
         }
       }
     };
@@ -144,22 +144,22 @@ export const MonitoringMetrics: React.FC = () => {
   const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
     switch (trend) {
       case 'up':
-        return <ArrowUp className="w-3 h-3 text-emerald-500" />;
+        return <ArrowUp className="w-3 h-3 text-emerald-500 dark:text-emerald-400" />;
       case 'down':
-        return <ArrowDown className="w-3 h-3 text-red-500" />;
+        return <ArrowDown className="w-3 h-3 text-red-500 dark:text-red-400" />;
       case 'stable':
-        return <Minus className="w-3 h-3 text-slate-400" />;
+        return <Minus className="w-3 h-3 text-slate-400 dark:text-slate-500" />;
     }
   };
 
   const getTrendColor = (trend: 'up' | 'down' | 'stable') => {
     switch (trend) {
       case 'up':
-        return 'text-emerald-600 font-semibold';
+        return 'text-emerald-600 dark:text-emerald-400 font-semibold';
       case 'down':
-        return 'text-red-600 font-semibold';
+        return 'text-red-600 dark:text-red-400 font-semibold';
       case 'stable':
-        return 'text-slate-500 font-medium';
+        return 'text-slate-500 dark:text-slate-400 font-medium';
     }
   };
 
@@ -245,7 +245,7 @@ export const MonitoringMetrics: React.FC = () => {
             stroke="currentColor"
             strokeWidth={strokeWidth}
             fill="none"
-            className="text-slate-200"
+            className="text-slate-200 dark:text-slate-700"
           />
           <circle
             cx={size / 2}
@@ -266,19 +266,19 @@ export const MonitoringMetrics: React.FC = () => {
 
   const getRhythmColor = (rhythm: string) => {
     switch (rhythm) {
-      case 'steady': return 'text-emerald-600 bg-emerald-50 border-emerald-200';
-      case 'erratic': return 'text-amber-600 bg-amber-50 border-amber-200';
-      case 'declining': return 'text-red-600 bg-red-50 border-red-200';
-      default: return 'text-slate-600 bg-slate-50 border-slate-200';
+      case 'steady': return 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700';
+      case 'erratic': return 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-700';
+      case 'declining': return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700';
+      default: return 'text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/20 border-slate-200 dark:border-slate-700';
     }
   };
 
   const getPatternColor = (pattern: string) => {
     switch (pattern) {
-      case 'smooth': return 'text-emerald-600 bg-emerald-50 border-emerald-200';
-      case 'erratic': return 'text-red-600 bg-red-50 border-red-200';
-      case 'minimal': return 'text-blue-600 bg-blue-50 border-blue-200';
-      default: return 'text-slate-600 bg-slate-50 border-slate-200';
+      case 'smooth': return 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700';
+      case 'erratic': return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700';
+      case 'minimal': return 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700';
+      default: return 'text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/20 border-slate-200 dark:border-slate-700';
     }
   };
 
@@ -288,9 +288,9 @@ export const MonitoringMetrics: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Left Column - Enhanced Cognitive Metrics */}
-        <div className="bg-white rounded-xl shadow-lg p-6 h-full flex flex-col border border-slate-200">
-          <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center space-x-2">
-            <Brain className="w-5 h-5 text-purple-500" />
+        <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 h-full flex flex-col border border-slate-200 dark:border-calm-700">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-6 flex items-center space-x-2">
+            <Brain className="w-5 h-5 text-purple-500 dark:text-purple-400" />
             <span>Cognitive Metrics</span>
           </h3>
           
@@ -317,7 +317,7 @@ export const MonitoringMetrics: React.FC = () => {
                 <div className={`text-2xl font-bold ${getMetricColors('focus', data.cognitiveMetrics.focusScore).text}`}>
                   {data.cognitiveMetrics.focusScore}
                 </div>
-                <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Focus Score</div>
+                <div className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Focus Score</div>
               </div>
               <MiniSparkline 
                 data={data.cognitiveMetrics.focusHistory} 
@@ -345,7 +345,7 @@ export const MonitoringMetrics: React.FC = () => {
                 <div className={`text-2xl font-bold ${getMetricColors('load', data.cognitiveMetrics.loadScore).text}`}>
                   {data.cognitiveMetrics.loadScore}
                 </div>
-                <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Load Score</div>
+                <div className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Load Score</div>
               </div>
               <MiniSparkline 
                 data={data.cognitiveMetrics.loadHistory} 
@@ -373,7 +373,7 @@ export const MonitoringMetrics: React.FC = () => {
                 <div className={`text-2xl font-bold ${getMetricColors('stress', data.cognitiveMetrics.stressScore).text}`}>
                   {data.cognitiveMetrics.stressScore}
                 </div>
-                <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Stress Score</div>
+                <div className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Stress Score</div>
               </div>
               <MiniSparkline 
                 data={data.cognitiveMetrics.stressHistory} 
@@ -401,7 +401,7 @@ export const MonitoringMetrics: React.FC = () => {
                 <div className={`text-2xl font-bold ${getMetricColors('overall', data.cognitiveMetrics.overallScore).text}`}>
                   {data.cognitiveMetrics.overallScore}
                 </div>
-                <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Overall Score</div>
+                <div className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Overall Score</div>
               </div>
               <MiniSparkline 
                 data={data.cognitiveMetrics.overallHistory} 
@@ -415,47 +415,47 @@ export const MonitoringMetrics: React.FC = () => {
         <div className="space-y-6">
           
           {/* Browser Activity */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-slate-200">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
-              <TrendingUp className="w-5 h-5 text-blue-500" />
+          <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-slate-200 dark:border-calm-700">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center space-x-2">
+              <TrendingUp className="w-5 h-5 text-blue-500 dark:text-blue-400" />
               <span>Browser Activity</span>
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-4 rounded-lg border border-slate-200">
-                <div className="text-xl font-bold text-slate-800">{data.browserActivity.tabSwitches}</div>
-                <div className="text-sm text-slate-600 font-medium">Tab Switches</div>
+              <div className="bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900/20 dark:to-blue-900/20 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{data.browserActivity.tabSwitches}</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">Tab Switches</div>
               </div>
-              <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-4 rounded-lg border border-slate-200">
-                <div className="text-xl font-bold text-slate-800">
+              <div className="bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900/20 dark:to-blue-900/20 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                <div className="text-xl font-bold text-slate-800 dark:text-slate-200">
                   {formatTime(data.browserActivity.focusTime)}
                 </div>
-                <div className="text-sm text-slate-600 font-medium">Current Focus</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">Current Focus</div>
               </div>
-              <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-4 rounded-lg border border-slate-200">
-                <div className="text-xl font-bold text-slate-800">
+              <div className="bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900/20 dark:to-blue-900/20 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                <div className="text-xl font-bold text-slate-800 dark:text-slate-200">
                   {formatTime(data.browserActivity.totalActiveTime)}
                 </div>
-                <div className="text-sm text-slate-600 font-medium">Total Active</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">Total Active</div>
               </div>
             </div>
           </div>
 
           {/* Keyboard Activity */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-slate-200">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
-              <Zap className="w-5 h-5 text-orange-500" />
+          <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-slate-200 dark:border-calm-700">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center space-x-2">
+              <Zap className="w-5 h-5 text-orange-500 dark:text-orange-400" />
               <span>Keyboard Activity</span>
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-br from-slate-50 to-orange-50 p-4 rounded-lg border border-slate-200">
-                <div className="text-xl font-bold text-slate-800">{data.keyboardActivity.typingSpeed}</div>
-                <div className="text-sm text-slate-600 font-medium">WPM</div>
+              <div className="bg-gradient-to-br from-slate-50 to-orange-50 dark:from-slate-900/20 dark:to-orange-900/20 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{data.keyboardActivity.typingSpeed}</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">WPM</div>
               </div>
-              <div className="bg-gradient-to-br from-slate-50 to-orange-50 p-4 rounded-lg border border-slate-200">
-                <div className="text-xl font-bold text-slate-800">{data.keyboardActivity.keystrokes}</div>
-                <div className="text-sm text-slate-600 font-medium">Keystrokes</div>
+              <div className="bg-gradient-to-br from-slate-50 to-orange-50 dark:from-slate-900/20 dark:to-orange-900/20 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{data.keyboardActivity.keystrokes}</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">Keystrokes</div>
               </div>
               <div className={`p-4 rounded-lg border-2 ${getRhythmColor(data.keyboardActivity.typingRhythm)}`}>
                 <div className="text-sm font-bold capitalize">{data.keyboardActivity.typingRhythm}</div>
@@ -465,20 +465,20 @@ export const MonitoringMetrics: React.FC = () => {
           </div>
 
           {/* Mouse Activity */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-slate-200">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
-              <Heart className="w-5 h-5 text-pink-500" />
+          <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-slate-200 dark:border-calm-700">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center space-x-2">
+              <Heart className="w-5 h-5 text-pink-500 dark:text-pink-400" />
               <span>Mouse Activity</span>
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-br from-slate-50 to-pink-50 p-4 rounded-lg border border-slate-200">
-                <div className="text-xl font-bold text-slate-800">{data.mouseActivity.movements}</div>
-                <div className="text-sm text-slate-600 font-medium">Movements</div>
+              <div className="bg-gradient-to-br from-slate-50 to-pink-50 dark:from-slate-900/20 dark:to-pink-900/20 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{data.mouseActivity.movements}</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">Movements</div>
               </div>
-              <div className="bg-gradient-to-br from-slate-50 to-pink-50 p-4 rounded-lg border border-slate-200">
-                <div className="text-xl font-bold text-slate-800">{data.mouseActivity.clicks}</div>
-                <div className="text-sm text-slate-600 font-medium">Clicks</div>
+              <div className="bg-gradient-to-br from-slate-50 to-pink-50 dark:from-slate-900/20 dark:to-pink-900/20 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{data.mouseActivity.clicks}</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">Clicks</div>
               </div>
               <div className={`p-4 rounded-lg border-2 ${getPatternColor(data.mouseActivity.movementPattern)}`}>
                 <div className="text-sm font-bold capitalize">{data.mouseActivity.movementPattern}</div>

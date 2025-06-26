@@ -62,8 +62,8 @@ export const FocusPresets: React.FC<FocusPresetsProps> = ({
   return (
     <div>
       <div className="mb-6">
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">Quick Session Presets</h3>
-        <p className="text-gray-600">Choose a preset to instantly configure your focus session, or use custom settings above</p>
+        <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Quick Session Presets</h3>
+        <p className="text-gray-600 dark:text-gray-400">Choose a preset to instantly configure your focus session, or use custom settings above</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -79,13 +79,13 @@ export const FocusPresets: React.FC<FocusPresetsProps> = ({
               onClick={() => onPresetSelect(preset)}
               className={`relative p-6 rounded-xl border-2 transition-all duration-300 text-left group hover:shadow-lg transform hover:-translate-y-1 ${
                 isSelected || isCurrentSettings
-                  ? 'border-blue-500 bg-blue-50 shadow-md scale-105'
-                  : 'border-gray-200 bg-white hover:border-gray-300'
+                  ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20 shadow-md scale-105'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
               {/* Selected indicator */}
               {(isSelected || isCurrentSettings) && (
-                <div className="absolute -top-2 -right-2 bg-blue-500 rounded-full p-1">
+                <div className="absolute -top-2 -right-2 bg-blue-500 dark:bg-blue-400 rounded-full p-1">
                   <CheckCircle className="w-4 h-4 text-white" />
                 </div>
               )}
@@ -98,27 +98,27 @@ export const FocusPresets: React.FC<FocusPresetsProps> = ({
               {/* Content */}
               <div className="space-y-4">
                 <div>
-                  <h4 className="text-lg font-bold text-gray-800 mb-1">{preset.name}</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">{preset.description}</p>
+                  <h4 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-1">{preset.name}</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{preset.description}</p>
                 </div>
                 
                 {/* Duration info */}
-                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-gray-700">{preset.focusMinutes}m focus</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{preset.focusMinutes}m focus</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-gray-700">{preset.breakMinutes}m break</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{preset.breakMinutes}m break</span>
                   </div>
                 </div>
                 
                 {/* Features */}
                 <div className="space-y-2">
                   {preset.features.map((feature, index) => (
-                    <div key={index} className="flex items-center space-x-2 text-xs text-gray-600">
-                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0"></div>
+                    <div key={index} className="flex items-center space-x-2 text-xs text-gray-600 dark:text-gray-400">
+                      <div className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full flex-shrink-0"></div>
                       <span className="leading-relaxed">{feature}</span>
                     </div>
                   ))}
@@ -137,12 +137,12 @@ export const FocusPresets: React.FC<FocusPresetsProps> = ({
         preferences.focusSessionLength === preset.focusMinutes &&
         (preferences.breakLength || 5) === preset.breakMinutes
       ) && (
-        <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-200">
+        <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20 rounded-lg border border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-3">
             <div className="w-4 h-4 bg-gradient-to-r from-gray-500 to-blue-500 rounded-full"></div>
-            <span className="text-sm font-semibold text-gray-700">Custom Configuration Active</span>
+            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Custom Configuration Active</span>
           </div>
-          <p className="text-xs text-gray-600 mt-2 ml-7">
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 ml-7">
             Currently using {preferences.focusSessionLength} minutes focus / {preferences.breakLength || 5} minutes break
           </p>
         </div>
