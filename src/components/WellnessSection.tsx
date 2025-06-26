@@ -24,7 +24,7 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
   cognitiveState,
   preferences
 }) => {
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['interventions']));
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['digital-wellness']));
   const { interventions, completeIntervention, dismissIntervention } = useInterventions(cognitiveState, preferences);
   const { data: digitalWellnessData } = useDigitalWellness();
 
@@ -72,6 +72,11 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
                   {Math.round(digitalWellnessData.dailySocialMediaTime / (1000 * 60))}m today
                 </div>
               )}
+              {id === 'interventions' && interventions.filter(i => !i.completed).length > 0 && (
+                <div className="bg-wellness-100 text-wellness-700 px-2 py-1 rounded-full text-xs font-medium">
+                  {interventions.filter(i => !i.completed).length} pending
+                </div>
+              )}
               {isExpanded ? (
                 <ChevronUp className="w-5 h-5 text-calm-500" />
               ) : (
@@ -103,13 +108,6 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
             <div className="flex items-center space-x-2 mb-2">
-              <Activity className="w-5 h-5" />
-              <span className="text-label font-medium">Active Interventions</span>
-            </div>
-            <div className="text-display font-bold">{interventions.filter(i => !i.completed).length}</div>
-          </div>
-          <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-            <div className="flex items-center space-x-2 mb-2">
               <Smartphone className="w-5 h-5" />
               <span className="text-label font-medium">Digital Wellness</span>
             </div>
@@ -124,37 +122,31 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
             <div className="text-display font-bold">{digitalWellnessData.mindfulBreaksTaken}</div>
             <div className="text-body-small text-wellness-100">Today</div>
           </div>
+          <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+            <div className="flex items-center space-x-2 mb-2">
+              <Activity className="w-5 h-5" />
+              <span className="text-label font-medium">Active Interventions</span>
+            </div>
+            <div className="text-display font-bold">{interventions.filter(i => !i.completed).length}</div>
+            <div className="text-body-small text-wellness-100">Pending</div>
+          </div>
         </div>
       </div>
 
-      {/* Wellness Sections */}
+      {/* Wellness Sections - Reordered */}
       <div className="space-y-6">
-        {/* Active Wellness Interventions */}
-        <WellnessCard
-          id="interventions"
-          title="Wellness Interventions"
-          icon={<Activity className="w-5 h-5" />}
-          description="Personalized wellness recommendations based on your cognitive state"
-          defaultExpanded={true}
-        >
-          <InterventionPanel
-            interventions={interventions}
-            onComplete={completeIntervention}
-            onDismiss={dismissIntervention}
-          />
-        </WellnessCard>
-
-        {/* Digital Wellness */}
+        {/* 1. Digital Wellness - Now First */}
         <WellnessCard
           id="digital-wellness"
           title="Digital Wellness"
           icon={<Smartphone className="w-5 h-5" />}
           description="Monitor and optimize your social media usage and digital habits"
+          defaultExpanded={true}
         >
           <DigitalWellnessPanel />
         </WellnessCard>
 
-        {/* Mindfulness & Breathing */}
+        {/* 2. Mindfulness & Breathing - Now Second */}
         <WellnessCard
           id="mindfulness"
           title="Mindfulness & Breathing"
@@ -190,7 +182,21 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
           </div>
         </WellnessCard>
 
-        {/* Wellness Insights */}
+        {/* 3. Wellness Interventions - Now Third */}
+        <WellnessCard
+          id="interventions"
+          title="Wellness Interventions"
+          icon={<Activity className="w-5 h-5" />}
+          description="Personalized wellness recommendations based on your cognitive state"
+        >
+          <InterventionPanel
+            interventions={interventions}
+            onComplete={completeIntervention}
+            onDismiss={dismissIntervention}
+          />
+        </WellnessCard>
+
+        {/* 4. Wellness Insights - Now Fourth */}
         <WellnessCard
           id="insights"
           title="Wellness Insights"
