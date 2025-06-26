@@ -19,8 +19,8 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #f8fafc;
-    color: #1e293b;
+    @apply bg-calm-50 text-calm-900 dark:bg-calm-900 dark:text-calm-100;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   /* Improved focus states for accessibility */
@@ -36,6 +36,11 @@
   *:focus-visible {
     outline: 2px solid #3b82f6;
     outline-offset: 2px;
+  }
+
+  /* Dark mode focus states */
+  .dark *:focus-visible {
+    outline-color: #60a5fa;
   }
 }
 
@@ -81,27 +86,27 @@
     @apply text-sm font-medium leading-tight;
   }
 
-  /* Enhanced card components */
+  /* Enhanced card components with dark mode */
   .card-primary {
-    @apply bg-white rounded-xl shadow-soft border border-calm-200 transition-all duration-300 hover:shadow-gentle hover:border-calm-300;
+    @apply bg-white dark:bg-calm-800 rounded-xl shadow-soft dark:shadow-gentle-dark border border-calm-200 dark:border-calm-700 transition-all duration-300 hover:shadow-gentle dark:hover:shadow-soft-dark hover:border-calm-300 dark:hover:border-calm-600;
   }
   
   .card-secondary {
-    @apply bg-calm-50 rounded-lg border border-calm-200 transition-all duration-200;
+    @apply bg-calm-50 dark:bg-calm-800/50 rounded-lg border border-calm-200 dark:border-calm-700 transition-all duration-200;
   }
 
-  /* Button improvements */
+  /* Button improvements with dark mode */
   .btn-primary {
-    @apply px-6 py-3 bg-focus-500 hover:bg-focus-600 text-white font-medium rounded-lg transition-all duration-200 shadow-gentle hover:shadow-soft focus:ring-2 focus:ring-focus-500 focus:ring-offset-2;
+    @apply px-6 py-3 bg-focus-500 hover:bg-focus-600 dark:bg-focus-600 dark:hover:bg-focus-700 text-white font-medium rounded-lg transition-all duration-200 shadow-gentle hover:shadow-soft focus:ring-2 focus:ring-focus-500 focus:ring-offset-2 dark:focus:ring-offset-calm-900;
   }
   
   .btn-secondary {
-    @apply px-6 py-3 bg-calm-100 hover:bg-calm-200 text-calm-700 font-medium rounded-lg transition-all duration-200 border border-calm-300 hover:border-calm-400;
+    @apply px-6 py-3 bg-calm-100 hover:bg-calm-200 dark:bg-calm-700 dark:hover:bg-calm-600 text-calm-700 dark:text-calm-300 font-medium rounded-lg transition-all duration-200 border border-calm-300 dark:border-calm-600 hover:border-calm-400 dark:hover:border-calm-500;
   }
 
   /* Loading states */
   .loading-skeleton {
-    @apply bg-gradient-to-r from-calm-200 via-calm-100 to-calm-200 bg-[length:200%_100%] animate-pulse;
+    @apply bg-gradient-to-r from-calm-200 via-calm-100 to-calm-200 dark:from-calm-700 dark:via-calm-600 dark:to-calm-700 bg-[length:200%_100%] animate-pulse;
   }
 
   /* Smooth transitions for all interactive elements */
@@ -109,9 +114,9 @@
     @apply transition-all duration-200 ease-out;
   }
 
-  /* Enhanced focus indicators */
+  /* Enhanced focus indicators with dark mode */
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-focus-500 focus:ring-offset-2 focus:ring-offset-white;
+    @apply focus:outline-none focus:ring-2 focus:ring-focus-500 dark:focus:ring-focus-400 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-calm-900;
   }
 }
 
@@ -141,33 +146,66 @@
   }
 }
 
-/* Custom scrollbar for webkit browsers */
+/* Custom scrollbar for webkit browsers with dark mode */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  @apply bg-calm-100 dark:bg-calm-800;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  @apply bg-calm-300 dark:bg-calm-600;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  @apply bg-calm-400 dark:bg-calm-500;
 }
 
-/* Selection styling */
+/* Selection styling with dark mode */
 ::selection {
-  background-color: #dbeafe;
-  color: #1e40af;
+  @apply bg-focus-200 dark:bg-focus-800 text-focus-900 dark:text-focus-100;
 }
 
 ::-moz-selection {
-  background-color: #dbeafe;
-  color: #1e40af;
+  @apply bg-focus-200 dark:bg-focus-800 text-focus-900 dark:text-focus-100;
+}
+
+/* Dark mode specific improvements */
+.dark {
+  color-scheme: dark;
+}
+
+/* Smooth theme transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Dark mode gradient improvements */
+.dark .bg-gradient-to-r.from-focus-600.to-focus-700 {
+  @apply from-focus-700 to-focus-800;
+}
+
+.dark .bg-gradient-to-r.from-wellness-600.to-wellness-700 {
+  @apply from-wellness-700 to-wellness-800;
+}
+
+.dark .bg-gradient-to-r.from-blue-600.to-purple-700 {
+  @apply from-blue-700 to-purple-800;
+}
+
+/* Dark mode backdrop blur improvements */
+.dark .backdrop-blur-sm {
+  backdrop-filter: blur(4px) brightness(0.8);
+}
+
+/* Dark mode shadow improvements for overlays */
+.dark .fixed.inset-0.bg-black.bg-opacity-50 {
+  @apply bg-opacity-70;
 }

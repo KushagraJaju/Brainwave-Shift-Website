@@ -15,13 +15,14 @@ import { useCognitiveState } from './hooks/useCognitiveState';
 import { useAnalytics } from './hooks/useAnalytics';
 import { useSettings } from './hooks/useSettings';
 import { useDigitalWellness } from './hooks/useDigitalWellness';
+import { useTheme } from './hooks/useTheme';
 
 // Loading component for better UX
 const LoadingScreen: React.FC = () => (
-  <div className="min-h-screen bg-calm-50 flex items-center justify-center">
+  <div className="min-h-screen bg-calm-50 dark:bg-calm-900 flex items-center justify-center">
     <div className="text-center animate-fade-in">
       <LoadingSpinner size="lg" className="mx-auto mb-4" />
-      <p className="text-body text-calm-600">Loading your cognitive workspace...</p>
+      <p className="text-body text-calm-600 dark:text-calm-400">Loading your cognitive workspace...</p>
     </div>
   </div>
 );
@@ -29,6 +30,9 @@ const LoadingScreen: React.FC = () => (
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  // Initialize theme hook to set up dark mode
+  useTheme();
   
   const { cognitiveState, isMonitoring, toggleMonitoring } = useCognitiveState();
   const { preferences, updatePreferences, resetPreferences, isLoading } = useSettings();
@@ -60,7 +64,7 @@ function App() {
         return (
           <div className="space-y-6 animate-fade-in">
             <div className="card-primary p-6">
-              <h2 className="text-heading-2 text-calm-800 mb-6">Cognitive Monitoring</h2>
+              <h2 className="text-heading-2 text-calm-800 dark:text-calm-200 mb-6">Cognitive Monitoring</h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <CognitiveStateIndicator 
                   cognitiveState={cognitiveState} 
@@ -68,15 +72,15 @@ function App() {
                 />
                 <div className="space-y-4">
                   <div className="card-secondary p-4">
-                    <h3 className="text-heading-4 text-calm-800 mb-2">Monitoring Status</h3>
+                    <h3 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-2">Monitoring Status</h3>
                     <div className="flex items-center justify-between">
-                      <span className="text-body text-calm-600">Active Monitoring</span>
+                      <span className="text-body text-calm-600 dark:text-calm-400">Active Monitoring</span>
                       <button
                         onClick={toggleMonitoring}
                         className={`px-4 py-2 rounded-lg text-label transition-all duration-200 focus-ring ${
                           isMonitoring 
-                            ? 'bg-red-100 text-red-700 hover:bg-red-200 border border-red-200' 
-                            : 'bg-wellness-100 text-wellness-700 hover:bg-wellness-200 border border-wellness-200'
+                            ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 border border-red-200 dark:border-red-800' 
+                            : 'bg-wellness-100 dark:bg-wellness-900/30 text-wellness-700 dark:text-wellness-400 hover:bg-wellness-200 dark:hover:bg-wellness-900/50 border border-wellness-200 dark:border-wellness-800'
                         }`}
                         aria-label={isMonitoring ? 'Pause monitoring' : 'Resume monitoring'}
                       >
@@ -97,7 +101,7 @@ function App() {
         return (
           <div className="space-y-6 animate-fade-in">
             <div className="card-primary p-6">
-              <h2 className="text-heading-2 text-calm-800 mb-6">Focus Management</h2>
+              <h2 className="text-heading-2 text-calm-800 dark:text-calm-200 mb-6">Focus Management</h2>
               <FocusTimer 
                 preferences={preferences} 
                 onUpdatePreferences={updatePreferences}
@@ -139,7 +143,7 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-calm-50 flex">
+      <div className="min-h-screen bg-calm-50 dark:bg-calm-900 flex transition-colors duration-300">
         <Navigation
           activeTab={activeTab}
           onTabChange={setActiveTab}
@@ -152,7 +156,7 @@ function App() {
           <main className="p-4 lg:p-8 pt-16 lg:pt-8">
             <ErrorBoundary fallback={
               <div className="card-primary p-6 text-center">
-                <p className="text-body text-calm-600">Unable to load this section. Please try again.</p>
+                <p className="text-body text-calm-600 dark:text-calm-400">Unable to load this section. Please try again.</p>
               </div>
             }>
               {renderContent()}

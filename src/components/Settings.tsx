@@ -15,11 +15,13 @@ import {
   WifiOff,
   Settings as SettingsIcon,
   Eye,
-  EyeOff
+  EyeOff,
+  Palette
 } from 'lucide-react';
 import { UserPreferences } from '../types';
 import { useDeviceIntegration } from '../hooks/useDeviceIntegration';
 import { DeviceConnectionModal } from './DeviceConnectionModal';
+import { ThemeSelector } from './ThemeToggle';
 
 interface SettingsProps {
   preferences: UserPreferences;
@@ -91,14 +93,16 @@ export const Settings: React.FC<SettingsProps> = ({
     description: string;
     children: React.ReactNode;
   }> = ({ icon, title, description, children }) => (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white dark:bg-calm-800 rounded-lg shadow-md dark:shadow-gentle-dark p-6 border border-calm-200 dark:border-calm-700">
       <div className="flex items-start space-x-4">
-        <div className="p-2 bg-blue-100 rounded-lg">
-          {icon}
+        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+          <div className="text-blue-600 dark:text-blue-400">
+            {icon}
+          </div>
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-800 mb-1">{title}</h3>
-          <p className="text-gray-600 text-sm mb-4">{description}</p>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-1">{title}</h3>
+          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">{description}</p>
           {children}
         </div>
       </div>
@@ -107,19 +111,19 @@ export const Settings: React.FC<SettingsProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-calm-200 dark:border-calm-700">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">Settings</h2>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Settings</h2>
           <div className="flex items-center space-x-3">
             {showSaveConfirmation && (
-              <div className="flex items-center space-x-2 text-green-600">
+              <div className="flex items-center space-x-2 text-green-600 dark:text-green-400">
                 <CheckCircle className="w-4 h-4" />
                 <span className="text-sm">Settings saved!</span>
               </div>
             )}
             <button
               onClick={handleReset}
-              className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Reset</span>
@@ -127,7 +131,7 @@ export const Settings: React.FC<SettingsProps> = ({
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center space-x-2 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center space-x-2 px-6 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               <span>{isSaving ? 'Saving...' : 'Save'}</span>
@@ -136,14 +140,23 @@ export const Settings: React.FC<SettingsProps> = ({
         </div>
 
         <div className="grid grid-cols-1 gap-6">
+          {/* Theme Settings */}
           <SettingCard
-            icon={<Monitor className="w-5 h-5 text-blue-500" />}
+            icon={<Palette className="w-5 h-5" />}
+            title="Appearance"
+            description="Customize the visual appearance of your workspace"
+          >
+            <ThemeSelector />
+          </SettingCard>
+
+          <SettingCard
+            icon={<Monitor className="w-5 h-5" />}
             title="Cognitive Monitoring"
             description="Configure how your cognitive state is tracked and analyzed"
           >
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Intervention Frequency
                 </label>
                 <select
@@ -151,7 +164,7 @@ export const Settings: React.FC<SettingsProps> = ({
                   onChange={(e) => onUpdatePreferences({
                     interventionFrequency: e.target.value as UserPreferences['interventionFrequency']
                   })}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-calm-700 text-gray-900 dark:text-gray-100"
                 >
                   <option value="Minimal">Minimal - Only critical interventions</option>
                   <option value="Normal">Normal - Balanced approach</option>
@@ -162,13 +175,13 @@ export const Settings: React.FC<SettingsProps> = ({
           </SettingCard>
 
           <SettingCard
-            icon={<Clock className="w-5 h-5 text-purple-500" />}
+            icon={<Clock className="w-5 h-5" />}
             title="Focus Sessions"
             description="Customize your focus timer and work session preferences"
           >
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Default Focus Session Length
                 </label>
                 <div className="flex items-center space-x-4">
@@ -183,11 +196,11 @@ export const Settings: React.FC<SettingsProps> = ({
                     })}
                     className="flex-1"
                   />
-                  <span className="text-sm font-medium text-gray-700 min-w-[60px]">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[60px]">
                     {preferences.focusSessionLength} min
                   </span>
                 </div>
-                <div className="mt-2 text-xs text-gray-500">
+                <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                   Current setting: {preferences.focusSessionLength} minutes
                 </div>
               </div>
@@ -195,22 +208,22 @@ export const Settings: React.FC<SettingsProps> = ({
           </SettingCard>
 
           <SettingCard
-            icon={<Bell className="w-5 h-5 text-orange-500" />}
+            icon={<Bell className="w-5 h-5" />}
             title="Notifications"
             description="Control how and when you receive wellness reminders"
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Break Reminders</label>
-                  <p className="text-xs text-gray-500">Get notified when it's time for a break</p>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Break Reminders</label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Get notified when it's time for a break</p>
                 </div>
                 <button
                   onClick={() => onUpdatePreferences({
                     breakReminders: !preferences.breakReminders
                   })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.breakReminders ? 'bg-blue-500' : 'bg-gray-200'
+                    preferences.breakReminders ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
                   }`}
                 >
                   <span
@@ -223,15 +236,15 @@ export const Settings: React.FC<SettingsProps> = ({
 
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Ambient Notifications</label>
-                  <p className="text-xs text-gray-500">Subtle visual cues instead of pop-ups</p>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Ambient Notifications</label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Subtle visual cues instead of pop-ups</p>
                 </div>
                 <button
                   onClick={() => onUpdatePreferences({
                     ambientNotifications: !preferences.ambientNotifications
                   })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.ambientNotifications ? 'bg-blue-500' : 'bg-gray-200'
+                    preferences.ambientNotifications ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
                   }`}
                 >
                   <span
@@ -245,35 +258,35 @@ export const Settings: React.FC<SettingsProps> = ({
           </SettingCard>
 
           <SettingCard
-            icon={<Smartphone className="w-5 h-5 text-pink-500" />}
+            icon={<Smartphone className="w-5 h-5" />}
             title="Device Integration"
             description="Connect your devices for enhanced cognitive monitoring"
           >
             <div className="space-y-4">
               {/* Browser Integration */}
-              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-green-50">
+              <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-green-50 dark:bg-green-900/20">
                 <div className="flex items-center space-x-3">
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   <div>
-                    <span className="text-sm font-medium text-gray-700">Browser Integration</span>
-                    <p className="text-xs text-gray-500">Built-in monitoring active</p>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Browser Integration</span>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Built-in monitoring active</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Wifi className="w-4 h-4 text-green-500" />
-                  <span className="text-xs text-green-600 font-medium">Connected</span>
+                  <span className="text-xs text-green-600 dark:text-green-400 font-medium">Connected</span>
                 </div>
               </div>
 
               {/* Smartwatch Integration */}
-              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+              <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-calm-700">
                 <div className="flex items-center space-x-3">
                   <div className={`w-3 h-3 rounded-full ${
                     getIntegrationStatus('smartwatch') === 'connected' ? 'bg-green-500' : 'bg-gray-400'
                   }`}></div>
                   <div>
-                    <span className="text-sm font-medium text-gray-700">Smartwatch</span>
-                    <p className="text-xs text-gray-500">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Smartwatch</span>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {getIntegrationStatus('smartwatch') === 'connected' 
                         ? `${getIntegrationProvider('smartwatch')} • Last sync: ${getIntegrationLastSync('smartwatch')?.toLocaleTimeString()}`
                         : 'Heart rate, sleep, and stress monitoring'
@@ -287,7 +300,7 @@ export const Settings: React.FC<SettingsProps> = ({
                       <Wifi className="w-4 h-4 text-green-500" />
                       <button 
                         onClick={() => disconnectDevice('smartwatch')}
-                        className="text-xs text-red-600 hover:text-red-800 font-medium"
+                        className="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium"
                       >
                         Disconnect
                       </button>
@@ -297,7 +310,7 @@ export const Settings: React.FC<SettingsProps> = ({
                       <WifiOff className="w-4 h-4 text-gray-400" />
                       <button 
                         onClick={() => setConnectionModal({ isOpen: true, deviceType: 'smartwatch' })}
-                        className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                        className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
                         disabled={isConnecting === 'smartwatch'}
                       >
                         {isConnecting === 'smartwatch' ? 'Connecting...' : 'Connect'}
@@ -308,14 +321,14 @@ export const Settings: React.FC<SettingsProps> = ({
               </div>
 
               {/* Calendar Integration */}
-              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+              <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-calm-700">
                 <div className="flex items-center space-x-3">
                   <div className={`w-3 h-3 rounded-full ${
                     getIntegrationStatus('calendar') === 'connected' ? 'bg-green-500' : 'bg-gray-400'
                   }`}></div>
                   <div>
-                    <span className="text-sm font-medium text-gray-700">Calendar</span>
-                    <p className="text-xs text-gray-500">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Calendar</span>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {getIntegrationStatus('calendar') === 'connected' 
                         ? `${getIntegrationProvider('calendar')} • Last sync: ${getIntegrationLastSync('calendar')?.toLocaleTimeString()}`
                         : 'Meeting analysis and focus time optimization'
@@ -329,7 +342,7 @@ export const Settings: React.FC<SettingsProps> = ({
                       <Wifi className="w-4 h-4 text-green-500" />
                       <button 
                         onClick={() => disconnectDevice('calendar')}
-                        className="text-xs text-red-600 hover:text-red-800 font-medium"
+                        className="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium"
                       >
                         Disconnect
                       </button>
@@ -339,7 +352,7 @@ export const Settings: React.FC<SettingsProps> = ({
                       <WifiOff className="w-4 h-4 text-gray-400" />
                       <button 
                         onClick={() => setConnectionModal({ isOpen: true, deviceType: 'calendar' })}
-                        className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                        className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
                         disabled={isConnecting === 'calendar'}
                       >
                         {isConnecting === 'calendar' ? 'Connecting...' : 'Connect'}
@@ -352,22 +365,22 @@ export const Settings: React.FC<SettingsProps> = ({
           </SettingCard>
 
           <SettingCard
-            icon={<Shield className="w-5 h-5 text-green-500" />}
+            icon={<Shield className="w-5 h-5" />}
             title="Privacy & Data"
             description="Control your data privacy and sharing preferences"
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Anonymous Data Sharing</label>
-                  <p className="text-xs text-gray-500">Help improve the AI model with anonymous usage data</p>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Anonymous Data Sharing</label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Help improve the AI model with anonymous usage data</p>
                 </div>
                 <button
                   onClick={() => onUpdatePreferences({
                     dataSharing: !preferences.dataSharing
                   })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.dataSharing ? 'bg-blue-500' : 'bg-gray-200'
+                    preferences.dataSharing ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
                   }`}
                 >
                   <span
@@ -381,15 +394,15 @@ export const Settings: React.FC<SettingsProps> = ({
               {getIntegrationStatus('smartwatch') === 'connected' && (
                 <div className="flex items-center justify-between">
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Smartwatch Data Sharing</label>
-                    <p className="text-xs text-gray-500">Share physiological data for enhanced insights</p>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Smartwatch Data Sharing</label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Share physiological data for enhanced insights</p>
                   </div>
                   <button
                     onClick={() => onUpdatePreferences({
                       smartwatchDataSharing: !preferences.smartwatchDataSharing
                     })}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      preferences.smartwatchDataSharing ? 'bg-blue-500' : 'bg-gray-200'
+                      preferences.smartwatchDataSharing ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
                     }`}
                   >
                     <span
@@ -404,15 +417,15 @@ export const Settings: React.FC<SettingsProps> = ({
               {getIntegrationStatus('calendar') === 'connected' && (
                 <div className="flex items-center justify-between">
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Calendar Data Sharing</label>
-                    <p className="text-xs text-gray-500">Share calendar patterns for cognitive load prediction</p>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Calendar Data Sharing</label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Share calendar patterns for cognitive load prediction</p>
                   </div>
                   <button
                     onClick={() => onUpdatePreferences({
                       calendarDataSharing: !preferences.calendarDataSharing
                     })}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      preferences.calendarDataSharing ? 'bg-blue-500' : 'bg-gray-200'
+                      preferences.calendarDataSharing ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
                     }`}
                   >
                     <span
