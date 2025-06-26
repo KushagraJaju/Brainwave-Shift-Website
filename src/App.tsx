@@ -8,12 +8,14 @@ import { AnalyticsDashboard } from './components/AnalyticsDashboard';
 import { Settings } from './components/Settings';
 import { MonitoringStatus } from './components/MonitoringStatus';
 import { MonitoringMetrics } from './components/MonitoringMetrics';
+import { DigitalWellnessIntervention } from './components/DigitalWellnessIntervention';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useCognitiveState } from './hooks/useCognitiveState';
 import { useInterventions } from './hooks/useInterventions';
 import { useAnalytics } from './hooks/useAnalytics';
 import { useSettings } from './hooks/useSettings';
+import { useDigitalWellness } from './hooks/useDigitalWellness';
 
 // Loading component for better UX
 const LoadingScreen: React.FC = () => (
@@ -33,6 +35,11 @@ function App() {
   const { preferences, updatePreferences, resetPreferences, isLoading } = useSettings();
   const { interventions, completeIntervention, dismissIntervention } = useInterventions(cognitiveState, preferences);
   const analyticsData = useAnalytics(cognitiveState);
+  const { 
+    interventions: digitalInterventions, 
+    dismissIntervention: dismissDigitalIntervention,
+    handleInterventionAction: handleDigitalInterventionAction
+  } = useDigitalWellness();
 
   const handleMobileMenuToggle = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -160,6 +167,16 @@ function App() {
             </ErrorBoundary>
           </main>
         </div>
+
+        {/* Digital Wellness Interventions Overlay */}
+        {digitalInterventions.map((intervention) => (
+          <DigitalWellnessIntervention
+            key={intervention.id}
+            intervention={intervention}
+            onDismiss={dismissDigitalIntervention}
+            onAction={handleDigitalInterventionAction}
+          />
+        ))}
       </div>
     </ErrorBoundary>
   );

@@ -40,6 +40,11 @@ export interface UserPreferences {
   calendarDataSharing: boolean;
   physiologicalMonitoring: boolean;
   calendarInsights: boolean;
+  // Digital wellness preferences
+  digitalWellnessEnabled?: boolean;
+  socialMediaTimeLimit?: number;
+  mindfulnessReminders?: boolean;
+  focusModeSchedule?: { start: string; end: string }[];
 }
 
 export interface FocusPreset {
@@ -61,6 +66,10 @@ export interface AnalyticsData {
   streakDays: number;
   peakHours: number[];
   distractionTriggers: string[];
+  // Digital wellness analytics
+  dailySocialMediaTime?: number;
+  mindfulBreaksTaken?: number;
+  digitalWellnessScore?: number;
 }
 
 // New device integration types
@@ -101,4 +110,19 @@ export interface CalendarData {
   upcomingDeadlines: CalendarEvent[];
   insights: string[];
   lastSync: Date;
+}
+
+// Digital wellness types
+export interface DigitalWellnessIntervention {
+  id: string;
+  type: 'Digital Wellness';
+  subtype: 'mindless-scrolling' | 'time-limit-gentle' | 'time-limit-moderate' | 'time-limit-firm' | 'focus-mode-violation';
+  title: string;
+  description: string;
+  options: string[];
+  priority: 'Low' | 'Medium' | 'High';
+  timestamp: Date;
+  platform?: string;
+  sessionLength?: number;
+  escalationLevel: number;
 }
