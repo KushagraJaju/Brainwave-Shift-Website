@@ -1,12 +1,15 @@
-import React from 'react';
-import { TrendingUp, Target, Award, Calendar, Clock, Brain } from 'lucide-react';
+import React, { useState } from 'react';
+import { TrendingUp, Target, Award, Calendar, Clock, Brain, BarChart3, Smartphone } from 'lucide-react';
 import { AnalyticsData } from '../types';
+import { SocialMediaAnalyticsReport } from './SocialMediaAnalyticsReport';
 
 interface AnalyticsDashboardProps {
   analyticsData: AnalyticsData;
 }
 
 export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analyticsData }) => {
+  const [activeTab, setActiveTab] = useState<'overview' | 'social-media' | 'cognitive' | 'wellness'>('overview');
+
   const formatTime = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -34,10 +37,30 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
     </div>
   );
 
-  return (
+  const TabButton: React.FC<{
+    id: string;
+    label: string;
+    icon: React.ReactNode;
+    isActive: boolean;
+    onClick: () => void;
+  }> = ({ id, label, icon, isActive, onClick }) => (
+    <button
+      onClick={onClick}
+      className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+        isActive 
+          ? 'bg-blue-500 text-white shadow-md' 
+          : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+      }`}
+    >
+      {icon}
+      <span className="font-medium">{label}</span>
+    </button>
+  );
+
+  const renderOverview = () => (
     <div className="space-y-6">
       <div className="bg-white rounded-xl shadow-lg p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-6">Performance Analytics</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-6">Performance Analytics Overview</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatCard
@@ -128,6 +151,89 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Digital Wellness Summary */}
+      {analyticsData.digitalWellnessScore && (
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-200">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+            <Smartphone className="w-5 h-5 text-purple-600" />
+            <span>Digital Wellness Summary</span>
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white p-4 rounded-lg">
+              <div className="text-2xl font-bold text-purple-800">{analyticsData.digitalWellnessScore}</div>
+              <div className="text-sm text-purple-600">Wellness Score</div>
+            </div>
+            <div className="bg-white p-4 rounded-lg">
+              <div className="text-2xl font-bold text-blue-800">{formatTime(analyticsData.dailySocialMediaTime || 0)}</div>
+              <div className="text-sm text-blue-600">Social Media Time</div>
+            </div>
+            <div className="bg-white p-4 rounded-lg">
+              <div className="text-2xl font-bold text-green-800">{analyticsData.mindfulBreaksTaken || 0}</div>
+              <div className="text-sm text-green-600">Mindful Breaks</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      {/* Tab Navigation */}
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-semibold text-gray-800">Analytics Dashboard</h1>
+          <div className="flex items-center space-x-2">
+            <TabButton
+              id="overview"
+              label="Overview"
+              icon={<BarChart3 className="w-4 h-4" />}
+              isActive={activeTab === 'overview'}
+              onClick={() => setActiveTab('overview')}
+            />
+            <TabButton
+              id="social-media"
+              label="Social Media"
+              icon={<Smartphone className="w-4 h-4" />}
+              isActive={activeTab === 'social-media'}
+              onClick={() => setActiveTab('social-media')}
+            />
+            <TabButton
+              id="cognitive"
+              label="Cognitive"
+              icon={<Brain className="w-4 h-4" />}
+              isActive={activeTab === 'cognitive'}
+              onClick={() => setActiveTab('cognitive')}
+            />
+            <TabButton
+              id="wellness"
+              label="Wellness"
+              icon={<Target className="w-4 h-4" />}
+              isActive={activeTab === 'wellness'}
+              onClick={() => setActiveTab('wellness')}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      <div className="animate-fade-in">
+        {activeTab === 'overview' && renderOverview()}
+        {activeTab === 'social-media' && <SocialMediaAnalyticsReport />}
+        {activeTab === 'cognitive' && (
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Cognitive Performance Analysis</h2>
+            <p className="text-gray-600">Detailed cognitive metrics and performance trends coming soon...</p>
+          </div>
+        )}
+        {activeTab === 'wellness' && (
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Wellness Analytics</h2>
+            <p className="text-gray-600">Comprehensive wellness tracking and insights coming soon...</p>
+          </div>
+        )}
       </div>
     </div>
   );
