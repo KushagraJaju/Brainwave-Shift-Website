@@ -3,7 +3,7 @@ import { Navigation } from './components/Navigation';
 import { Dashboard } from './components/Dashboard';
 import { CognitiveStateIndicator } from './components/CognitiveStateIndicator';
 import { FocusTimer } from './components/FocusTimer';
-import { InterventionPanel } from './components/InterventionPanel';
+import { WellnessSection } from './components/WellnessSection';
 import { AnalyticsDashboard } from './components/AnalyticsDashboard';
 import { Settings } from './components/Settings';
 import { MonitoringStatus } from './components/MonitoringStatus';
@@ -12,7 +12,6 @@ import { DigitalWellnessIntervention } from './components/DigitalWellnessInterve
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useCognitiveState } from './hooks/useCognitiveState';
-import { useInterventions } from './hooks/useInterventions';
 import { useAnalytics } from './hooks/useAnalytics';
 import { useSettings } from './hooks/useSettings';
 import { useDigitalWellness } from './hooks/useDigitalWellness';
@@ -33,7 +32,6 @@ function App() {
   
   const { cognitiveState, isMonitoring, toggleMonitoring } = useCognitiveState();
   const { preferences, updatePreferences, resetPreferences, isLoading } = useSettings();
-  const { interventions, completeIntervention, dismissIntervention } = useInterventions(cognitiveState, preferences);
   const analyticsData = useAnalytics(cognitiveState);
   const { 
     interventions: digitalInterventions, 
@@ -109,16 +107,10 @@ function App() {
         );
       case 'interventions':
         return (
-          <div className="space-y-6 animate-fade-in">
-            <div className="card-primary p-6">
-              <h2 className="text-heading-2 text-calm-800 mb-6">Wellness Interventions</h2>
-              <InterventionPanel
-                interventions={interventions}
-                onComplete={completeIntervention}
-                onDismiss={dismissIntervention}
-              />
-            </div>
-          </div>
+          <WellnessSection 
+            cognitiveState={cognitiveState}
+            preferences={preferences}
+          />
         );
       case 'analytics':
         return (

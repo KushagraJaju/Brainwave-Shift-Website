@@ -4,11 +4,9 @@ import { FocusTimer } from './FocusTimer';
 import { InterventionPanel } from './InterventionPanel';
 import { PhysiologicalMetrics } from './PhysiologicalMetrics';
 import { CalendarInsights } from './CalendarInsights';
-import { DigitalWellnessPanel } from './DigitalWellnessPanel';
 import { useCognitiveState } from '../hooks/useCognitiveState';
 import { useInterventions } from '../hooks/useInterventions';
 import { useDeviceIntegration } from '../hooks/useDeviceIntegration';
-import { useDigitalWellness } from '../hooks/useDigitalWellness';
 import { UserPreferences } from '../types';
 
 interface DashboardProps {
@@ -19,7 +17,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ preferences }) => {
   const { cognitiveState, isMonitoring, toggleMonitoring } = useCognitiveState();
   const { interventions, completeIntervention, dismissIntervention } = useInterventions(cognitiveState, preferences);
   const { smartwatchData, calendarData, integrations } = useDeviceIntegration();
-  const { data: digitalWellnessData } = useDigitalWellness();
 
   const isSmartWatchConnected = integrations.find(i => i.type === 'smartwatch')?.status === 'connected';
   const isCalendarConnected = integrations.find(i => i.type === 'calendar')?.status === 'connected';
@@ -53,7 +50,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ preferences }) => {
         </div>
       </div>
 
-      {/* Main Dashboard Grid */}
+      {/* Main Dashboard Grid - Core Cognitive Metrics Only */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
           <CognitiveStateIndicator 
@@ -71,11 +68,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ preferences }) => {
             onDismiss={dismissIntervention}
           />
         </div>
-      </div>
-
-      {/* Digital Wellness Section */}
-      <div className="grid grid-cols-1 gap-6">
-        <DigitalWellnessPanel />
       </div>
 
       {/* Device Integration Data - Show when devices are connected */}
