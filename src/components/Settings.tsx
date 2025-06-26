@@ -1,0 +1,440 @@
+import React, { useState } from 'react';
+import { 
+  Monitor, 
+  Bell, 
+  Shield, 
+  Clock, 
+  Volume2, 
+  Smartphone,
+  Save,
+  RotateCcw,
+  CheckCircle,
+  Watch,
+  Calendar,
+  Wifi,
+  WifiOff,
+  Settings as SettingsIcon,
+  Eye,
+  EyeOff
+} from 'lucide-react';
+import { UserPreferences } from '../types';
+import { useDeviceIntegration } from '../hooks/useDeviceIntegration';
+import { DeviceConnectionModal } from './DeviceConnectionModal';
+
+interface SettingsProps {
+  preferences: UserPreferences;
+  onUpdatePreferences: (updates: Partial<UserPreferences>) => void;
+  onResetPreferences: () => void;
+}
+
+export const Settings: React.FC<SettingsProps> = ({
+  preferences,
+  onUpdatePreferences,
+  onResetPreferences
+}) => {
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
+  const [connectionModal, setConnectionModal] = useState<{
+    isOpen: boolean;
+    deviceType: 'smartwatch' | 'calendar';
+  }>({ isOpen: false, deviceType: 'smartwatch' });
+
+  const {
+    integrations,
+    isConnecting,
+    connectSmartwatch,
+    connectCalendar,
+    disconnectDevice,
+    updatePrivacyLevel
+  } = useDeviceIntegration();
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    // Simulate save delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    setIsSaving(false);
+    setShowSaveConfirmation(true);
+    setTimeout(() => setShowSaveConfirmation(false), 2000);
+  };
+
+  const handleReset = () => {
+    onResetPreferences();
+    setShowSaveConfirmation(false);
+  };
+
+  const handleDeviceConnect = async (provider: string) => {
+    if (connectionModal.deviceType === 'smartwatch') {
+      return await connectSmartwatch(provider);
+    } else {
+      return await connectCalendar(provider);
+    }
+  };
+
+  const getIntegrationStatus = (type: string) => {
+    const integration = integrations.find(i => i.type === type);
+    return integration?.status || 'disconnected';
+  };
+
+  const getIntegrationProvider = (type: string) => {
+    const integration = integrations.find(i => i.type === type);
+    return integration?.provider;
+  };
+
+  const getIntegrationLastSync = (type: string) => {
+    const integration = integrations.find(i => i.type === type);
+    return integration?.lastSync;
+  };
+
+  const SettingCard: React.FC<{
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+    children: React.ReactNode;
+  }> = ({ icon, title, description, children }) => (
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="flex items-start space-x-4">
+        <div className="p-2 bg-blue-100 rounded-lg">
+          {icon}
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-gray-800 mb-1">{title}</h3>
+          <p className="text-gray-600 text-sm mb-4">{description}</p>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-800">Settings</h2>
+          <div className="flex items-center space-x-3">
+            {showSaveConfirmation && (
+              <div className="flex items-center space-x-2 text-green-600">
+                <CheckCircle className="w-4 h-4" />
+                <span className="text-sm">Settings saved!</span>
+              </div>
+            )}
+            <button
+              onClick={handleReset}
+              className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Reset</span>
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex items-center space-x-2 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50"
+            >
+              <Save className="w-4 h-4" />
+              <span>{isSaving ? 'Saving...' : 'Save'}</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6">
+          <SettingCard
+            icon={<Monitor className="w-5 h-5 text-blue-500" />}
+            title="Cognitive Monitoring"
+            description="Configure how your cognitive state is tracked and analyzed"
+          >
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Intervention Frequency
+                </label>
+                <select
+                  value={preferences.interventionFrequency}
+                  onChange={(e) => onUpdatePreferences({
+                    interventionFrequency: e.target.value as UserPreferences['interventionFrequency']
+                  })}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="Minimal">Minimal - Only critical interventions</option>
+                  <option value="Normal">Normal - Balanced approach</option>
+                  <option value="Frequent">Frequent - Proactive wellness</option>
+                </select>
+              </div>
+            </div>
+          </SettingCard>
+
+          <SettingCard
+            icon={<Clock className="w-5 h-5 text-purple-500" />}
+            title="Focus Sessions"
+            description="Customize your focus timer and work session preferences"
+          >
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Default Focus Session Length
+                </label>
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="range"
+                    min="15"
+                    max="60"
+                    step="5"
+                    value={preferences.focusSessionLength}
+                    onChange={(e) => onUpdatePreferences({
+                      focusSessionLength: parseInt(e.target.value)
+                    })}
+                    className="flex-1"
+                  />
+                  <span className="text-sm font-medium text-gray-700 min-w-[60px]">
+                    {preferences.focusSessionLength} min
+                  </span>
+                </div>
+                <div className="mt-2 text-xs text-gray-500">
+                  Current setting: {preferences.focusSessionLength} minutes
+                </div>
+              </div>
+            </div>
+          </SettingCard>
+
+          <SettingCard
+            icon={<Bell className="w-5 h-5 text-orange-500" />}
+            title="Notifications"
+            description="Control how and when you receive wellness reminders"
+          >
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Break Reminders</label>
+                  <p className="text-xs text-gray-500">Get notified when it's time for a break</p>
+                </div>
+                <button
+                  onClick={() => onUpdatePreferences({
+                    breakReminders: !preferences.breakReminders
+                  })}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    preferences.breakReminders ? 'bg-blue-500' : 'bg-gray-200'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      preferences.breakReminders ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Ambient Notifications</label>
+                  <p className="text-xs text-gray-500">Subtle visual cues instead of pop-ups</p>
+                </div>
+                <button
+                  onClick={() => onUpdatePreferences({
+                    ambientNotifications: !preferences.ambientNotifications
+                  })}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    preferences.ambientNotifications ? 'bg-blue-500' : 'bg-gray-200'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      preferences.ambientNotifications ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+          </SettingCard>
+
+          <SettingCard
+            icon={<Smartphone className="w-5 h-5 text-pink-500" />}
+            title="Device Integration"
+            description="Connect your devices for enhanced cognitive monitoring"
+          >
+            <div className="space-y-4">
+              {/* Browser Integration */}
+              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-green-50">
+                <div className="flex items-center space-x-3">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">Browser Integration</span>
+                    <p className="text-xs text-gray-500">Built-in monitoring active</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Wifi className="w-4 h-4 text-green-500" />
+                  <span className="text-xs text-green-600 font-medium">Connected</span>
+                </div>
+              </div>
+
+              {/* Smartwatch Integration */}
+              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-3 h-3 rounded-full ${
+                    getIntegrationStatus('smartwatch') === 'connected' ? 'bg-green-500' : 'bg-gray-400'
+                  }`}></div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">Smartwatch</span>
+                    <p className="text-xs text-gray-500">
+                      {getIntegrationStatus('smartwatch') === 'connected' 
+                        ? `${getIntegrationProvider('smartwatch')} • Last sync: ${getIntegrationLastSync('smartwatch')?.toLocaleTimeString()}`
+                        : 'Heart rate, sleep, and stress monitoring'
+                      }
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {getIntegrationStatus('smartwatch') === 'connected' ? (
+                    <>
+                      <Wifi className="w-4 h-4 text-green-500" />
+                      <button 
+                        onClick={() => disconnectDevice('smartwatch')}
+                        className="text-xs text-red-600 hover:text-red-800 font-medium"
+                      >
+                        Disconnect
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <WifiOff className="w-4 h-4 text-gray-400" />
+                      <button 
+                        onClick={() => setConnectionModal({ isOpen: true, deviceType: 'smartwatch' })}
+                        className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                        disabled={isConnecting === 'smartwatch'}
+                      >
+                        {isConnecting === 'smartwatch' ? 'Connecting...' : 'Connect'}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Calendar Integration */}
+              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-3 h-3 rounded-full ${
+                    getIntegrationStatus('calendar') === 'connected' ? 'bg-green-500' : 'bg-gray-400'
+                  }`}></div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">Calendar</span>
+                    <p className="text-xs text-gray-500">
+                      {getIntegrationStatus('calendar') === 'connected' 
+                        ? `${getIntegrationProvider('calendar')} • Last sync: ${getIntegrationLastSync('calendar')?.toLocaleTimeString()}`
+                        : 'Meeting analysis and focus time optimization'
+                      }
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {getIntegrationStatus('calendar') === 'connected' ? (
+                    <>
+                      <Wifi className="w-4 h-4 text-green-500" />
+                      <button 
+                        onClick={() => disconnectDevice('calendar')}
+                        className="text-xs text-red-600 hover:text-red-800 font-medium"
+                      >
+                        Disconnect
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <WifiOff className="w-4 h-4 text-gray-400" />
+                      <button 
+                        onClick={() => setConnectionModal({ isOpen: true, deviceType: 'calendar' })}
+                        className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                        disabled={isConnecting === 'calendar'}
+                      >
+                        {isConnecting === 'calendar' ? 'Connecting...' : 'Connect'}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </SettingCard>
+
+          <SettingCard
+            icon={<Shield className="w-5 h-5 text-green-500" />}
+            title="Privacy & Data"
+            description="Control your data privacy and sharing preferences"
+          >
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Anonymous Data Sharing</label>
+                  <p className="text-xs text-gray-500">Help improve the AI model with anonymous usage data</p>
+                </div>
+                <button
+                  onClick={() => onUpdatePreferences({
+                    dataSharing: !preferences.dataSharing
+                  })}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    preferences.dataSharing ? 'bg-blue-500' : 'bg-gray-200'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      preferences.dataSharing ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {getIntegrationStatus('smartwatch') === 'connected' && (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Smartwatch Data Sharing</label>
+                    <p className="text-xs text-gray-500">Share physiological data for enhanced insights</p>
+                  </div>
+                  <button
+                    onClick={() => onUpdatePreferences({
+                      smartwatchDataSharing: !preferences.smartwatchDataSharing
+                    })}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      preferences.smartwatchDataSharing ? 'bg-blue-500' : 'bg-gray-200'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        preferences.smartwatchDataSharing ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              )}
+
+              {getIntegrationStatus('calendar') === 'connected' && (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Calendar Data Sharing</label>
+                    <p className="text-xs text-gray-500">Share calendar patterns for cognitive load prediction</p>
+                  </div>
+                  <button
+                    onClick={() => onUpdatePreferences({
+                      calendarDataSharing: !preferences.calendarDataSharing
+                    })}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      preferences.calendarDataSharing ? 'bg-blue-500' : 'bg-gray-200'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        preferences.calendarDataSharing ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              )}
+            </div>
+          </SettingCard>
+        </div>
+      </div>
+
+      <DeviceConnectionModal
+        isOpen={connectionModal.isOpen}
+        onClose={() => setConnectionModal({ ...connectionModal, isOpen: false })}
+        deviceType={connectionModal.deviceType}
+        onConnect={handleDeviceConnect}
+        isConnecting={isConnecting !== null}
+      />
+    </div>
+  );
+};

@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base typography improvements */
+@layer base {
+  html {
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    font-variant-numeric: oldstyle-nums;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f8fafc;
+    color: #1e293b;
+  }
+
+  /* Improved focus states for accessibility */
+  *:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  *:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+}
+
+/* Typography scale */
+@layer components {
+  .text-display {
+    @apply text-4xl font-bold tracking-tight leading-tight;
+  }
+  
+  .text-heading-1 {
+    @apply text-3xl font-semibold tracking-tight leading-tight;
+  }
+  
+  .text-heading-2 {
+    @apply text-2xl font-semibold tracking-tight leading-snug;
+  }
+  
+  .text-heading-3 {
+    @apply text-xl font-semibold tracking-tight leading-snug;
+  }
+  
+  .text-heading-4 {
+    @apply text-lg font-medium tracking-tight leading-snug;
+  }
+  
+  .text-body-large {
+    @apply text-lg font-normal leading-relaxed;
+  }
+  
+  .text-body {
+    @apply text-base font-normal leading-normal;
+  }
+  
+  .text-body-small {
+    @apply text-sm font-normal leading-normal;
+  }
+  
+  .text-caption {
+    @apply text-xs font-medium tracking-wide uppercase leading-tight;
+  }
+  
+  .text-label {
+    @apply text-sm font-medium leading-tight;
+  }
+
+  /* Enhanced card components */
+  .card-primary {
+    @apply bg-white rounded-xl shadow-soft border border-calm-200 transition-all duration-300 hover:shadow-gentle hover:border-calm-300;
+  }
+  
+  .card-secondary {
+    @apply bg-calm-50 rounded-lg border border-calm-200 transition-all duration-200;
+  }
+
+  /* Button improvements */
+  .btn-primary {
+    @apply px-6 py-3 bg-focus-500 hover:bg-focus-600 text-white font-medium rounded-lg transition-all duration-200 shadow-gentle hover:shadow-soft focus:ring-2 focus:ring-focus-500 focus:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply px-6 py-3 bg-calm-100 hover:bg-calm-200 text-calm-700 font-medium rounded-lg transition-all duration-200 border border-calm-300 hover:border-calm-400;
+  }
+
+  /* Loading states */
+  .loading-skeleton {
+    @apply bg-gradient-to-r from-calm-200 via-calm-100 to-calm-200 bg-[length:200%_100%] animate-pulse;
+  }
+
+  /* Smooth transitions for all interactive elements */
+  .interactive {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  /* Enhanced focus indicators */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-focus-500 focus:ring-offset-2 focus:ring-offset-white;
+  }
+}
+
+/* Performance optimizations */
+@layer utilities {
+  .will-change-transform {
+    will-change: transform;
+  }
+  
+  .will-change-opacity {
+    will-change: opacity;
+  }
+  
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* Reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Selection styling */
+::selection {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+::-moz-selection {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
