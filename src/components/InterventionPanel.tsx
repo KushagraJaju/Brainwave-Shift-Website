@@ -94,9 +94,9 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                     {intervention.title}
                   </h3>
                   <div className="flex items-center space-x-4 text-body-small text-calm-500">
-                    <span>• {intervention.duration} min</span>
-                    <span>• {intervention.priority} priority</span>
-                    <span>• {intervention.timestamp.toLocaleTimeString()}</span>
+                    <span>{intervention.duration} min</span>
+                    <span>{intervention.priority} priority</span>
+                    <span>{intervention.timestamp.toLocaleTimeString()}</span>
                   </div>
                 </div>
               </div>
