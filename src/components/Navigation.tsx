@@ -71,7 +71,7 @@ export const Navigation: React.FC<NavigationProps> = ({
       >
         <div className="flex flex-col h-full">
           {/* Header - Fixed at top of sidebar */}
-          <div className="flex items-center justify-center h-16 bg-gradient-to-r from-focus-600 to-focus-700 dark:from-focus-700 dark:to-focus-800 px-2 flex-shrink-0">
+          <div className="flex items-center justify-center h-16 bg-gradient-to-r from-focus-600 to-focus-700 dark:from-focus-700 dark:to-focus-800 px-4 flex-shrink-0">
             <div className="flex items-center space-x-3">
               <img 
                 src="/BrainwaveShift.png" 
