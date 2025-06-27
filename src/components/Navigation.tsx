@@ -83,7 +83,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           </div>
           
           {/* Navigation Items - Scrollable if needed */}
-          <div className="flex-1 mt-8 px-2 overflow-y-auto">
+          <div className="flex-1 mt-8 px-4 overflow-y-auto">
             <div className="space-y-2">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -93,7 +93,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                     key={item.id}
                     onClick={() => handleTabChange(item.id)}
                     className={`
-                      w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 text-left focus-ring group
+                      w-full flex items-center space-x-2 px-4 py-3 rounded-xl transition-all duration-200 text-left focus-ring group
                       ${isActive
                         ? 'bg-focus-100 dark:bg-focus-900/30 text-focus-700 dark:text-focus-300 border-l-4 border-focus-500 dark:border-focus-400 shadow-gentle dark:shadow-gentle-dark'
                         : 'text-calm-600 dark:text-calm-400 hover:bg-calm-100 dark:hover:bg-calm-700 hover:text-calm-800 dark:hover:text-calm-200'
