@@ -83,7 +83,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           </div>
           
           {/* Navigation Items - Scrollable if needed */}
-          <div className="flex-1 mt-8 px-4 overflow-y-auto">
+          <div className="flex-1 mt-8 px-4 overflow-y-auto pt-2">
             <div className="space-y-2">
               {navItems.map((item) => {
                 const Icon = item.icon;
