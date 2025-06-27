@@ -125,6 +125,11 @@ export const Navigation: React.FC<NavigationProps> = ({
               <p className="text-body-small text-calm-600 dark:text-calm-400 mt-1 leading-relaxed">
                 AI-powered mental co-pilot for optimal performance
               </p>
+                          <img
+              src="/Bolt_logo_blk.png"
+              alt="Built with bolt"
+              className="h-20 w-20 "
+            />
             </div>
           </div>
         </div>
