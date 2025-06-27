@@ -122,9 +122,14 @@ export const Navigation: React.FC<NavigationProps> = ({
             {/* Footer Info */}
             <div className="bg-gradient-to-r from-wellness-50 to-focus-50 dark:from-wellness-900/20 dark:to-focus-900/20 rounded-xl p-4 border border-calm-200 dark:border-calm-700">
               <p className="text-label text-calm-800 dark:text-calm-200">Cognitive Enhancement</p>
-              <p className="text-body-small text-calm-600 dark:text-calm-400 mt-1 leading-relaxed">
+              <p className="text-body-small text-calm-600 dark:text-calm-400 mt-1 leading-relaxed pb-4">
                 AI-powered mental co-pilot for optimal performance
               </p>
+                          <img
+              src="/Bolt_logo_blk.png"
+              alt="Built with bolt"
+              className="h-20 w-20 "
+            />
             </div>
           </div>
         </div>
