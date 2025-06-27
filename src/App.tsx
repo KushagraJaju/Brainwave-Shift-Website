@@ -151,8 +151,8 @@ function App() {
           onMobileMenuToggle={handleMobileMenuToggle}
         />
         
-        {/* Main Content Area - Now with left margin to account for fixed sidebar */}
-        <div className="flex-1 lg:ml-64">
+        {/* Main Content Area - Now with explicit scrolling container */}
+        <div className="flex-1 lg:ml-64 overflow-y-auto h-screen">
           <main className="p-4 lg:p-8 pt-16 lg:pt-8">
             <ErrorBoundary fallback={
               <div className="card-primary p-6 text-center">
