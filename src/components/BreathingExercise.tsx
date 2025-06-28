@@ -316,36 +316,36 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
         )}
 
         {/* Main Exercise Area */}
-        <div className="p-8 text-center">
+        <div className="p-6 text-center">
           {/* Progress Indicator */}
-          <div className="mb-6">
+          <div className="mb-8">
             <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
               <span>Cycle {cycleCount + 1} of {totalCycles}</span>
               <span>{Math.round(overallProgress)}% Complete</span>
             </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
               <div 
-                className="bg-blue-500 dark:bg-blue-400 h-2 rounded-full transition-all duration-300"
+                className="bg-blue-500 dark:bg-blue-400 h-3 rounded-full transition-all duration-300"
                 style={{ width: `${overallProgress}%` }}
               />
             </div>
           </div>
 
           {/* Breathing Visual Guide */}
-          <div className="mb-8 flex items-center justify-center">
+          <div className="my-12 flex items-center justify-center">
             <div 
-              className={`w-48 h-48 rounded-full bg-gradient-to-br ${getPhaseColor()} flex items-center justify-center transition-all duration-1000 ease-in-out shadow-lg`}
+              className={`w-56 h-56 rounded-full bg-gradient-to-br ${getPhaseColor()} flex items-center justify-center transition-all duration-1000 ease-in-out shadow-xl`}
               style={{ 
                 transform: `scale(${getBreathingScale()})`,
-                filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.1))'
+                filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.15))'
               }}
             >
               <div className="text-center text-white">
                 {isActive && currentPhaseData && (
                   <>
-                    <div className="text-2xl font-bold mb-2">{currentPhaseData.name}</div>
-                    <div className="text-4xl font-bold">{timeRemaining}</div>
-                    <div className="text-sm mt-2 opacity-90 max-w-32 leading-tight">
+                    <div className="text-2xl font-bold mb-1">{currentPhaseData.name}</div>
+                    <div className="text-5xl font-bold">{timeRemaining}</div>
+                    <div className="text-sm mt-2 opacity-90 max-w-36 mx-auto leading-tight">
                       {currentPhaseData.instruction}
                     </div>
                   </>
@@ -359,10 +359,16 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
 
           {/* Phase Progress */}
           {isActive && currentPhaseData && (
-            <div className="mb-6">
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
+            <div className="mb-8 mt-4">
+              <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                {currentPhaseData.name} Progress
+              </div>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div 
-                  className="bg-white h-1 rounded-full transition-all duration-100"
+                  className={`h-2 rounded-full transition-all duration-100 ${
+                    currentPhaseData.name === 'Inhale' ? 'bg-blue-400' :
+                    currentPhaseData.name === 'Hold' ? 'bg-purple-400' : 'bg-green-400'
+                  }`}
                   style={{ width: `${phaseProgress}%` }}
                 />
               </div>
@@ -370,7 +376,7 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
           )}
 
           {/* Controls */}
-          <div className="flex items-center justify-center space-x-4">
+          <div className="flex items-center justify-center space-x-4 mt-6">
             {!isActive ? (
               <button
                 onClick={startExercise}
@@ -427,7 +433,7 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
         </div>
 
         {/* Instructions */}
-        <div className="px-6 pb-6">
+        <div className="px-6 pb-6 mt-2">
           <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
             <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-2">How it works:</h4>
             <div className="text-sm text-blue-700 dark:text-blue-400 space-y-1">
