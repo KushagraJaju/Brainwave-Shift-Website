@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { 
   Monitor, 
   Bell, 
@@ -31,12 +31,14 @@ interface SettingsProps {
   preferences: UserPreferences;
   onUpdatePreferences: (updates: Partial<UserPreferences>) => void;
   onResetPreferences: () => void;
+  scrollableContainerRef: React.RefObject<HTMLDivElement>;
 }
 
 export const Settings: React.FC<SettingsProps> = ({
   preferences,
   onUpdatePreferences,
-  onResetPreferences
+  onResetPreferences,
+  scrollableContainerRef
 }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
@@ -46,9 +48,8 @@ export const Settings: React.FC<SettingsProps> = ({
   }>({ isOpen: false, deviceType: 'smartwatch' });
   const [activeSection, setActiveSection] = useState<'general' | 'data'>('general');
   
-  // Ref to maintain scroll position
-  const settingsContainerRef = useRef<HTMLDivElement>(null);
-  const [scrollPosition, setScrollPosition] = useState(0);
+  // Store scroll position value
+  const scrollPositionRef = useRef<number>(0);
 
   const {
     integrations,
@@ -61,34 +62,29 @@ export const Settings: React.FC<SettingsProps> = ({
 
   const { resetOnboarding } = useOnboarding();
 
-  // Save scroll position before any state update
+  // Save scroll position when scrolling
   useEffect(() => {
     const saveScrollPosition = () => {
-      if (settingsContainerRef.current) {
-        setScrollPosition(settingsContainerRef.current.scrollTop);
+      if (scrollableContainerRef.current) {
+        scrollPositionRef.current = scrollableContainerRef.current.scrollTop;
       }
     };
 
-    const container = settingsContainerRef.current;
+    const container = scrollableContainerRef.current;
     if (container) {
       container.addEventListener('scroll', saveScrollPosition);
       return () => container.removeEventListener('scroll', saveScrollPosition);
     }
-  }, []);
+  }, [scrollableContainerRef]);
 
-  // Restore scroll position after render
-  useEffect(() => {
-    if (settingsContainerRef.current) {
-      settingsContainerRef.current.scrollTop = scrollPosition;
+  // Restore scroll position after DOM updates
+  useLayoutEffect(() => {
+    if (scrollableContainerRef.current) {
+      scrollableContainerRef.current.scrollTop = scrollPositionRef.current;
     }
-  }, [scrollPosition, preferences, activeSection, showSaveConfirmation]);
+  }, [scrollableContainerRef, preferences, activeSection, showSaveConfirmation]);
 
   const handleSave = async () => {
-    // Save current scroll position
-    if (settingsContainerRef.current) {
-      setScrollPosition(settingsContainerRef.current.scrollTop);
-    }
-    
     setIsSaving(true);
     // Simulate save delay
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -98,11 +94,6 @@ export const Settings: React.FC<SettingsProps> = ({
   };
 
   const handleReset = () => {
-    // Save current scroll position
-    if (settingsContainerRef.current) {
-      setScrollPosition(settingsContainerRef.current.scrollTop);
-    }
-    
     onResetPreferences();
     setShowSaveConfirmation(false);
   };
@@ -139,10 +130,8 @@ export const Settings: React.FC<SettingsProps> = ({
   };
 
   const handleSectionChange = (section: 'general' | 'data') => {
-    // Save current scroll position before changing section
-    if (settingsContainerRef.current) {
-      setScrollPosition(0); // Reset to top for new section
-    }
+    // Reset to top for new section
+    scrollPositionRef.current = 0;
     setActiveSection(section);
   };
 
@@ -169,7 +158,7 @@ export const Settings: React.FC<SettingsProps> = ({
   );
 
   return (
-    <div className="space-y-6" ref={settingsContainerRef}>
+    <div className="space-y-6">
       <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-calm-200 dark:border-calm-700">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Settings</h2>
