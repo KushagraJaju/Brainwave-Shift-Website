@@ -42,8 +42,8 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
       name: 'Microsoft Calendar', 
       icon: '📧', 
       description: 'Outlook calendar integration',
-      enabled: true,
-      oauth: true
+      enabled: false,
+      comingSoon: true
     },
     { 
       id: 'apple', 
@@ -200,8 +200,8 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
               })}
             </div>
 
-            {/* OAuth Information for Calendar */}
-            {deviceType === 'calendar' && selectedProvider && (
+            {/* OAuth Information for Calendar - Only show for Google */}
+            {deviceType === 'calendar' && selectedProvider === 'google' && (
               <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                 <div className="flex items-start space-x-3">
                   <Shield className="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5" />
