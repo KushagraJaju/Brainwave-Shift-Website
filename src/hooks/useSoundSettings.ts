@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { soundService, SoundSettings } from '../services/SoundService';
 import { userDataManager } from '../services/UserDataManager';
+import { timerService } from '../services/TimerService';
 
 export const useSoundSettings = () => {
   const [settings, setSettings] = useState<SoundSettings>(soundService.getSettings());
@@ -15,6 +16,13 @@ export const useSoundSettings = () => {
         // Update sound service with saved settings
         soundService.updateSettings(savedSettings);
         setSettings(soundService.getSettings());
+        
+        // Update timer service tick sound setting
+        if (savedSettings.tickSound) {
+          timerService.setTickSoundEnabled(true);
+        } else {
+          timerService.setTickSoundEnabled(false);
+        }
       } else {
         setTimeout(checkInitialization, 100);
       }
@@ -27,6 +35,13 @@ export const useSoundSettings = () => {
       const savedSettings = userData.soundSettings;
       soundService.updateSettings(savedSettings);
       setSettings(soundService.getSettings());
+      
+      // Update timer service tick sound setting
+      if (savedSettings.tickSound) {
+        timerService.setTickSoundEnabled(true);
+      } else {
+        timerService.setTickSoundEnabled(false);
+      }
     });
 
     // Initialize audio context on component mount
@@ -50,6 +65,11 @@ export const useSoundSettings = () => {
     soundService.updateSettings(updates);
     userDataManager.updateSoundSettings(updates);
     setSettings(soundService.getSettings());
+    
+    // Update timer service tick sound setting
+    if (updates.tickSound !== undefined) {
+      timerService.setTickSoundEnabled(updates.tickSound === 'enabled');
+    }
   };
 
   const toggleSound = () => {
@@ -72,6 +92,10 @@ export const useSoundSettings = () => {
   const testBreakSound = () => {
     soundService.testBreakSound();
   };
+  
+  const testTickSound = () => {
+    soundService.testTickSound();
+  };
 
   return {
     settings,
@@ -79,6 +103,7 @@ export const useSoundSettings = () => {
     toggleSound,
     setVolume,
     testFocusSound,
-    testBreakSound
+    testBreakSound,
+    testTickSound
   };
 };

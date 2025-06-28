@@ -1,3 +1,5 @@
+import { soundService } from './SoundService';
+
 export interface TimerState {
   isActive: boolean;
   isPaused: boolean;
@@ -11,6 +13,7 @@ export interface TimerSettings {
   focusSessionLength: number;
   breakLength: number;
   breakReminders: boolean;
+  tickSound?: boolean;
 }
 
 export class TimerService {
@@ -19,12 +22,14 @@ export class TimerService {
   private settings: TimerSettings;
   private listeners: ((state: TimerState) => void)[] = [];
   private intervalRef: NodeJS.Timeout | null = null;
+  private tickSoundEnabled: boolean = false;
 
   private constructor() {
     this.settings = {
       focusSessionLength: 25,
       breakLength: 5,
-      breakReminders: true
+      breakReminders: true,
+      tickSound: false
     };
     
     this.state = {
@@ -50,6 +55,11 @@ export class TimerService {
   public updateSettings(newSettings: Partial<TimerSettings>): void {
     const oldSettings = { ...this.settings };
     this.settings = { ...this.settings, ...newSettings };
+    
+    // Update tick sound setting
+    if (newSettings.tickSound !== undefined) {
+      this.tickSoundEnabled = newSettings.tickSound;
+    }
     
     // Check if focus or break length changed
     const focusChanged = oldSettings.focusSessionLength !== this.settings.focusSessionLength;
@@ -154,6 +164,15 @@ export class TimerService {
     this.intervalRef = setInterval(() => {
       if (!this.state.isActive || this.state.time <= 0) return;
 
+      // Play tick sound if enabled
+      if (this.tickSoundEnabled) {
+        try {
+          soundService.playTickSound();
+        } catch (error) {
+          console.warn('Error playing tick sound:', error);
+        }
+      }
+
       this.state.time -= 1;
 
       if (this.state.time <= 0) {
@@ -177,7 +196,7 @@ export class TimerService {
     
     this.clearInterval();
 
-    // Play completion sound (we'll import this when needed)
+    // Play completion sound
     this.playCompletionSound();
 
     // Show notification if enabled
@@ -203,17 +222,14 @@ export class TimerService {
   }
 
   private playCompletionSound(): void {
-    // Import and use sound service when available
     try {
-      import('../services/SoundService').then(({ soundService }) => {
-        if (this.state.sessionType === 'Focus') {
-          soundService.playFocusCompleteSound();
-        } else {
-          soundService.playBreakCompleteSound();
-        }
-      });
+      if (this.state.sessionType === 'Focus') {
+        soundService.playFocusCompleteSound();
+      } else {
+        soundService.playBreakCompleteSound();
+      }
     } catch (error) {
-      console.warn('Sound service not available:', error);
+      console.warn('Error playing completion sound:', error);
     }
   }
 
@@ -231,6 +247,14 @@ export class TimerService {
         });
       }
     }
+  }
+
+  public setTickSoundEnabled(enabled: boolean): void {
+    this.tickSoundEnabled = enabled;
+  }
+
+  public isTickSoundEnabled(): boolean {
+    return this.tickSoundEnabled;
   }
 
   public subscribe(callback: (state: TimerState) => void): () => void {

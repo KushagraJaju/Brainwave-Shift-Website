@@ -17,7 +17,8 @@ export const SoundControls: React.FC<SoundControlsProps> = ({
     toggleSound, 
     setVolume, 
     testFocusSound, 
-    testBreakSound 
+    testBreakSound,
+    testTickSound
   } = useSoundSettings();
 
   return (
@@ -149,23 +150,35 @@ export const SoundControls: React.FC<SoundControlsProps> = ({
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Subtle Tick Sound</span>
               <p className="text-xs text-gray-500 dark:text-gray-400">Very quiet tick every second</p>
             </div>
-            <button
-              onClick={() => updateSettings({ 
-                tickSound: settings.tickSound ? undefined : 'enabled' 
-              })}
-              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus-ring ${
-                settings.tickSound ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
-              }`}
-              aria-label={settings.tickSound ? 'Disable tick sound' : 'Enable tick sound'}
-              aria-pressed={settings.tickSound ? true : false}
-            >
-              <span
-                className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                  settings.tickSound ? 'translate-x-5' : 'translate-x-1'
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => updateSettings({ 
+                  tickSound: settings.tickSound ? undefined : 'enabled' 
+                })}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus-ring ${
+                  settings.tickSound ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
                 }`}
-                aria-hidden="true"
-              />
-            </button>
+                aria-label={settings.tickSound ? 'Disable tick sound' : 'Enable tick sound'}
+                aria-pressed={settings.tickSound ? true : false}
+              >
+                <span
+                  className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                    settings.tickSound ? 'translate-x-5' : 'translate-x-1'
+                  }`}
+                  aria-hidden="true"
+                />
+              </button>
+              {settings.tickSound && (
+                <button
+                  onClick={testTickSound}
+                  className="flex items-center justify-center w-8 h-8 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors touch-target focus-ring"
+                  title="Test tick sound"
+                  aria-label="Test tick sound"
+                >
+                  <Play className="w-3 h-3" aria-hidden="true" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

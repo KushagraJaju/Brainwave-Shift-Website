@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { timerService, TimerState } from '../services/TimerService';
 import { UserPreferences } from '../types';
+import { soundService } from '../services/SoundService';
 
 export const useSharedTimer = (preferences?: UserPreferences) => {
   const [timerState, setTimerState] = useState<TimerState>(timerService.getState());
@@ -17,6 +18,7 @@ export const useSharedTimer = (preferences?: UserPreferences) => {
   // Update timer settings when preferences change
   useEffect(() => {
     if (preferences) {
+      // Update timer service settings
       timerService.updateSettings({
         focusSessionLength: preferences.focusSessionLength,
         breakLength: preferences.breakLength || 5,
@@ -34,6 +36,12 @@ export const useSharedTimer = (preferences?: UserPreferences) => {
       Notification.requestPermission();
     }
   }, [preferences?.breakReminders]);
+
+  // Initialize audio context on first render
+  useEffect(() => {
+    // Initialize audio context on component mount
+    soundService.initializeOnUserInteraction();
+  }, []);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -60,10 +68,16 @@ export const useSharedTimer = (preferences?: UserPreferences) => {
     progress: getProgress(),
     
     // Timer controls
-    start: () => timerService.start(),
+    start: () => {
+      soundService.initializeOnUserInteraction();
+      timerService.start();
+    },
     pause: () => timerService.pause(),
     resume: () => timerService.resume(),
     reset: () => timerService.reset(),
-    toggle: () => timerService.toggle()
+    toggle: () => {
+      soundService.initializeOnUserInteraction();
+      timerService.toggle();
+    }
   };
 };

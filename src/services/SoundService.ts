@@ -21,7 +21,10 @@ export class SoundService {
 
   private initializeAudioContext(): void {
     try {
-      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      // Only create AudioContext on demand to avoid autoplay policy issues
+      if (!this.audioContext) {
+        this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
     } catch (error) {
       console.warn('Web Audio API not supported:', error);
     }
@@ -32,6 +35,11 @@ export class SoundService {
     if (!this.audioContext || !this.settings.enabled) return;
 
     try {
+      // Resume audio context if suspended
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume();
+      }
+
       const oscillator = this.audioContext.createOscillator();
       const gainNode = this.audioContext.createGain();
       const filterNode = this.audioContext.createBiquadFilter();
@@ -69,6 +77,11 @@ export class SoundService {
     if (!this.audioContext || !this.settings.enabled) return;
 
     try {
+      // Resume audio context if suspended
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume();
+      }
+
       const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5 chord
       const duration = 1.5;
 
@@ -105,6 +118,11 @@ export class SoundService {
     if (!this.audioContext || !this.settings.enabled) return;
 
     try {
+      // Resume audio context if suspended
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume();
+      }
+
       const oscillator = this.audioContext.createOscillator();
       const gainNode = this.audioContext.createGain();
 
@@ -130,6 +148,9 @@ export class SoundService {
   public playFocusCompleteSound(): void {
     if (!this.settings.enabled) return;
     
+    // Initialize audio context if needed
+    this.initializeAudioContext();
+    
     // Resume audio context if suspended (required by some browsers)
     if (this.audioContext?.state === 'suspended') {
       this.audioContext.resume();
@@ -149,6 +170,9 @@ export class SoundService {
 
   public playBreakCompleteSound(): void {
     if (!this.settings.enabled) return;
+    
+    // Initialize audio context if needed
+    this.initializeAudioContext();
     
     if (this.audioContext?.state === 'suspended') {
       this.audioContext.resume();
@@ -171,6 +195,9 @@ export class SoundService {
 
   public playTickSound(): void {
     if (!this.settings.enabled || !this.settings.tickSound) return;
+    
+    // Initialize audio context if needed
+    this.initializeAudioContext();
     
     if (this.audioContext?.state === 'suspended') {
       this.audioContext.resume();
@@ -231,8 +258,19 @@ export class SoundService {
     this.settings.enabled = originalEnabled;
   }
 
+  public testTickSound(): void {
+    const originalEnabled = this.settings.enabled;
+    const originalTickSound = this.settings.tickSound;
+    this.settings.enabled = true;
+    this.settings.tickSound = 'enabled';
+    this.playTickSound();
+    this.settings.enabled = originalEnabled;
+    this.settings.tickSound = originalTickSound;
+  }
+
   // Initialize audio context on user interaction (required by browsers)
   public initializeOnUserInteraction(): void {
+    this.initializeAudioContext();
     if (this.audioContext?.state === 'suspended') {
       this.audioContext.resume();
     }
