@@ -509,5 +509,5 @@ nav {
 
 /* Header z-index fix */
 header {
-  z-index: 30 !important;
+  z-index: 5 !important;
 }
