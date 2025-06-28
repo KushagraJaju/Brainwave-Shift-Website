@@ -402,23 +402,17 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
 
   const progress = initialTime > 0 ? ((initialTime - time) / initialTime) * 100 : 0;
 
-  // FIXED: Get current preset info with proper priority for selectedPreset
+  // FIXED: Get current preset info - only return preset if selectedPreset ID matches
   const getCurrentPreset = () => {
     if (!preferences) return null;
     
-    // First, try to find preset by selectedPreset ID (highest priority)
+    // Only return a preset if selectedPreset is explicitly set and matches a preset ID
     if (preferences.selectedPreset) {
-      const presetById = FOCUS_PRESETS.find(preset => preset.id === preferences.selectedPreset);
-      if (presetById) {
-        return presetById;
-      }
+      return FOCUS_PRESETS.find(preset => preset.id === preferences.selectedPreset) || null;
     }
     
-    // Fallback: find preset by matching focus and break times
-    return FOCUS_PRESETS.find(preset => 
-      preset.focusMinutes === preferences.focusSessionLength &&
-      preset.breakMinutes === (preferences.breakLength || 5)
-    );
+    // If no selectedPreset is set, return null (indicating custom settings)
+    return null;
   };
 
   const currentPreset = getCurrentPreset();
