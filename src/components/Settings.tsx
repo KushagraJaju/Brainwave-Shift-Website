@@ -433,7 +433,7 @@ export const Settings: React.FC<SettingsProps> = ({
                       </p>
                       <div className="text-xs text-blue-600 dark:text-blue-500 space-y-1">
                         <div>• ✅ Google Calendar - OAuth 2.0 Ready</div>
-                        <div>• ✅ Microsoft Calendar - OAuth 2.0 Ready</div>
+                        <div>• ✅ Microsoft Calendar - Coming Soon</div>
                         <div>• ⏳ Apple Calendar - Coming Soon</div>
                         <div>• ⏳ Notion Calendar - Coming Soon</div>
                       </div>
