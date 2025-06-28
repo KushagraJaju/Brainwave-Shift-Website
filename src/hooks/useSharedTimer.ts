@@ -23,7 +23,8 @@ export const useSharedTimer = (preferences?: UserPreferences) => {
         focusSessionLength: preferences.focusSessionLength,
         breakLength: preferences.breakLength || 5,
         breakReminders: preferences.breakReminders,
-        numberOfBreaks: preferences.numberOfBreaks || 1
+        numberOfBreaks: preferences.numberOfBreaks || 1,
+        currentTaskName: preferences.currentTaskName
       });
       
       // Force update the timer to reflect new settings immediately
@@ -33,7 +34,8 @@ export const useSharedTimer = (preferences?: UserPreferences) => {
     preferences?.focusSessionLength, 
     preferences?.breakLength, 
     preferences?.breakReminders,
-    preferences?.numberOfBreaks
+    preferences?.numberOfBreaks,
+    preferences?.currentTaskName
   ]);
 
   // Request notification permission when break reminders are enabled
@@ -70,6 +72,7 @@ export const useSharedTimer = (preferences?: UserPreferences) => {
     initialTime: timerState.initialTime,
     currentFocusSession: timerState.currentFocusSession,
     totalFocusSessions: timerState.totalFocusSessions,
+    taskName: timerState.taskName,
     
     // Computed values
     formattedTime: formatTime(timerState.time),

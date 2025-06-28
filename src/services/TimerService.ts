@@ -9,6 +9,7 @@ export interface TimerState {
   startTime?: Date;
   currentFocusSession: number;
   totalFocusSessions: number;
+  taskName?: string;
 }
 
 export interface TimerSettings {
@@ -17,6 +18,7 @@ export interface TimerSettings {
   breakReminders: boolean;
   tickSound?: boolean;
   numberOfBreaks?: number;
+  currentTaskName?: string;
 }
 
 export class TimerService {
@@ -33,7 +35,8 @@ export class TimerService {
       breakLength: 5,
       breakReminders: true,
       tickSound: false,
-      numberOfBreaks: 1
+      numberOfBreaks: 1,
+      currentTaskName: ''
     };
     
     this.state = {
@@ -43,7 +46,8 @@ export class TimerService {
       time: this.settings.focusSessionLength * 60,
       initialTime: this.settings.focusSessionLength * 60,
       currentFocusSession: 1,
-      totalFocusSessions: 1
+      totalFocusSessions: 1,
+      taskName: ''
     };
   }
 
@@ -70,6 +74,11 @@ export class TimerService {
     // Update total focus sessions if number of breaks changed
     if (newSettings.numberOfBreaks !== undefined) {
       this.state.totalFocusSessions = newSettings.numberOfBreaks + 1;
+    }
+    
+    // Update task name if provided
+    if (newSettings.currentTaskName !== undefined) {
+      this.state.taskName = newSettings.currentTaskName;
     }
     
     // Check if focus or break length changed
@@ -170,6 +179,9 @@ export class TimerService {
       this.state.currentFocusSession = 1;
       this.state.totalFocusSessions = (this.settings.numberOfBreaks || 1) + 1;
       
+      // Update task name
+      this.state.taskName = this.settings.currentTaskName || '';
+      
       this.notifyListeners();
     }
   }
@@ -265,20 +277,22 @@ export class TimerService {
 
   private showNotification(): void {
     if ('Notification' in window && Notification.permission === 'granted') {
+      const taskInfo = this.state.taskName ? ` (${this.state.taskName})` : '';
+      
       if (this.state.sessionType === 'Focus') {
         new Notification('Focus session complete!', {
-          body: `Time for a ${this.settings.breakLength}-minute break.`,
+          body: `Time for a ${this.settings.breakLength}-minute break.${taskInfo}`,
           icon: '/BrainwaveShift.png'
         });
       } else {
         if (this.state.currentFocusSession < this.state.totalFocusSessions) {
           new Notification('Break time over!', {
-            body: `Ready to start focus session ${this.state.currentFocusSession + 1} of ${this.state.totalFocusSessions}?`,
+            body: `Ready to start focus session ${this.state.currentFocusSession + 1} of ${this.state.totalFocusSessions}?${taskInfo}`,
             icon: '/BrainwaveShift.png'
           });
         } else {
           new Notification('All sessions complete!', {
-            body: 'You have completed all your planned focus sessions.',
+            body: `You have completed all your planned focus sessions.${taskInfo}`,
             icon: '/BrainwaveShift.png'
           });
         }

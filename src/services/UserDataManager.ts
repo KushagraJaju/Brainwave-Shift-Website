@@ -16,6 +16,8 @@ export interface UserData {
     socialMediaTimeLimit?: number;
     mindfulnessReminders?: boolean;
     focusModeSchedule?: { start: string; end: string }[];
+    numberOfBreaks?: number;
+    currentTaskName?: string;
   };
   
   // Analytics and progress data
@@ -46,6 +48,7 @@ export interface UserData {
     quality?: number;
     preset?: string;
     timestamp: string;
+    taskName?: string;
   }[];
   
   // Digital wellness tracking
@@ -159,7 +162,9 @@ export class UserDataManager {
         physiologicalMonitoring: true,
         calendarInsights: true,
         digitalWellnessEnabled: true,
-        mindfulnessReminders: true
+        mindfulnessReminders: true,
+        numberOfBreaks: 1,
+        currentTaskName: ''
       },
       analytics: {
         dailyFocusTime: 0,
@@ -199,8 +204,8 @@ export class UserDataManager {
       soundSettings: {
         enabled: true,
         volume: 0.7,
-        focusCompleteSound: 'chime',
-        breakCompleteSound: 'chime'
+        focusCompleteSound: 'success',
+        breakCompleteSound: 'notification'
       }
     };
   }
@@ -404,7 +409,8 @@ export class UserDataManager {
     const newSession = {
       ...session,
       id: Date.now().toString(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      taskName: this.userData.preferences.currentTaskName // Add task name to session
     };
     
     this.userData.focusSessions.push(newSession);

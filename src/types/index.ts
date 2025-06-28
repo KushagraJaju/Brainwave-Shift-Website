@@ -47,6 +47,8 @@ export interface UserPreferences {
   focusModeSchedule?: { start: string; end: string }[];
   // Multi-break support
   numberOfBreaks?: number;
+  // Task naming
+  currentTaskName?: string;
 }
 
 export interface FocusPreset {

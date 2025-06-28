@@ -46,7 +46,9 @@ export const useSettings = () => {
       physiologicalMonitoring: true,
       calendarInsights: true,
       digitalWellnessEnabled: true,
-      mindfulnessReminders: true
+      mindfulnessReminders: true,
+      numberOfBreaks: 1,
+      currentTaskName: ''
     };
     
     userDataManager.updatePreferences(defaultPreferences);
