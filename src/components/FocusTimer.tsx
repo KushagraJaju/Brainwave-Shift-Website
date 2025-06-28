@@ -54,6 +54,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   // Custom settings state
   const [customFocusTime, setCustomFocusTime] = useState(preferences?.focusSessionLength || 25);
   const [customBreakTime, setCustomBreakTime] = useState(preferences?.breakLength || 5);
+  const [customNumberOfBreaks, setCustomNumberOfBreaks] = useState(1);
   
   // Use preferences for initial time, fallback to default (25 minutes for Pomodoro)
   const defaultFocusTime = (preferences?.focusSessionLength || 25) * 60;
@@ -221,17 +222,22 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     setShowOptions(false);
   };
 
-  const adjustCustomTime = (type: 'focus' | 'break', direction: 'up' | 'down') => {
+  const adjustCustomTime = (type: 'focus' | 'break' | 'breaks', direction: 'up' | 'down') => {
     if (type === 'focus') {
       const newValue = direction === 'up' 
         ? Math.min(120, customFocusTime + 5) 
         : Math.max(5, customFocusTime - 5);
       setCustomFocusTime(newValue);
-    } else {
+    } else if (type === 'break') {
       const newValue = direction === 'up' 
         ? Math.min(60, customBreakTime + 5) 
         : Math.max(1, customBreakTime - 5);
       setCustomBreakTime(newValue);
+    } else if (type === 'breaks') {
+      const newValue = direction === 'up' 
+        ? Math.min(5, customNumberOfBreaks + 1) 
+        : Math.max(1, customNumberOfBreaks - 1);
+      setCustomNumberOfBreaks(newValue);
     }
   };
 
@@ -295,6 +301,24 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
       default:
         return <Clock className="w-4 h-4" />;
     }
+  };
+
+  // Generate enhanced preview text with breaks calculation
+  const getCustomPreviewText = () => {
+    const totalBreakTime = customNumberOfBreaks * customBreakTime;
+    const totalSessionTime = customFocusTime + totalBreakTime;
+    
+    if (customNumberOfBreaks === 1) {
+      return `${customFocusTime} minutes of focused work followed by ${customBreakTime} minute${customBreakTime !== 1 ? 's' : ''} of break time`;
+    } else {
+      return `${customFocusTime} minutes of focused work with ${customNumberOfBreaks} breaks of ${customBreakTime} minute${customBreakTime !== 1 ? 's' : ''} each`;
+    }
+  };
+
+  const getCustomSessionSummary = () => {
+    const totalBreakTime = customNumberOfBreaks * customBreakTime;
+    const totalSessionTime = customFocusTime + totalBreakTime;
+    return `Total session: ${totalSessionTime} minutes (${customFocusTime}m work + ${totalBreakTime}m breaks)`;
   };
 
   return (
@@ -502,11 +526,46 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                     </div>
                   </div>
 
-                  {/* Preview */}
+                  {/* Number of Breaks Setting */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                      Number of Breaks
+                    </label>
+                    <div className="flex items-center space-x-4">
+                      <button
+                        onClick={() => adjustCustomTime('breaks', 'down')}
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <div className="flex-1 text-center">
+                        <input
+                          type="number"
+                          min="1"
+                          max="5"
+                          value={customNumberOfBreaks}
+                          onChange={(e) => setCustomNumberOfBreaks(Math.max(1, Math.min(5, parseInt(e.target.value) || 1)))}
+                          className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200"
+                        />
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">1-5 breaks</div>
+                      </div>
+                      <button
+                        onClick={() => adjustCustomTime('breaks', 'up')}
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Enhanced Preview */}
                   <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
-                    <h5 className="font-medium text-purple-800 dark:text-purple-300 mb-2">Preview</h5>
-                    <p className="text-sm text-purple-700 dark:text-purple-400">
-                      {customFocusTime} minutes of focused work followed by {customBreakTime} minute{customBreakTime !== 1 ? 's' : ''} of break time.
+                    <h5 className="font-medium text-purple-800 dark:text-purple-300 mb-2">Session Preview</h5>
+                    <p className="text-sm text-purple-700 dark:text-purple-400 mb-2">
+                      {getCustomPreviewText()}
+                    </p>
+                    <p className="text-xs text-purple-600 dark:text-purple-500 font-medium">
+                      {getCustomSessionSummary()}
                     </p>
                   </div>
 
@@ -598,7 +657,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           <button
             onClick={resetTimer}
             className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-50"
-            aria-label="Reset timer"
+            aria-label="Reset timer to original time"
             title="Reset timer to original time"
           >
             <RotateCcw className="w-6 h-6" />
