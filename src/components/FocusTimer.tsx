@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, Square, Clock, Settings, Timer, Zap, Target } from 'lucide-react';
+import { Play, Pause, Square, Clock, Settings, Timer, Zap, Target, Plus, Minus, Save, X } from 'lucide-react';
 import { UserPreferences, FocusPreset } from '../types';
 
 interface FocusTimerProps {
@@ -47,7 +47,12 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
 }) => {
   const [isActive, setIsActive] = useState(false);
   const [sessionType, setSessionType] = useState<'Focus' | 'Break'>('Focus');
-  const [showPresets, setShowPresets] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const [optionsMode, setOptionsMode] = useState<'presets' | 'custom'>('presets');
+  
+  // Custom settings state
+  const [customFocusTime, setCustomFocusTime] = useState(preferences?.focusSessionLength || 25);
+  const [customBreakTime, setCustomBreakTime] = useState(preferences?.breakLength || 5);
   
   // Use preferences for initial time, fallback to default (25 minutes for Pomodoro)
   const defaultFocusTime = (preferences?.focusSessionLength || 25) * 60;
@@ -55,6 +60,14 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   
   const [time, setTime] = useState(defaultFocusTime);
   const [initialTime, setInitialTime] = useState(defaultFocusTime);
+
+  // Update custom settings when preferences change
+  useEffect(() => {
+    if (preferences) {
+      setCustomFocusTime(preferences.focusSessionLength);
+      setCustomBreakTime(preferences.breakLength || 5);
+    }
+  }, [preferences?.focusSessionLength, preferences?.breakLength]);
 
   // Update timer when preferences change
   useEffect(() => {
@@ -144,7 +157,47 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
       }
     }
     
-    setShowPresets(false);
+    setShowOptions(false);
+  };
+
+  const handleCustomApply = () => {
+    if (onUpdatePreferences) {
+      onUpdatePreferences({
+        focusSessionLength: customFocusTime,
+        breakLength: customBreakTime,
+        selectedPreset: undefined, // Clear preset when using custom
+        breakReminders: true
+      });
+    }
+    
+    // Reset timer if not active
+    if (!isActive) {
+      if (sessionType === 'Focus') {
+        const newTime = customFocusTime * 60;
+        setTime(newTime);
+        setInitialTime(newTime);
+      } else {
+        const newTime = customBreakTime * 60;
+        setTime(newTime);
+        setInitialTime(newTime);
+      }
+    }
+    
+    setShowOptions(false);
+  };
+
+  const adjustCustomTime = (type: 'focus' | 'break', direction: 'up' | 'down') => {
+    if (type === 'focus') {
+      const newValue = direction === 'up' 
+        ? Math.min(120, customFocusTime + 5) 
+        : Math.max(5, customFocusTime - 5);
+      setCustomFocusTime(newValue);
+    } else {
+      const newValue = direction === 'up' 
+        ? Math.min(60, customBreakTime + 5) 
+        : Math.max(1, customBreakTime - 5);
+      setCustomBreakTime(newValue);
+    }
   };
 
   const toggleTimer = () => {
@@ -219,14 +272,14 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Quick Presets:</span>
             <button
-              onClick={() => setShowPresets(!showPresets)}
+              onClick={() => setShowOptions(!showOptions)}
               className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
             >
-              {showPresets ? 'Hide' : 'More Options'}
+              {showOptions ? 'Hide Options' : 'More Options'}
             </button>
           </div>
           
-          <div className="grid grid-cols-3 gap-2 mb-3">
+          <div className="grid grid-cols-4 gap-2 mb-3">
             {FOCUS_PRESETS.map((preset) => (
               <button
                 key={preset.id}
@@ -246,38 +299,179 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                 </div>
               </button>
             ))}
+            
+            {/* Custom Button */}
+            <button
+              onClick={() => {
+                setShowOptions(true);
+                setOptionsMode('custom');
+              }}
+              className={`p-3 rounded-lg border-2 transition-all duration-200 text-center ${
+                !currentPreset
+                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+              }`}
+            >
+              <div className="flex items-center justify-center mb-1">
+                <Settings className="w-4 h-4" />
+              </div>
+              <div className="text-xs font-medium">Custom</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {preferences?.focusSessionLength}m/{preferences?.breakLength || 5}m
+              </div>
+            </button>
           </div>
 
-          {/* Expanded Preset Details */}
-          {showPresets && (
+          {/* Expanded Options */}
+          {showOptions && (
             <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-              <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">Choose Your Focus Style:</h4>
-              <div className="space-y-3">
-                {FOCUS_PRESETS.map((preset) => (
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                  {optionsMode === 'presets' ? 'Choose Your Focus Style:' : 'Custom Timer Settings:'}
+                </h4>
+                <div className="flex items-center space-x-2">
                   <button
-                    key={preset.id}
-                    onClick={() => handlePresetSelect(preset)}
-                    className={`w-full p-3 rounded-lg border-2 transition-all duration-200 text-left ${
-                      currentPreset?.id === preset.id
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 hover:border-gray-300 dark:hover:border-gray-600'
+                    onClick={() => setOptionsMode('presets')}
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                      optionsMode === 'presets'
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                     }`}
                   >
-                    <div className="flex items-center space-x-3">
-                      <div className={`p-2 rounded-lg bg-gradient-to-r ${preset.color} text-white`}>
-                        {getPresetIcon(preset.icon)}
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-800 dark:text-gray-200">{preset.name}</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{preset.description}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {preset.focusMinutes} min focus • {preset.breakMinutes} min break
+                    Presets
+                  </button>
+                  <button
+                    onClick={() => setOptionsMode('custom')}
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                      optionsMode === 'custom'
+                        ? 'bg-purple-500 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    Custom
+                  </button>
+                  <button
+                    onClick={() => setShowOptions(false)}
+                    className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {optionsMode === 'presets' ? (
+                /* Preset Options */
+                <div className="space-y-3">
+                  {FOCUS_PRESETS.map((preset) => (
+                    <button
+                      key={preset.id}
+                      onClick={() => handlePresetSelect(preset)}
+                      className={`w-full p-3 rounded-lg border-2 transition-all duration-200 text-left ${
+                        currentPreset?.id === preset.id
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 hover:border-gray-300 dark:hover:border-gray-600'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className={`p-2 rounded-lg bg-gradient-to-r ${preset.color} text-white`}>
+                          {getPresetIcon(preset.icon)}
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-800 dark:text-gray-200">{preset.name}</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">{preset.description}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {preset.focusMinutes} min focus • {preset.breakMinutes} min break
+                          </div>
                         </div>
                       </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                /* Custom Settings Interface */
+                <div className="space-y-6">
+                  {/* Focus Time Setting */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                      Focus Time (minutes)
+                    </label>
+                    <div className="flex items-center space-x-4">
+                      <button
+                        onClick={() => adjustCustomTime('focus', 'down')}
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <div className="flex-1 text-center">
+                        <input
+                          type="number"
+                          min="5"
+                          max="120"
+                          value={customFocusTime}
+                          onChange={(e) => setCustomFocusTime(Math.max(5, Math.min(120, parseInt(e.target.value) || 5)))}
+                          className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200"
+                        />
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">5-120 minutes</div>
+                      </div>
+                      <button
+                        onClick={() => adjustCustomTime('focus', 'up')}
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
                     </div>
+                  </div>
+
+                  {/* Break Time Setting */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                      Break Time (minutes)
+                    </label>
+                    <div className="flex items-center space-x-4">
+                      <button
+                        onClick={() => adjustCustomTime('break', 'down')}
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <div className="flex-1 text-center">
+                        <input
+                          type="number"
+                          min="1"
+                          max="60"
+                          value={customBreakTime}
+                          onChange={(e) => setCustomBreakTime(Math.max(1, Math.min(60, parseInt(e.target.value) || 1)))}
+                          className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200"
+                        />
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">1-60 minutes</div>
+                      </div>
+                      <button
+                        onClick={() => adjustCustomTime('break', 'up')}
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Preview */}
+                  <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                    <h5 className="font-medium text-purple-800 dark:text-purple-300 mb-2">Preview</h5>
+                    <p className="text-sm text-purple-700 dark:text-purple-400">
+                      {customFocusTime} minutes of focused work followed by {customBreakTime} minute{customBreakTime !== 1 ? 's' : ''} of break time.
+                    </p>
+                  </div>
+
+                  {/* Apply Button */}
+                  <button
+                    onClick={handleCustomApply}
+                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white rounded-lg transition-colors font-medium"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Apply Custom Settings</span>
                   </button>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -366,9 +560,13 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
             <div className="flex items-center space-x-2">
               <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               <span className="text-gray-600 dark:text-gray-400">Current:</span>
-              {currentPreset && (
+              {currentPreset ? (
                 <span className="text-blue-600 dark:text-blue-400 font-medium">
                   {currentPreset.name}
+                </span>
+              ) : (
+                <span className="text-purple-600 dark:text-purple-400 font-medium">
+                  Custom
                 </span>
               )}
             </div>
