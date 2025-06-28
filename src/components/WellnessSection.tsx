@@ -51,7 +51,7 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
     const isExpanded = expandedSections.has(id);
     
     return (
-      <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark border border-calm-200 dark:border-calm-700 transition-all duration-300 hover:shadow-gentle dark:hover:shadow-soft-dark">
+      <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark border border-calm-200 dark:border-calm-700 transition-all duration-300 hover:shadow-gentle dark:hover:shadow-soft-dark h-full flex flex-col">
         <button
           onClick={() => toggleSection(id)}
           className="w-full p-6 text-left focus-ring rounded-t-xl hover:bg-calm-50 dark:hover:bg-calm-700 transition-colors duration-200"
@@ -62,7 +62,7 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
                 {icon}
               </div>
               <div>
-                <h3 className="text-heading-3 text-calm-800 dark:text-calm-200">{title}</h3>
+                <h3 className="text-heading-4 text-calm-800 dark:text-calm-200">{title}</h3>
                 <p className="text-body-small text-calm-600 dark:text-calm-400 mt-1">{description}</p>
               </div>
             </div>
@@ -87,8 +87,8 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
         </button>
         
         {isExpanded && (
-          <div className="px-6 pb-6 animate-fade-in">
-            <div className="border-t border-calm-200 dark:border-calm-700 pt-6">
+          <div className="px-6 pb-6 flex-1 animate-fade-in">
+            <div className="border-t border-calm-200 dark:border-calm-700 pt-6 h-full">
               {children}
             </div>
           </div>
@@ -133,9 +133,9 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
         </div>
       </div>
 
-      {/* Wellness Sections - Reordered */}
-      <div className="space-y-6">
-        {/* 1. Digital Wellness - Now First */}
+      {/* Wellness Sections - NEW 2x2 Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Row 1: Digital Wellness & Mindfulness */}
         <WellnessCard
           id="digital-wellness"
           title="Digital Wellness"
@@ -146,20 +146,19 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
           <DigitalWellnessPanel />
         </WellnessCard>
 
-        {/* 2. Mindfulness & Breathing - Now Second */}
         <WellnessCard
           id="mindfulness"
           title="Mindfulness & Breathing"
           icon={<Heart className="w-5 h-5" />}
           description="Guided breathing exercises and mindfulness practices"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-800">
+          <div className="grid grid-cols-1 gap-4 h-full">
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800 flex flex-col">
               <h4 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-3 flex items-center space-x-2">
-                <Target className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                <Target className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                 <span>4-7-8 Breathing</span>
               </h4>
-              <p className="text-body-small text-calm-600 dark:text-calm-400 mb-4">
+              <p className="text-body-small text-calm-600 dark:text-calm-400 mb-4 flex-1">
                 Inhale for 4, hold for 7, exhale for 8. Perfect for stress relief and focus.
               </p>
               <button className="btn-primary w-full">
@@ -167,12 +166,12 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
               </button>
             </div>
             
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800 flex flex-col">
               <h4 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-3 flex items-center space-x-2">
-                <Clock className="w-5 h-5 text-green-500 dark:text-green-400" />
+                <Clock className="w-4 h-4 text-green-500 dark:text-green-400" />
                 <span>Box Breathing</span>
               </h4>
-              <p className="text-body-small text-calm-600 dark:text-calm-400 mb-4">
+              <p className="text-body-small text-calm-600 dark:text-calm-400 mb-4 flex-1">
                 Equal counts for inhale, hold, exhale, hold. Great for maintaining calm focus.
               </p>
               <button className="btn-primary w-full">
@@ -182,7 +181,7 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
           </div>
         </WellnessCard>
 
-        {/* 3. Wellness Interventions - Now Third */}
+        {/* Row 2: Wellness Interventions & Wellness Insights */}
         <WellnessCard
           id="interventions"
           title="Wellness Interventions"
@@ -196,63 +195,64 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
           />
         </WellnessCard>
 
-        {/* 4. Wellness Insights - Now Fourth */}
         <WellnessCard
           id="insights"
           title="Wellness Insights"
           icon={<TrendingUp className="w-5 h-5" />}
           description="Personalized insights and recommendations for optimal wellness"
         >
-          <div className="space-y-4">
+          <div className="space-y-4 h-full flex flex-col">
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
               <h4 className="font-semibold text-calm-800 dark:text-calm-200 mb-2">Today's Wellness Summary</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div>
+              <div className="grid grid-cols-1 gap-2 text-sm">
+                <div className="flex justify-between">
                   <span className="text-calm-600 dark:text-calm-400">Cognitive State:</span>
-                  <span className="ml-2 font-medium text-calm-800 dark:text-calm-200">{cognitiveState.focusLevel}</span>
+                  <span className="font-medium text-calm-800 dark:text-calm-200">{cognitiveState.focusLevel}</span>
                 </div>
-                <div>
+                <div className="flex justify-between">
                   <span className="text-calm-600 dark:text-calm-400">Digital Wellness:</span>
-                  <span className="ml-2 font-medium text-calm-800 dark:text-calm-200">
+                  <span className="font-medium text-calm-800 dark:text-calm-200">
                     {digitalWellnessData.cognitiveImpactScore >= 80 ? 'Excellent' :
                      digitalWellnessData.cognitiveImpactScore >= 60 ? 'Good' : 'Needs Attention'}
                   </span>
                 </div>
-                <div>
+                <div className="flex justify-between">
                   <span className="text-calm-600 dark:text-calm-400">Mindful Breaks:</span>
-                  <span className="ml-2 font-medium text-calm-800 dark:text-calm-200">{digitalWellnessData.mindfulBreaksTaken}</span>
+                  <span className="font-medium text-calm-800 dark:text-calm-200">{digitalWellnessData.mindfulBreaksTaken}</span>
                 </div>
               </div>
             </div>
             
-            {digitalWellnessData.cognitiveImpactScore < 60 && (
-              <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 p-4 rounded-lg">
-                <h5 className="font-medium text-orange-800 dark:text-orange-300 mb-2">Recommendation</h5>
-                <p className="text-sm text-orange-700 dark:text-orange-400">
-                  Your digital wellness score suggests high social media usage may be impacting cognitive performance. 
-                  Consider taking more frequent breaks or setting usage limits.
-                </p>
-              </div>
-            )}
-            
-            {cognitiveState.emotionalState === 'Stressed' && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-lg">
-                <h5 className="font-medium text-red-800 dark:text-red-300 mb-2">Stress Alert</h5>
-                <p className="text-sm text-red-700 dark:text-red-400">
-                  Elevated stress detected. Try a breathing exercise or take a short walk to reset your mental state.
-                </p>
-              </div>
-            )}
-            
-            {digitalWellnessData.mindfulBreaksTaken > 3 && (
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-4 rounded-lg">
-                <h5 className="font-medium text-green-800 dark:text-green-300 mb-2">Great Progress!</h5>
-                <p className="text-sm text-green-700 dark:text-green-400">
-                  Excellent job taking mindful breaks today. This conscious approach to digital wellness 
-                  is helping maintain your cognitive performance.
-                </p>
-              </div>
-            )}
+            <div className="flex-1 space-y-3">
+              {digitalWellnessData.cognitiveImpactScore < 60 && (
+                <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 p-3 rounded-lg">
+                  <h5 className="font-medium text-orange-800 dark:text-orange-300 mb-1 text-sm">Recommendation</h5>
+                  <p className="text-xs text-orange-700 dark:text-orange-400">
+                    Your digital wellness score suggests high social media usage may be impacting cognitive performance. 
+                    Consider taking more frequent breaks or setting usage limits.
+                  </p>
+                </div>
+              )}
+              
+              {cognitiveState.emotionalState === 'Stressed' && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-3 rounded-lg">
+                  <h5 className="font-medium text-red-800 dark:text-red-300 mb-1 text-sm">Stress Alert</h5>
+                  <p className="text-xs text-red-700 dark:text-red-400">
+                    Elevated stress detected. Try a breathing exercise or take a short walk to reset your mental state.
+                  </p>
+                </div>
+              )}
+              
+              {digitalWellnessData.mindfulBreaksTaken > 3 && (
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-3 rounded-lg">
+                  <h5 className="font-medium text-green-800 dark:text-green-300 mb-1 text-sm">Great Progress!</h5>
+                  <p className="text-xs text-green-700 dark:text-green-400">
+                    Excellent job taking mindful breaks today. This conscious approach to digital wellness 
+                    is helping maintain your cognitive performance.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </WellnessCard>
       </div>
