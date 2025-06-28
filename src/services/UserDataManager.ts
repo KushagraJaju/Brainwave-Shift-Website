@@ -142,6 +142,9 @@ export class UserDataManager {
   }
 
   private getDefaultUserData(): UserData {
+    // Check for theme preference from onboarding
+    const savedTheme = localStorage.getItem('themePreference') as 'light' | 'dark' | null;
+    
     return {
       preferences: {
         interventionFrequency: 'Normal',
@@ -191,7 +194,7 @@ export class UserDataManager {
         firstLaunch: true,
         lastActiveDate: new Date().toISOString(),
         version: this.VERSION,
-        theme: 'system'
+        theme: savedTheme || 'system' // Use saved theme from onboarding or default to system
       },
       soundSettings: {
         enabled: true,
@@ -259,6 +262,12 @@ export class UserDataManager {
     if (!migratedData.appState.version || migratedData.appState.version < '1.0.0') {
       // Add any specific migrations here
       migratedData.appState.version = this.VERSION;
+    }
+    
+    // Check for theme preference from onboarding if not set
+    if (!migratedData.appState.theme) {
+      const savedTheme = localStorage.getItem('themePreference') as 'light' | 'dark' | null;
+      migratedData.appState.theme = savedTheme || 'system';
     }
     
     return migratedData;
@@ -469,6 +478,15 @@ export class UserDataManager {
   public completeOnboarding(): void {
     this.userData.appState.onboardingCompleted = true;
     this.userData.appState.firstLaunch = false;
+    
+    // Apply theme from onboarding selection if it exists
+    const savedTheme = localStorage.getItem('themePreference') as 'light' | 'dark' | null;
+    if (savedTheme) {
+      this.userData.appState.theme = savedTheme;
+      // Clean up the temporary theme preference
+      localStorage.removeItem('themePreference');
+    }
+    
     this.debouncedSave();
     this.notifyListeners();
   }
@@ -559,7 +577,7 @@ export class UserDataManager {
       return { total: totalSize, breakdown };
     } catch (error) {
       console.error('Failed to calculate data size:', error);
-      return { total: 0, breakdown: {} };
+      return { total: totalSize: 0, breakdown: {} };
     }
   }
 
