@@ -580,6 +580,57 @@ export class CognitiveMonitor {
     this.saveDataToStorage();
   }
   
+  private restoreDataFromStorage = (): void => {
+    try {
+      const savedData = localStorage.getItem(this.STORAGE_KEY);
+      if (!savedData) return;
+      
+      const parsedData = JSON.parse(savedData);
+      
+      // Restore monitoring state
+      this.isMonitoring = parsedData.isMonitoring || false;
+      this.isPaused = parsedData.isPaused || false;
+      this.tabSwitchCount = parsedData.tabSwitchCount || 0;
+      this.totalFocusTime = parsedData.totalFocusTime || 0;
+      
+      if (parsedData.sessionStartTime) {
+        this.sessionStartTime = new Date(parsedData.sessionStartTime);
+      }
+      
+      if (parsedData.lastTabFocusTime) {
+        this.lastTabFocusTime = new Date(parsedData.lastTabFocusTime);
+      }
+      
+      // Restore data if available
+      if (parsedData.data) {
+        this.data = {
+          ...this.data,
+          ...parsedData.data,
+          // Ensure dates are properly restored
+          browserActivity: {
+            ...this.data.browserActivity,
+            ...parsedData.data.browserActivity,
+            lastFocusChange: new Date(parsedData.data.browserActivity?.lastFocusChange || Date.now())
+          },
+          keyboardActivity: {
+            ...this.data.keyboardActivity,
+            ...parsedData.data.keyboardActivity,
+            lastKeystroke: new Date(parsedData.data.keyboardActivity?.lastKeystroke || Date.now())
+          },
+          mouseActivity: {
+            ...this.data.mouseActivity,
+            ...parsedData.data.mouseActivity,
+            lastActivity: new Date(parsedData.data.mouseActivity?.lastActivity || Date.now())
+          }
+        };
+      }
+      
+      this.lastSaveTime = parsedData.timestamp || 0;
+    } catch (error) {
+      console.error('Failed to restore cognitive data from storage:', error);
+    }
+  };
+  
   private saveDataToStorage(): void {
     try {
       const dataToSave = {
