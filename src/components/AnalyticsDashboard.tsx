@@ -178,39 +178,6 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
         </div>
       </div>
 
-      {/* Core Performance Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <StatCard
-          icon={<Clock className="w-6 h-6 text-white" />}
-          title="Daily Focus"
-          value={formatTime(analyticsData.dailyFocusTime)}
-          subtitle="Deep work sessions today"
-          color="bg-blue-500"
-          trend="up"
-          trendValue="+12%"
-        />
-        
-        <StatCard
-          icon={<Calendar className="w-6 h-6 text-white" />}
-          title="Weekly Focus"
-          value={formatTime(analyticsData.weeklyFocusTime)}
-          subtitle="Total focus time this week"
-          color="bg-purple-500"
-          trend="stable"
-          trendValue="±2%"
-        />
-        
-        <StatCard
-          icon={<Brain className="w-6 h-6 text-white" />}
-          title="Focus Quality"
-          value={`${analyticsData.averageFocusQuality}%`}
-          subtitle="Average cognitive performance"
-          color="bg-green-500"
-          trend={analyticsData.averageFocusQuality > 75 ? 'up' : analyticsData.averageFocusQuality < 60 ? 'down' : 'stable'}
-          trendValue={analyticsData.averageFocusQuality > 75 ? '+8%' : analyticsData.averageFocusQuality < 60 ? '-5%' : '±1%'}
-        />
-      </div>
-
       {/* UNIFIED Digital Wellness Overview Section */}
       <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-calm-200 dark:border-calm-700">
         <div className="flex items-center justify-between mb-6">
