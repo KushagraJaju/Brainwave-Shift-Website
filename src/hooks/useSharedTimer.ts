@@ -11,16 +11,21 @@ export const useSharedTimer = (preferences?: UserPreferences) => {
       setTimerState(state);
     });
 
-    // Update timer settings when preferences change
+    return unsubscribe;
+  }, []);
+
+  // Update timer settings when preferences change
+  useEffect(() => {
     if (preferences) {
       timerService.updateSettings({
         focusSessionLength: preferences.focusSessionLength,
         breakLength: preferences.breakLength || 5,
         breakReminders: preferences.breakReminders
       });
+      
+      // Force update the timer to reflect new settings immediately
+      timerService.forceUpdateToCurrentSettings();
     }
-
-    return unsubscribe;
   }, [preferences?.focusSessionLength, preferences?.breakLength, preferences?.breakReminders]);
 
   // Request notification permission when break reminders are enabled

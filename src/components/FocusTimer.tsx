@@ -85,6 +85,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
 
   const handlePresetSelect = (preset: FocusPreset) => {
     if (onUpdatePreferences) {
+      console.log('Selecting preset:', preset.name, 'Focus:', preset.focusMinutes, 'Break:', preset.breakMinutes);
       onUpdatePreferences({
         focusSessionLength: preset.focusMinutes,
         breakLength: preset.breakMinutes,
@@ -138,18 +139,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   const getCurrentPreset = () => {
     if (!preferences) return null;
     
-    // First check if selectedPreset is explicitly set and matches
-    if (preferences.selectedPreset) {
-      const explicitPreset = FOCUS_PRESETS.find(preset => preset.id === preferences.selectedPreset);
-      if (explicitPreset && 
-          explicitPreset.focusMinutes === preferences.focusSessionLength && 
-          explicitPreset.breakMinutes === (preferences.breakLength || 5)) {
-        return explicitPreset;
-      }
-    }
-    
-    // If no explicit preset or it doesn't match current settings, 
-    // try to find a preset that matches the current time settings
+    // Find a preset that matches the current time settings
     const matchingPreset = FOCUS_PRESETS.find(preset => 
       preset.focusMinutes === preferences.focusSessionLength &&
       preset.breakMinutes === (preferences.breakLength || 5)

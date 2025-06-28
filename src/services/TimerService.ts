@@ -48,20 +48,26 @@ export class TimerService {
   }
 
   public updateSettings(newSettings: Partial<TimerSettings>): void {
+    const oldSettings = { ...this.settings };
     this.settings = { ...this.settings, ...newSettings };
     
-    // Update timer times if not active and not paused
+    // Check if focus or break length changed
+    const focusChanged = oldSettings.focusSessionLength !== this.settings.focusSessionLength;
+    const breakChanged = oldSettings.breakLength !== this.settings.breakLength;
+    
+    // Update timer times if not active and not paused, OR if the current session type changed
     if (!this.state.isActive && !this.state.isPaused) {
-      if (this.state.sessionType === 'Focus') {
+      if (this.state.sessionType === 'Focus' && focusChanged) {
         const newTime = this.settings.focusSessionLength * 60;
         this.state.time = newTime;
         this.state.initialTime = newTime;
-      } else {
+        this.notifyListeners();
+      } else if (this.state.sessionType === 'Break' && breakChanged) {
         const newTime = this.settings.breakLength * 60;
         this.state.time = newTime;
         this.state.initialTime = newTime;
+        this.notifyListeners();
       }
-      this.notifyListeners();
     }
   }
 
@@ -123,6 +129,22 @@ export class TimerService {
       } else {
         this.start();
       }
+    }
+  }
+
+  // Force update timer to current settings (useful when preset changes)
+  public forceUpdateToCurrentSettings(): void {
+    if (!this.state.isActive && !this.state.isPaused) {
+      if (this.state.sessionType === 'Focus') {
+        const newTime = this.settings.focusSessionLength * 60;
+        this.state.time = newTime;
+        this.state.initialTime = newTime;
+      } else {
+        const newTime = this.settings.breakLength * 60;
+        this.state.time = newTime;
+        this.state.initialTime = newTime;
+      }
+      this.notifyListeners();
     }
   }
 
