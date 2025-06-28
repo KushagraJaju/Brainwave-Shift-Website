@@ -70,7 +70,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
   }) => (
     <button
       onClick={onSelect}
-      className={`relative w-full p-6 rounded-xl border-2 transition-all duration-300 text-left group hover:scale-105 focus-ring ${
+      className={`relative w-full p-4 rounded-xl border-2 transition-all duration-300 text-left group hover:scale-105 focus-ring ${
         isSelected
           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg scale-105'
           : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
@@ -86,7 +86,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
       )}
       
       {/* Theme icon */}
-      <div className={`inline-flex p-3 rounded-xl mb-4 shadow-lg ${
+      <div className={`inline-flex p-3 rounded-xl mb-3 shadow-lg ${
         theme === 'light' 
           ? 'bg-gradient-to-r from-yellow-400 to-orange-500' 
           : 'bg-gradient-to-r from-indigo-500 to-purple-600'
@@ -98,8 +98,8 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
         )}
       </div>
       
-      {/* Theme info */}
-      <div className="space-y-3">
+      {/* Theme info - REDUCED SPACING */}
+      <div className="space-y-2">
         <div>
           <h4 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-1">
             {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
@@ -112,13 +112,13 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
           </p>
         </div>
         
-        {/* Mini preview */}
-        <div className={`p-3 rounded-lg border ${
+        {/* Mini preview - REDUCED SIZE */}
+        <div className={`p-2 rounded-lg border ${
           theme === 'light' 
             ? 'bg-white border-gray-200' 
             : 'bg-gray-900 border-gray-700'
         }`} aria-hidden="true">
-          <div className="flex items-center space-x-2 mb-2">
+          <div className="flex items-center space-x-2 mb-1">
             <div className={`w-2 h-2 rounded-full ${
               theme === 'light' ? 'bg-blue-500' : 'bg-blue-400'
             }`}></div>
@@ -135,7 +135,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
           </div>
         </div>
         
-        {/* Features */}
+        {/* Features - CONDENSED */}
         <div className="space-y-1">
           {(theme === 'light' 
             ? ['Bright, clean interface', 'High contrast text', 'Vibrant colors']
@@ -165,11 +165,11 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
       description: 'Your AI-powered cognitive wellness companion',
       icon: <Brain className="w-8 h-8" aria-hidden="true" />,
       content: (
-        <div className="text-center space-y-6">
-          <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6" aria-hidden="true">
-            <Brain className="w-12 h-12 text-white" />
+        <div className="text-center space-y-4">
+          <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
+            <Brain className="w-10 h-10 text-white" />
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
               Transform Your Mental Performance
             </h3>
@@ -177,14 +177,14 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
               Brainwave Shift uses advanced AI to monitor your cognitive state in real-time and provides 
               personalized interventions to maintain peak mental performance.
             </p>
-            <div className="grid grid-cols-2 gap-4 mt-6">
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                <Activity className="w-6 h-6 text-blue-500 dark:text-blue-400 mb-2" aria-hidden="true" />
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                <Activity className="w-5 h-5 text-blue-500 dark:text-blue-400 mb-1" aria-hidden="true" />
                 <div className="text-sm font-medium text-blue-800 dark:text-blue-300">Real-time Monitoring</div>
                 <div className="text-xs text-blue-600 dark:text-blue-400">Track focus & cognitive load</div>
               </div>
-              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
-                <Sparkles className="w-6 h-6 text-purple-500 dark:text-purple-400 mb-2" aria-hidden="true" />
+              <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border border-purple-200 dark:border-purple-800">
+                <Sparkles className="w-5 h-5 text-purple-500 dark:text-purple-400 mb-1" aria-hidden="true" />
                 <div className="text-sm font-medium text-purple-800 dark:text-purple-300">AI-Powered Insights</div>
                 <div className="text-xs text-purple-600 dark:text-purple-400">Personalized recommendations</div>
               </div>
@@ -199,12 +199,12 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
       description: 'Select your preferred visual experience',
       icon: <Palette className="w-8 h-8" aria-hidden="true" />,
       content: (
-        <div className="space-y-6">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
+        <div className="space-y-4">
+          <div className="text-center mb-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3" aria-hidden="true">
               <Palette className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-1">
               Personalize Your Experience
             </h3>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed max-w-md mx-auto">
@@ -212,7 +212,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
             <ThemePreview
               theme="light"
               isSelected={selectedTheme === 'light'}
@@ -225,12 +225,12 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
             />
           </div>
           
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800 max-w-md mx-auto">
-            <div className="flex items-start space-x-3">
-              <Sparkles className="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 flex-shrink-0" aria-hidden="true" />
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-3 border border-blue-200 dark:border-blue-800 max-w-md mx-auto">
+            <div className="flex items-start space-x-2">
+              <Sparkles className="w-4 h-4 text-blue-500 dark:text-blue-400 mt-0.5 flex-shrink-0" aria-hidden="true" />
               <div>
-                <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-1">Pro Tip</h4>
-                <p className="text-sm text-blue-700 dark:text-blue-400">
+                <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-1 text-sm">Pro Tip</h4>
+                <p className="text-xs text-blue-700 dark:text-blue-400">
                   Dark mode can help reduce eye strain during long work sessions, while light mode 
                   provides excellent readability in bright environments.
                 </p>
@@ -247,33 +247,33 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
       icon: <Brain className="w-8 h-8" aria-hidden="true" />,
       highlight: 'monitor',
       content: (
-        <div className="space-y-6">
-          <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-xl border border-blue-200 dark:border-blue-800">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center" aria-hidden="true">
-                <Brain className="w-6 h-6 text-white" />
+        <div className="space-y-4">
+          <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center" aria-hidden="true">
+                <Brain className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h4 className="font-semibold text-gray-800 dark:text-gray-200">Continuous Analysis</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Monitor your cognitive performance</p>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-3">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">85</div>
+                <div className="text-xl font-bold text-blue-600 dark:text-blue-400">85</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">Focus Score</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600 dark:text-green-400">Fresh</div>
+                <div className="text-xl font-bold text-green-600 dark:text-green-400">Fresh</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">Cognitive Load</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">Calm</div>
+                <div className="text-xl font-bold text-purple-600 dark:text-purple-400">Calm</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">Emotional State</div>
               </div>
             </div>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400" aria-hidden="true" />
               <span className="text-sm text-gray-700 dark:text-gray-300">Tracks browser activity and typing patterns</span>
@@ -297,12 +297,12 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
       icon: <Timer className="w-8 h-8" aria-hidden="true" />,
       highlight: 'focus',
       content: (
-        <div className="space-y-6">
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-xl border border-green-200 dark:border-green-800">
-            <div className="flex items-center justify-between mb-4">
+        <div className="space-y-4">
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 rounded-xl border border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center" aria-hidden="true">
-                  <Timer className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center" aria-hidden="true">
+                  <Timer className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800 dark:text-gray-200">Smart Focus Sessions</h4>
@@ -310,26 +310,26 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-3xl font-bold text-green-600 dark:text-green-400">25:00</div>
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400">25:00</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">Focus Session</div>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-white dark:bg-gray-800 p-3 rounded-lg text-center border border-gray-200 dark:border-gray-700">
+            <div className="grid grid-cols-3 gap-2">
+              <div className="bg-white dark:bg-gray-800 p-2 rounded-lg text-center border border-gray-200 dark:border-gray-700">
                 <div className="text-sm font-medium text-gray-800 dark:text-gray-200">Pomodoro</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">25m/5m</div>
               </div>
-              <div className="bg-white dark:bg-gray-800 p-3 rounded-lg text-center border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800 p-2 rounded-lg text-center border border-gray-200 dark:border-gray-700">
                 <div className="text-sm font-medium text-gray-800 dark:text-gray-200">Deep Work</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">45m/15m</div>
               </div>
-              <div className="bg-white dark:bg-gray-800 p-3 rounded-lg text-center border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800 p-2 rounded-lg text-center border border-gray-200 dark:border-gray-700">
                 <div className="text-sm font-medium text-gray-800 dark:text-gray-200">Flow State</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">90m/15m</div>
               </div>
             </div>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400" aria-hidden="true" />
               <span className="text-sm text-gray-700 dark:text-gray-300">Multiple preset configurations available</span>
@@ -353,29 +353,29 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
       icon: <Smartphone className="w-8 h-8" aria-hidden="true" />,
       highlight: 'interventions',
       content: (
-        <div className="space-y-6">
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 rounded-xl border border-purple-200 dark:border-purple-800">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center" aria-hidden="true">
-                <Smartphone className="w-6 h-6 text-white" />
+        <div className="space-y-4">
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-xl border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center" aria-hidden="true">
+                <Smartphone className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h4 className="font-semibold text-gray-800 dark:text-gray-200">Social Media Tracking</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Mindful usage insights</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">45m</div>
+                <div className="text-xl font-bold text-purple-600 dark:text-purple-400">45m</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">Daily Usage</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600 dark:text-green-400">3</div>
+                <div className="text-xl font-bold text-green-600 dark:text-green-400">3</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">Mindful Breaks</div>
               </div>
             </div>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400" aria-hidden="true" />
               <span className="text-sm text-gray-700 dark:text-gray-300">Tracks social media usage patterns</span>
@@ -399,30 +399,30 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
       icon: <Heart className="w-8 h-8" aria-hidden="true" />,
       highlight: 'interventions',
       content: (
-        <div className="space-y-6">
-          <div className="bg-gradient-to-br from-rose-50 to-orange-50 dark:from-rose-900/20 dark:to-orange-900/20 p-6 rounded-xl border border-rose-200 dark:border-rose-800">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="w-12 h-12 bg-rose-500 rounded-full flex items-center justify-center" aria-hidden="true">
-                <Heart className="w-6 h-6 text-white" />
+        <div className="space-y-4">
+          <div className="bg-gradient-to-br from-rose-50 to-orange-50 dark:from-rose-900/20 dark:to-orange-900/20 p-4 rounded-xl border border-rose-200 dark:border-rose-800">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center" aria-hidden="true">
+                <Heart className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h4 className="font-semibold text-gray-800 dark:text-gray-200">Smart Recommendations</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Based on your cognitive state</p>
               </div>
             </div>
-            <div className="space-y-3">
-              <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="space-y-2">
+              <div className="bg-white dark:bg-gray-800 p-2 rounded-lg border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-blue-500 rounded-full" aria-hidden="true"></div>
                     <span className="text-sm font-medium text-gray-800 dark:text-gray-200">Take a 5-minute break</span>
                   </div>
                   <span className="text-xs text-blue-600 dark:text-blue-400">Medium priority</span>
                 </div>
               </div>
-              <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800 p-2 rounded-lg border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full" aria-hidden="true"></div>
                     <span className="text-sm font-medium text-gray-800 dark:text-gray-200">Deep breathing exercise</span>
                   </div>
@@ -431,7 +431,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
               </div>
             </div>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400" aria-hidden="true" />
               <span className="text-sm text-gray-700 dark:text-gray-300">Breathing exercises and movement prompts</span>
@@ -455,29 +455,29 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
       icon: <BarChart3 className="w-8 h-8" aria-hidden="true" />,
       highlight: 'analytics',
       content: (
-        <div className="space-y-6">
-          <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 p-6 rounded-xl border border-indigo-200 dark:border-indigo-800">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center" aria-hidden="true">
-                <BarChart3 className="w-6 h-6 text-white" />
+        <div className="space-y-4">
+          <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 p-4 rounded-xl border border-indigo-200 dark:border-indigo-800">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center" aria-hidden="true">
+                <BarChart3 className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h4 className="font-semibold text-gray-800 dark:text-gray-200">Detailed Insights</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Track your progress over time</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div className="text-center">
-                <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">4h 32m</div>
+                <div className="text-xl font-bold text-indigo-600 dark:text-indigo-400">4h 32m</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">Weekly Focus</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600 dark:text-green-400">78%</div>
+                <div className="text-xl font-bold text-green-600 dark:text-green-400">78%</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">Avg Quality</div>
               </div>
             </div>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400" aria-hidden="true" />
               <span className="text-sm text-gray-700 dark:text-gray-300">Daily and weekly performance tracking</span>
@@ -501,27 +501,27 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
       icon: <Settings className="w-8 h-8" aria-hidden="true" />,
       highlight: 'settings',
       content: (
-        <div className="space-y-6">
-          <div className="bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20 p-6 rounded-xl border border-gray-200 dark:border-gray-800">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="w-12 h-12 bg-gray-500 rounded-full flex items-center justify-center" aria-hidden="true">
-                <Settings className="w-6 h-6 text-white" />
+        <div className="space-y-4">
+          <div className="bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20 p-4 rounded-xl border border-gray-200 dark:border-gray-800">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center" aria-hidden="true">
+                <Settings className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h4 className="font-semibold text-gray-800 dark:text-gray-200">Tailored to You</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Adjust settings to match your workflow</p>
               </div>
             </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                 <span className="text-sm text-gray-700 dark:text-gray-300">Intervention Frequency</span>
                 <span className="text-sm font-medium text-blue-600 dark:text-blue-400">Normal</span>
               </div>
-              <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                 <span className="text-sm text-gray-700 dark:text-gray-300">Focus Session Length</span>
                 <span className="text-sm font-medium text-blue-600 dark:text-blue-400">25 minutes</span>
               </div>
-              <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                 <span className="text-sm text-gray-700 dark:text-gray-300">Theme</span>
                 <span className="text-sm font-medium text-green-600 dark:text-green-400">
                   {selectedTheme === 'light' ? 'Light Mode' : 'Dark Mode'}
@@ -529,7 +529,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
               </div>
             </div>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400" aria-hidden="true" />
               <span className="text-sm text-gray-700 dark:text-gray-300">Customize intervention frequency and types</span>
@@ -552,11 +552,11 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
       description: 'Start optimizing your cognitive performance',
       icon: <Target className="w-8 h-8" aria-hidden="true" />,
       content: (
-        <div className="text-center space-y-6">
-          <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6" aria-hidden="true">
-            <CheckCircle className="w-12 h-12 text-white" />
+        <div className="text-center space-y-4">
+          <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
+            <CheckCircle className="w-10 h-10 text-white" />
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
               You're All Set!
             </h3>
@@ -564,9 +564,9 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
               Brainwave Shift is now ready to help you achieve peak cognitive performance. 
               Your AI-powered mental co-pilot will start monitoring and providing insights immediately.
             </p>
-            <div className="bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 p-6 rounded-xl border border-blue-200 dark:border-blue-800">
-              <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Quick Start Tips:</h4>
-              <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+            <div className="bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-800">
+              <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Quick Start Tips:</h4>
+              <div className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-blue-500 rounded-full" aria-hidden="true"></div>
                   <span>Start with a 25-minute Pomodoro session</span>
@@ -617,19 +617,21 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
   return (
     <div className={`modal-overlay-critical modal-open flex items-center justify-center p-4`} role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
       <div className={`
-        modal-content-fix bg-white dark:bg-calm-800 rounded-2xl shadow-2xl dark:shadow-gentle-dark max-w-4xl w-full max-h-[90vh] overflow-hidden
+        modal-content-fix bg-white dark:bg-calm-800 rounded-2xl shadow-2xl dark:shadow-gentle-dark max-w-4xl w-full overflow-hidden
         transform transition-all duration-500 ease-out border border-calm-200 dark:border-calm-700
         ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}
-      `}>
+      `}
+      style={{ maxHeight: '85vh' }} // FIXED: Limit max height to ensure visibility on smaller screens
+      >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-700 dark:from-blue-700 dark:to-purple-800 p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-purple-700 dark:from-blue-700 dark:to-purple-800 p-4 text-white">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm" aria-hidden="true">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm" aria-hidden="true">
                 {currentStepData.icon}
               </div>
               <div>
-                <h2 id="onboarding-title" className="text-xl font-semibold">{currentStepData.title}</h2>
+                <h2 id="onboarding-title" className="text-lg font-semibold">{currentStepData.title}</h2>
                 <p className="text-blue-100 dark:text-blue-200 text-sm">{currentStepData.description}</p>
               </div>
             </div>
@@ -643,8 +645,8 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
           </div>
           
           {/* Progress Bar */}
-          <div className="mt-6">
-            <div className="flex items-center justify-between mb-2">
+          <div className="mt-4">
+            <div className="flex items-center justify-between mb-1">
               <span className="text-sm text-blue-100 dark:text-blue-200">
                 Step {currentStep + 1} of {steps.length}
               </span>
@@ -661,16 +663,16 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-8 overflow-y-auto max-h-[60vh]">
+        {/* Content - FIXED: Reduced max height and added padding bottom for scrolling */}
+        <div className="p-6 overflow-y-auto" style={{ maxHeight: '50vh', paddingBottom: '1rem' }}>
           <div className="animate-fade-in">
             {currentStepData.content}
           </div>
         </div>
 
         {/* Step Indicators */}
-        <div className="px-8 py-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-center space-x-2 mb-4" role="tablist">
+        <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-center space-x-2" role="tablist">
             {steps.map((step, index) => (
               <button
                 key={step.id}
@@ -691,13 +693,13 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
           </div>
         </div>
 
-        {/* Footer - FIXED: Increased bottom padding and enhanced button visibility */}
-        <div className="bg-gray-50 dark:bg-gray-800 px-8 py-6 pb-10 flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
-          <div className="flex items-center space-x-4">
+        {/* Footer - FIXED: Reduced padding, fixed button positioning */}
+        <div className="bg-gray-50 dark:bg-gray-800 px-6 py-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center space-x-3">
             <button
               onClick={handlePrevious}
               disabled={currentStep === 0}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors focus-ring ${
+              className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors focus-ring ${
                 currentStep === 0
                   ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700'
@@ -717,14 +719,10 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
             </button>
           </div>
           
-          {/* FIXED: Enhanced Next Button with Maximum Visibility and Safe Bottom Margin */}
+          {/* FIXED: Enhanced Next Button with Maximum Visibility */}
           <button
             onClick={handleNext}
-            className="flex items-center space-x-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-all duration-200 font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 focus-ring border-2 border-blue-700 dark:border-blue-400 mb-2"
-            style={{ 
-              minHeight: '48px', // Ensure minimum touch target
-              marginBottom: '12px' // Extra safe bottom margin
-            }}
+            className="flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 focus-ring"
             aria-label={isLastStep ? "Complete onboarding and get started" : "Go to next step"}
           >
             <span className="text-base font-semibold">{isLastStep ? 'Get Started' : 'Next'}</span>
