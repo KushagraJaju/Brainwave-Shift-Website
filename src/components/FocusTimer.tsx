@@ -134,20 +134,40 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     toggle();
   };
 
-  // FIXED: Get current preset info - only return preset if selectedPreset ID matches
+  // FIXED: Improved preset detection logic
   const getCurrentPreset = () => {
     if (!preferences) return null;
     
-    // Only return a preset if selectedPreset is explicitly set and matches a preset ID
+    // First check if selectedPreset is explicitly set and matches
     if (preferences.selectedPreset) {
-      return FOCUS_PRESETS.find(preset => preset.id === preferences.selectedPreset) || null;
+      const explicitPreset = FOCUS_PRESETS.find(preset => preset.id === preferences.selectedPreset);
+      if (explicitPreset && 
+          explicitPreset.focusMinutes === preferences.focusSessionLength && 
+          explicitPreset.breakMinutes === (preferences.breakLength || 5)) {
+        return explicitPreset;
+      }
     }
     
-    // If no selectedPreset is set, return null (indicating custom settings)
-    return null;
+    // If no explicit preset or it doesn't match current settings, 
+    // try to find a preset that matches the current time settings
+    const matchingPreset = FOCUS_PRESETS.find(preset => 
+      preset.focusMinutes === preferences.focusSessionLength &&
+      preset.breakMinutes === (preferences.breakLength || 5)
+    );
+    
+    return matchingPreset || null;
   };
 
   const currentPreset = getCurrentPreset();
+
+  // Helper function to check if a specific preset is currently selected
+  const isPresetSelected = (preset: FocusPreset) => {
+    if (!preferences) return false;
+    
+    // Check if this preset matches current settings
+    return preset.focusMinutes === preferences.focusSessionLength &&
+           preset.breakMinutes === (preferences.breakLength || 5);
+  };
 
   const getPresetIcon = (iconName: string) => {
     switch (iconName) {
@@ -251,7 +271,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                 key={preset.id}
                 onClick={() => handlePresetSelect(preset)}
                 className={`p-3 rounded-lg border-2 transition-all duration-200 text-center touch-target focus-ring ${
-                  currentPreset?.id === preset.id
+                  isPresetSelected(preset)
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
                     : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                 }`}
@@ -333,7 +353,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                       key={preset.id}
                       onClick={() => handlePresetSelect(preset)}
                       className={`w-full p-3 rounded-lg border-2 transition-all duration-200 text-left touch-target focus-ring ${
-                        currentPreset?.id === preset.id
+                        isPresetSelected(preset)
                           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                           : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
