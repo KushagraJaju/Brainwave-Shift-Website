@@ -563,9 +563,19 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              {/* Fixed Timer Text Display */}
+              {/* Enhanced Timer Text Display with Professional Monospace Font */}
               <div className="text-center">
-                <div className="text-5xl font-mono font-bold text-gray-900 dark:text-white mb-2 tracking-tight leading-none">
+                <div 
+                  className="text-6xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight leading-none select-none"
+                  style={{
+                    fontFamily: "'SF Mono', 'Monaco', 'Consolas', 'Roboto Mono', 'Menlo', 'Courier New', monospace",
+                    fontWeight: '700',
+                    letterSpacing: '-0.02em',
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+                    fontFeatureSettings: '"tnum" 1, "lnum" 1', // Tabular and lining numbers for consistent spacing
+                    fontVariantNumeric: 'tabular-nums lining-nums'
+                  }}
+                >
                   {formatTime(time)}
                 </div>
                 <div className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">
