@@ -36,7 +36,8 @@ interface OnboardingFlowProps {
 export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSkip }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark'>('light');
+  // FIXED: Start with dark theme as default to match app startup
+  const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark'>('dark');
 
   useEffect(() => {
     // Animate in after a short delay
@@ -685,7 +686,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer - FIXED BUTTON VISIBILITY */}
         <div className="bg-gray-50 dark:bg-gray-800 px-8 py-6 flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-4">
             <button
@@ -709,15 +710,16 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
             </button>
           </div>
           
+          {/* FIXED: Enhanced Next Button with Better Visibility */}
           <button
             onClick={handleNext}
-            className="flex items-center space-x-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg transition-colors font-medium shadow-lg hover:shadow-xl transform hover:scale-105 focus-ring"
+            className="flex items-center space-x-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 focus-ring border-2 border-blue-700 dark:border-blue-400"
           >
-            <span>{isLastStep ? 'Get Started' : 'Next'}</span>
+            <span className="text-base">{isLastStep ? 'Get Started' : 'Next'}</span>
             {isLastStep ? (
-              <Play className="w-4 h-4" />
+              <Play className="w-5 h-5" />
             ) : (
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5" />
             )}
           </button>
         </div>
