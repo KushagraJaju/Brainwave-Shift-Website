@@ -3,8 +3,6 @@ import {
   Monitor, 
   Bell, 
   Shield, 
-  Clock, 
-  Volume2, 
   Smartphone,
   Save,
   RotateCcw,
@@ -195,7 +193,7 @@ export const Settings: React.FC<SettingsProps> = ({
 
             {/* Sound Settings */}
             <SettingCard
-              icon={<Volume2 className="w-5 h-5" />}
+              icon={<Monitor className="w-5 h-5" />}
               title="Sound Notifications"
               description="Configure audio notifications for timer events and focus sessions"
             >
@@ -223,39 +221,6 @@ export const Settings: React.FC<SettingsProps> = ({
                     <option value="Normal">Normal - Balanced approach</option>
                     <option value="Frequent">Frequent - Proactive wellness</option>
                   </select>
-                </div>
-              </div>
-            </SettingCard>
-
-            <SettingCard
-              icon={<Clock className="w-5 h-5" />}
-              title="Focus Sessions"
-              description="Customize your focus timer and work session preferences"
-            >
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Default Focus Session Length
-                  </label>
-                  <div className="flex items-center space-x-4">
-                    <input
-                      type="range"
-                      min="15"
-                      max="60"
-                      step="5"
-                      value={preferences.focusSessionLength}
-                      onChange={(e) => onUpdatePreferences({
-                        focusSessionLength: parseInt(e.target.value)
-                      })}
-                      className="flex-1 slider"
-                    />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[60px]">
-                      {preferences.focusSessionLength} min
-                    </span>
-                  </div>
-                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                    Current setting: {preferences.focusSessionLength} minutes
-                  </div>
                 </div>
               </div>
             </SettingCard>
