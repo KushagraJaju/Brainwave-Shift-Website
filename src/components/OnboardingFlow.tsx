@@ -727,7 +727,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
               ring-4 ring-blue-300 dark:ring-blue-500 ring-opacity-50
               focus:outline-none focus:ring-8 focus:ring-blue-400 focus:ring-opacity-75
               relative overflow-hidden
-              min-w-[160px] min-h-[56px]
+              min-w-[100px] min-h-[45px]
             "
             style={{
               background: 'linear-gradient(135deg, #1e40af 0%, #1d4ed8 50%, #2563eb 100%)',
