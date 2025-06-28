@@ -147,7 +147,7 @@ function App() {
         );
       case 'settings':
         return (
-          <div className="animate-fade-in">
+          <div className="animate-fade-in will-change-opacity will-change-transform">
             <Settings 
               preferences={preferences}
               onUpdatePreferences={updatePreferences}
