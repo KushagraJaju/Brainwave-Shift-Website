@@ -22,10 +22,38 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
   if (!isOpen) return null;
 
   const smartwatchProviders = [
-    { id: 'apple', name: 'Apple Watch', icon: '⌚', description: 'Heart rate, activity, sleep data' },
-    { id: 'fitbit', name: 'Fitbit', icon: '🏃', description: 'Comprehensive health tracking' },
-    { id: 'garmin', name: 'Garmin', icon: '🏔️', description: 'Advanced fitness metrics' },
-    { id: 'samsung', name: 'Samsung Galaxy Watch', icon: '⌚', description: 'Health and wellness data' }
+    { 
+      id: 'apple', 
+      name: 'Apple Watch', 
+      icon: '⌚', 
+      description: 'Heart rate, activity, sleep data',
+      enabled: false,
+      comingSoon: true
+    },
+    { 
+      id: 'fitbit', 
+      name: 'Fitbit', 
+      icon: '🏃', 
+      description: 'Comprehensive health tracking',
+      enabled: false,
+      comingSoon: true
+    },
+    { 
+      id: 'garmin', 
+      name: 'Garmin', 
+      icon: '🏔️', 
+      description: 'Advanced fitness metrics',
+      enabled: false,
+      comingSoon: true
+    },
+    { 
+      id: 'samsung', 
+      name: 'Samsung Galaxy Watch', 
+      icon: '⌚', 
+      description: 'Health and wellness data',
+      enabled: false,
+      comingSoon: true
+    }
   ];
 
   const calendarProviders = [
@@ -221,6 +249,27 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
               </div>
             )}
 
+            {/* Coming Soon Notice for Smartwatch */}
+            {deviceType === 'smartwatch' && (
+              <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                <div className="flex items-start space-x-3">
+                  <Clock className="w-5 h-5 text-yellow-500 dark:text-yellow-400 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-yellow-800 dark:text-yellow-300 mb-1">Smartwatch Integration Coming Soon</h4>
+                    <p className="text-sm text-yellow-700 dark:text-yellow-400 mb-2">
+                      We're working on secure integrations with major smartwatch providers to bring you physiological monitoring capabilities.
+                    </p>
+                    <div className="text-xs text-yellow-600 dark:text-yellow-500 space-y-1">
+                      <div>• Apple Watch - Health data integration</div>
+                      <div>• Fitbit - Comprehensive wellness tracking</div>
+                      <div>• Garmin - Advanced fitness metrics</div>
+                      <div>• Samsung Galaxy Watch - Health monitoring</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Privacy Notice */}
             <div className="mb-6 p-4 bg-gray-50 dark:bg-calm-700 rounded-lg border border-gray-200 dark:border-calm-600">
               <div className="flex items-start space-x-3">
@@ -243,16 +292,25 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
               >
                 Cancel
               </button>
-              <button
-                onClick={handleConnect}
-                disabled={!selectedProvider || !providers.find(p => p.id === selectedProvider && ('enabled' in p ? p.enabled : true))}
-                className="px-6 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
-              >
-                {selectedProvider && providers.find(p => p.id === selectedProvider && ('oauth' in p ? p.oauth : false))
-                  ? `Connect via OAuth`
-                  : `Connect ${selectedProvider ? providers.find(p => p.id === selectedProvider)?.name : 'Device'}`
-                }
-              </button>
+              {deviceType === 'calendar' ? (
+                <button
+                  onClick={handleConnect}
+                  disabled={!selectedProvider || !providers.find(p => p.id === selectedProvider && ('enabled' in p ? p.enabled : true))}
+                  className="px-6 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                >
+                  {selectedProvider && providers.find(p => p.id === selectedProvider && ('oauth' in p ? p.oauth : false))
+                    ? `Connect via OAuth`
+                    : `Connect ${selectedProvider ? providers.find(p => p.id === selectedProvider)?.name : 'Device'}`
+                  }
+                </button>
+              ) : (
+                <button
+                  disabled
+                  className="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 rounded-lg cursor-not-allowed"
+                >
+                  Coming Soon
+                </button>
+              )}
             </div>
           </div>
         )}
