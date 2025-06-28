@@ -577,7 +577,7 @@ export class UserDataManager {
       return { total: totalSize, breakdown };
     } catch (error) {
       console.error('Failed to calculate data size:', error);
-      return { total: totalSize: 0, breakdown: {} };
+      return { total: 0, breakdown: {} };
     }
   }
 
