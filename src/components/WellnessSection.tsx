@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { InterventionPanel } from './InterventionPanel';
 import { DigitalWellnessPanel } from './DigitalWellnessPanel';
+import { BreathingExercise, BreathingType } from './BreathingExercise';
 import { useInterventions } from '../hooks/useInterventions';
 import { useDigitalWellness } from '../hooks/useDigitalWellness';
 import { CognitiveState, UserPreferences } from '../types';
@@ -24,6 +25,29 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
 }) => {
   const { interventions, completeIntervention, dismissIntervention } = useInterventions(cognitiveState, preferences);
   const { data: digitalWellnessData } = useDigitalWellness();
+  
+  // Breathing exercise state
+  const [breathingExercise, setBreathingExercise] = React.useState<{
+    isOpen: boolean;
+    type: BreathingType | null;
+  }>({
+    isOpen: false,
+    type: null
+  });
+
+  const startBreathingExercise = (type: BreathingType) => {
+    setBreathingExercise({ isOpen: true, type });
+  };
+
+  const closeBreathingExercise = () => {
+    setBreathingExercise({ isOpen: false, type: null });
+  };
+
+  const handleBreathingComplete = () => {
+    // Record mindful break when exercise is completed
+    // This could be connected to your analytics system
+    console.log('Breathing exercise completed');
+  };
 
   const WellnessCard: React.FC<{
     title: string;
@@ -139,7 +163,10 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
               <p className="text-body-small text-calm-600 dark:text-calm-400 mb-4 flex-1">
                 Inhale for 4, hold for 7, exhale for 8. Perfect for stress relief and focus.
               </p>
-              <button className="btn-primary w-full">
+              <button 
+                onClick={() => startBreathingExercise('4-7-8')}
+                className="btn-primary w-full"
+              >
                 Start Exercise
               </button>
             </div>
@@ -152,7 +179,10 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
               <p className="text-body-small text-calm-600 dark:text-calm-400 mb-4 flex-1">
                 Equal counts for inhale, hold, exhale, hold. Great for maintaining calm focus.
               </p>
-              <button className="btn-primary w-full">
+              <button 
+                onClick={() => startBreathingExercise('box')}
+                className="btn-primary w-full"
+              >
                 Start Exercise
               </button>
             </div>
@@ -232,6 +262,16 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
           </div>
         </WellnessCard>
       </div>
+      
+      {/* Breathing Exercise Modal */}
+      {breathingExercise.isOpen && breathingExercise.type && (
+        <BreathingExercise
+          type={breathingExercise.type}
+          isOpen={breathingExercise.isOpen}
+          onClose={closeBreathingExercise}
+          onComplete={handleBreathingComplete}
+        />
+      )}
     </div>
   );
 };
