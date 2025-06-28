@@ -11,8 +11,8 @@ export class SoundService {
   private settings: SoundSettings = {
     enabled: true,
     volume: 0.7,
-    focusCompleteSound: 'bell',
-    breakCompleteSound: 'chime'
+    focusCompleteSound: 'chime', // Changed default to 'chime'
+    breakCompleteSound: 'chime'  // Changed default to 'chime'
   };
 
   constructor() {
@@ -163,7 +163,7 @@ export class SoundService {
         this.createChimeSound();
         break;
       default:
-        this.createBellSound(800, 2.5);
+        this.createChimeSound(); // Default to chime
     }
   }
 
@@ -185,7 +185,7 @@ export class SoundService {
         this.createBellSound(600, 1.5);
         break;
       default:
-        this.createNotificationSound();
+        this.createChimeSound(); // Default to chime
     }
   }
 

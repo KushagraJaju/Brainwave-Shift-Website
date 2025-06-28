@@ -57,7 +57,7 @@ export const SoundControls: React.FC<SoundControlsProps> = ({
             Volume: {Math.round(settings.volume * 100)}%
           </label>
           <div className="flex items-center space-x-3">
-            <VolumeX className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+            <VolumeX className="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
             <input
               type="range"
               min="0"
@@ -67,7 +67,7 @@ export const SoundControls: React.FC<SoundControlsProps> = ({
               onChange={(e) => setVolume(parseFloat(e.target.value))}
               className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
             />
-            <Volume2 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            <Volume2 className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" />
           </div>
         </div>
       )}
@@ -82,22 +82,25 @@ export const SoundControls: React.FC<SoundControlsProps> = ({
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Focus Session Complete
             </label>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <select
                 value={settings.focusCompleteSound}
                 onChange={(e) => updateSettings({ focusCompleteSound: e.target.value })}
-                className="flex-1 form-select text-sm"
+                className="flex-1 form-select text-sm min-h-[44px]"
               >
-                <option value="bell">Meditation Bell</option>
                 <option value="chime">Gentle Chime</option>
+                <option value="bell">Meditation Bell</option>
               </select>
-              <button
-                onClick={testFocusSound}
-                className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors touch-target"
-                title="Test focus complete sound"
-              >
-                <Play className="w-4 h-4" />
-              </button>
+              <div className="flex items-center justify-center">
+                <button
+                  onClick={testFocusSound}
+                  className="flex items-center justify-center w-11 h-11 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors touch-target focus-ring"
+                  title="Test focus complete sound"
+                  aria-label="Test focus complete sound"
+                >
+                  <Play className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
 
@@ -106,23 +109,26 @@ export const SoundControls: React.FC<SoundControlsProps> = ({
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Break Session Complete
             </label>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <select
                 value={settings.breakCompleteSound}
                 onChange={(e) => updateSettings({ breakCompleteSound: e.target.value })}
-                className="flex-1 form-select text-sm"
+                className="flex-1 form-select text-sm min-h-[44px]"
               >
                 <option value="chime">Gentle Chime</option>
                 <option value="notification">Soft Notification</option>
                 <option value="bell">Light Bell</option>
               </select>
-              <button
-                onClick={testBreakSound}
-                className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors touch-target"
-                title="Test break complete sound"
-              >
-                <Play className="w-4 h-4" />
-              </button>
+              <div className="flex items-center justify-center">
+                <button
+                  onClick={testBreakSound}
+                  className="flex items-center justify-center w-11 h-11 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors touch-target focus-ring"
+                  title="Test break complete sound"
+                  aria-label="Test break complete sound"
+                >
+                  <Play className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
 
@@ -139,6 +145,7 @@ export const SoundControls: React.FC<SoundControlsProps> = ({
               className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus-ring ${
                 settings.tickSound ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
               }`}
+              aria-label={settings.tickSound ? 'Disable tick sound' : 'Enable tick sound'}
             >
               <span
                 className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
