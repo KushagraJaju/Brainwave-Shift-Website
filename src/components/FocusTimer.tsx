@@ -316,7 +316,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
 
       {/* Quick Preset Buttons - Only show when timer is not active */}
       {!isActive && !isPaused && (
-        <div className="mb-6">
+        <div className="mb-8">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Quick Presets:</span>
             <button
@@ -525,51 +525,13 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         </div>
       )}
 
-      {/* NEW HORIZONTAL TIMER LAYOUT */}
+      {/* IMPROVED TIMER LAYOUT - Removed Progress Circle, Added Spacing */}
       <div className="flex-1 flex flex-col justify-center">
-        <div className="flex items-center justify-center space-x-8 mb-8">
-          
-          {/* LEFT: Progress Ring */}
+        {/* Main Timer Display - Centered with More Spacing */}
+        <div className="flex items-center justify-center mb-12">
+          {/* CENTER: Enlarged Timer Circle with More Space */}
           <div className="flex flex-col items-center">
-            <div className="relative w-20 h-20 mb-2">
-              <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 80 80">
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="32"
-                  stroke="currentColor"
-                  strokeWidth="6"
-                  fill="none"
-                  className="text-gray-200 dark:text-gray-700"
-                />
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="32"
-                  stroke="currentColor"
-                  strokeWidth="6"
-                  fill="none"
-                  strokeDasharray={`${progress * 2.01} 201`}
-                  className={`transition-all duration-1000 ease-out ${
-                    sessionType === 'Focus' ? 'text-blue-500 dark:text-blue-400' : 'text-green-500 dark:text-green-400'
-                  }`}
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">
-                  {Math.round(progress)}%
-                </span>
-              </div>
-            </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              Progress
-            </div>
-          </div>
-
-          {/* CENTER: Enlarged Timer Circle */}
-          <div className="flex flex-col items-center">
-            <div className="relative w-64 h-64 mb-4">
+            <div className="relative w-64 h-64 mb-8">
               <svg className="w-64 h-64 transform -rotate-90" viewBox="0 0 264 264">
                 <circle
                   cx="132"
@@ -615,40 +577,36 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               </div>
             </div>
           </div>
-
-          {/* RIGHT: Play/Pause Button */}
-          <div className="flex flex-col items-center">
-            <button
-              onClick={toggleTimer}
-              className={`flex items-center justify-center w-20 h-20 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-opacity-50 mb-2 ${
-                isActive
-                  ? 'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white focus:ring-red-300'
-                  : 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white focus:ring-blue-300'
-              }`}
-              aria-label={isActive ? 'Pause timer' : 'Start timer'}
-            >
-              {isActive ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 ml-1" />}
-            </button>
-            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              {isActive ? 'Pause' : isPaused ? 'Resume' : 'Start'}
-            </div>
-          </div>
         </div>
 
-        {/* Reset Button - Centered below the horizontal layout with NEW RESTART ICON */}
-        <div className="flex justify-center mb-8">
+        {/* Button Group - Play/Pause and Restart Side by Side */}
+        <div className="flex justify-center items-center space-x-6 mb-12">
+          {/* Play/Pause Button */}
+          <button
+            onClick={toggleTimer}
+            className={`flex items-center justify-center w-20 h-20 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-opacity-50 ${
+              isActive
+                ? 'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white focus:ring-red-300'
+                : 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white focus:ring-blue-300'
+            }`}
+            aria-label={isActive ? 'Pause timer' : 'Start timer'}
+          >
+            {isActive ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 ml-1" />}
+          </button>
+
+          {/* Restart Button - Now Next to Play/Pause */}
           <button
             onClick={resetTimer}
-            className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-50"
+            className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-50"
             aria-label="Reset timer"
             title="Reset timer to original time"
           >
-            <RotateCcw className="w-5 h-5" />
+            <RotateCcw className="w-6 h-6" />
           </button>
         </div>
 
         {/* Status Text with Enhanced Spacing */}
-        <div className="text-center text-gray-600 dark:text-gray-400 my-6 py-4">
+        <div className="text-center text-gray-600 dark:text-gray-400 mb-8 py-6">
           {isActive ? (
             <div className="flex items-center justify-center space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -667,7 +625,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
 
       {/* Settings Section - At bottom with enhanced spacing */}
       {preferences && (
-        <div className="border-t border-gray-100 dark:border-gray-700 pt-6 mt-6">
+        <div className="border-t border-gray-100 dark:border-gray-700 pt-6 mt-8">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center space-x-2">
               <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" />
