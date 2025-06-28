@@ -1,0 +1,16 @@
+# Calendar Integration OAuth Settings
+# Get these from your OAuth provider's developer console
+
+# Google Calendar OAuth
+VITE_GOOGLE_CLIENT_ID=your-google-client-id-here
+VITE_GOOGLE_CLIENT_SECRET=your-google-client-secret-here
+
+# Microsoft Calendar OAuth  
+VITE_MICROSOFT_CLIENT_ID=your-microsoft-client-id-here
+VITE_MICROSOFT_CLIENT_SECRET=your-microsoft-client-secret-here
+
+# Instructions:
+# 1. Copy this file to .env.local
+# 2. Replace the placeholder values with your actual OAuth credentials
+# 3. For Google: Visit https://console.developers.google.com/
+# 4. For Microsoft: Visit https://portal.azure.com/ > App registrations
