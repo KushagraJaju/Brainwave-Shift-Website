@@ -455,6 +455,15 @@ export class UserDataManager {
     }
   }
 
+  public updateIntervention(id: string, updates: Partial<UserData['interventions'][0]>): void {
+    const intervention = this.userData.interventions.find(i => i.id === id);
+    if (intervention) {
+      Object.assign(intervention, updates);
+      this.debouncedSave();
+      this.notifyListeners();
+    }
+  }
+
   public recordMindfulBreak(): void {
     this.userData.analytics.mindfulBreaksTaken++;
     this.userData.analytics.totalBreaksTaken++;

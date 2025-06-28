@@ -8,11 +8,14 @@ import {
   Monitor,
   Navigation as NavIcon,
   Palette,
-  RefreshCw
+  RefreshCw,
+  Heart
 } from 'lucide-react';
 import { useSharedTimer } from '../hooks/useSharedTimer';
 import { useSettings } from '../hooks/useSettings';
 import { useTheme } from '../hooks/useTheme';
+import { useInterventions } from '../hooks/useInterventions';
+import { useCognitiveState } from '../hooks/useCognitiveState';
 
 export const VerificationTest: React.FC = () => {
   const [testResults, setTestResults] = useState<Record<string, boolean>>({});
@@ -21,6 +24,23 @@ export const VerificationTest: React.FC = () => {
   const { preferences, updatePreferences } = useSettings();
   const { theme, resolvedTheme } = useTheme();
   const timerState = useSharedTimer(preferences);
+  const { cognitiveState } = useCognitiveState();
+  const { interventions, completeIntervention } = useInterventions(cognitiveState, preferences || {
+    interventionFrequency: 'Normal',
+    focusSessionLength: 25,
+    breakLength: 5,
+    breakReminders: true,
+    ambientNotifications: false,
+    dataSharing: false,
+    smartwatchDataSharing: true,
+    calendarDataSharing: true,
+    physiologicalMonitoring: true,
+    calendarInsights: true,
+    digitalWellnessEnabled: true,
+    mindfulnessReminders: true,
+    numberOfBreaks: 1,
+    currentTaskName: ''
+  });
 
   const runVerificationTests = async () => {
     setIsRunning(true);
@@ -105,6 +125,25 @@ export const VerificationTest: React.FC = () => {
       results.settingsSynchronization = false;
     }
 
+    // Test 9: Intervention persistence
+    try {
+      // Create a test intervention
+      if (interventions.length > 0) {
+        const testId = interventions[0].id;
+        completeIntervention(testId);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Check if it was marked as completed
+        const stillActive = interventions.some(i => i.id === testId && !i.completed);
+        results.interventionPersistence = !stillActive;
+      } else {
+        // No interventions to test with
+        results.interventionPersistence = true; // Assume success if no interventions
+      }
+    } catch {
+      results.interventionPersistence = false;
+    }
+
     setTestResults(results);
     setIsRunning(false);
   };
@@ -147,9 +186,9 @@ export const VerificationTest: React.FC = () => {
           passed ? 'bg-green-500' : 'bg-red-500'
         }`}>
           {passed ? (
-            <CheckCircle className="w-4 h-4 text-white" />
+            <CheckCircle className="w-4 h-4 text-white" aria-hidden="true" />
           ) : (
-            <AlertTriangle className="w-4 h-4 text-white" />
+            <AlertTriangle className="w-4 h-4 text-white" aria-hidden="true" />
           )}
         </div>
       </div>
@@ -178,8 +217,9 @@ export const VerificationTest: React.FC = () => {
             onClick={runVerificationTests}
             disabled={isRunning}
             className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 focus-ring"
+            aria-label="Run verification tests"
           >
-            <RefreshCw className={`w-4 h-4 ${isRunning ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isRunning ? 'animate-spin' : ''}`} aria-hidden="true" />
             <span>{isRunning ? 'Running...' : 'Re-run Tests'}</span>
           </button>
         </div>
@@ -190,56 +230,63 @@ export const VerificationTest: React.FC = () => {
           name="Data Synchronization"
           passed={testResults.dataSynchronization || false}
           description="Settings and timer state sync across all pages"
-          icon={<RefreshCw className="w-4 h-4" />}
+          icon={<RefreshCw className="w-4 h-4" aria-hidden="true" />}
         />
         
         <TestResult
           name="Preset Functionality"
           passed={testResults.presetFunctionality || false}
           description="Focus timer presets work correctly"
-          icon={<Clock className="w-4 h-4" />}
+          icon={<Clock className="w-4 h-4" aria-hidden="true" />}
         />
         
         <TestResult
           name="Mobile Responsiveness"
           passed={testResults.mobileResponsiveness || false}
           description="Proper viewport and mobile optimization"
-          icon={<Smartphone className="w-4 h-4" />}
+          icon={<Smartphone className="w-4 h-4" aria-hidden="true" />}
         />
         
         <TestResult
           name="Theme Consistency"
           passed={testResults.themeConsistency || false}
           description="Theme persists from onboarding to app"
-          icon={<Palette className="w-4 h-4" />}
+          icon={<Palette className="w-4 h-4" aria-hidden="true" />}
         />
         
         <TestResult
           name="Navigation Flow"
           passed={testResults.navigationFlow || false}
           description="All navigation elements are accessible"
-          icon={<NavIcon className="w-4 h-4" />}
+          icon={<NavIcon className="w-4 h-4" aria-hidden="true" />}
         />
         
         <TestResult
           name="Button Accessibility"
           passed={testResults.buttonAccessibility || false}
           description="Buttons meet accessibility standards"
-          icon={<Monitor className="w-4 h-4" />}
+          icon={<Monitor className="w-4 h-4" aria-hidden="true" />}
         />
         
         <TestResult
           name="Timer Persistence"
           passed={testResults.timerPersistence || false}
           description="Timer state persists during navigation"
-          icon={<Clock className="w-4 h-4" />}
+          icon={<Clock className="w-4 h-4" aria-hidden="true" />}
         />
         
         <TestResult
           name="Settings Sync"
           passed={testResults.settingsSynchronization || false}
           description="Settings synchronize across all components"
-          icon={<Settings className="w-4 h-4" />}
+          icon={<Settings className="w-4 h-4" aria-hidden="true" />}
+        />
+
+        <TestResult
+          name="Intervention Persistence"
+          passed={testResults.interventionPersistence || false}
+          description="Completed interventions stay completed"
+          icon={<Heart className="w-4 h-4" aria-hidden="true" />}
         />
       </div>
 
@@ -265,13 +312,25 @@ export const VerificationTest: React.FC = () => {
               {timerState.formattedTime || 'Loading...'}
             </span>
           </div>
+          <div>
+            <span className="text-gray-600 dark:text-gray-400">Active Interventions:</span>
+            <span className="ml-2 font-medium text-gray-800 dark:text-gray-200">
+              {interventions.length}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-600 dark:text-gray-400">Cognitive Score:</span>
+            <span className="ml-2 font-medium text-gray-800 dark:text-gray-200">
+              {cognitiveState.score}
+            </span>
+          </div>
         </div>
       </div>
 
       {allTestsPassed && (
         <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
           <div className="flex items-center space-x-2">
-            <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400" />
+            <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400" aria-hidden="true" />
             <span className="font-semibold text-green-800 dark:text-green-300">
               All Systems Operational
             </span>

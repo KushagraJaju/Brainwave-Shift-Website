@@ -16,15 +16,15 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
   const getInterventionIcon = (type: Intervention['type']) => {
     switch (type) {
       case 'Break':
-        return <Clock className="w-5 h-5" />;
+        return <Clock className="w-5 h-5" aria-hidden="true" />;
       case 'Breathing':
-        return <Activity className="w-5 h-5" />;
+        return <Activity className="w-5 h-5" aria-hidden="true" />;
       case 'Posture':
-        return <AlertCircle className="w-5 h-5" />;
+        return <AlertCircle className="w-5 h-5" aria-hidden="true" />;
       case 'Movement':
-        return <Activity className="w-5 h-5" />;
+        return <Activity className="w-5 h-5" aria-hidden="true" />;
       default:
-        return <AlertCircle className="w-5 h-5" />;
+        return <AlertCircle className="w-5 h-5" aria-hidden="true" />;
     }
   };
 
@@ -54,6 +54,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
     }
   };
 
+  // Filter out completed interventions
   const activeInterventions = interventions.filter(i => !i.completed);
 
   return (
@@ -68,7 +69,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
       <div className="flex-1 flex flex-col">
         {activeInterventions.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-            <CheckCircle className="w-16 h-16 text-wellness-500 dark:text-wellness-400 mx-auto mb-4" />
+            <CheckCircle className="w-16 h-16 text-wellness-500 dark:text-wellness-400 mx-auto mb-4" aria-hidden="true" />
             <h4 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-2">All Caught Up!</h4>
             <p className="text-body text-calm-600 dark:text-calm-400">No interventions needed right now. We'll notify you when it's time for a break.</p>
           </div>
@@ -78,6 +79,8 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               <div
                 key={intervention.id}
                 className={`border-2 rounded-lg p-4 transition-all duration-200 ${getPriorityColor(intervention.priority)}`}
+                role="region"
+                aria-label={`${intervention.priority} priority ${intervention.type} recommendation`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3 flex-1">
@@ -103,17 +106,17 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                       onClick={() => onComplete(intervention.id)}
                       className="p-2 text-wellness-600 dark:text-wellness-400 hover:bg-wellness-100 dark:hover:bg-wellness-900/30 rounded-full transition-colors duration-200 focus-ring"
                       title="Complete intervention"
-                      aria-label="Complete intervention"
+                      aria-label={`Complete ${intervention.title}`}
                     >
-                      <CheckCircle className="w-5 h-5" />
+                      <CheckCircle className="w-5 h-5" aria-hidden="true" />
                     </button>
                     <button
                       onClick={() => onDismiss(intervention.id)}
                       className="p-2 text-calm-400 dark:text-calm-500 hover:bg-calm-100 dark:hover:bg-calm-700 rounded-full transition-colors duration-200 focus-ring"
                       title="Dismiss intervention"
-                      aria-label="Dismiss intervention"
+                      aria-label={`Dismiss ${intervention.title}`}
                     >
-                      <X className="w-5 h-5" />
+                      <X className="w-5 h-5" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
