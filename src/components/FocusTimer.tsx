@@ -322,7 +322,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   };
 
   return (
-    <div className="card-primary p-6 h-full flex flex-col">
+    <div className="card-primary h-full flex flex-col">
       {/* Header Section */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Focus Timer</h2>
@@ -356,7 +356,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               <button
                 key={preset.id}
                 onClick={() => handlePresetSelect(preset)}
-                className={`p-3 rounded-lg border-2 transition-all duration-200 text-center ${
+                className={`p-3 rounded-lg border-2 transition-all duration-200 text-center touch-target ${
                   currentPreset?.id === preset.id
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
                     : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
@@ -378,7 +378,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                 setShowOptions(true);
                 setOptionsMode('custom');
               }}
-              className={`p-3 rounded-lg border-2 transition-all duration-200 text-center ${
+              className={`p-3 rounded-lg border-2 transition-all duration-200 text-center touch-target ${
                 !currentPreset
                   ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
@@ -404,7 +404,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setOptionsMode('presets')}
-                    className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition-colors touch-target ${
                       optionsMode === 'presets'
                         ? 'bg-blue-500 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
@@ -414,7 +414,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                   </button>
                   <button
                     onClick={() => setOptionsMode('custom')}
-                    className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition-colors touch-target ${
                       optionsMode === 'custom'
                         ? 'bg-purple-500 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
@@ -424,7 +424,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                   </button>
                   <button
                     onClick={() => setShowOptions(false)}
-                    className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                    className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 touch-target"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -438,7 +438,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                     <button
                       key={preset.id}
                       onClick={() => handlePresetSelect(preset)}
-                      className={`w-full p-3 rounded-lg border-2 transition-all duration-200 text-left ${
+                      className={`w-full p-3 rounded-lg border-2 transition-all duration-200 text-left touch-target ${
                         currentPreset?.id === preset.id
                           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                           : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 hover:border-gray-300 dark:hover:border-gray-600'
@@ -470,7 +470,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                     <div className="flex items-center space-x-4">
                       <button
                         onClick={() => adjustCustomTime('focus', 'down')}
-                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
@@ -481,13 +481,13 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                           max="120"
                           value={customFocusTime}
                           onChange={(e) => setCustomFocusTime(Math.max(5, Math.min(120, parseInt(e.target.value) || 5)))}
-                          className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200"
+                          className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 form-input"
                         />
                         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">5-120 minutes</div>
                       </div>
                       <button
                         onClick={() => adjustCustomTime('focus', 'up')}
-                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -502,7 +502,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                     <div className="flex items-center space-x-4">
                       <button
                         onClick={() => adjustCustomTime('break', 'down')}
-                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
@@ -513,13 +513,13 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                           max="60"
                           value={customBreakTime}
                           onChange={(e) => setCustomBreakTime(Math.max(1, Math.min(60, parseInt(e.target.value) || 1)))}
-                          className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200"
+                          className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 form-input"
                         />
                         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">1-60 minutes</div>
                       </div>
                       <button
                         onClick={() => adjustCustomTime('break', 'up')}
-                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -534,7 +534,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                     <div className="flex items-center space-x-4">
                       <button
                         onClick={() => adjustCustomTime('breaks', 'down')}
-                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
@@ -545,13 +545,13 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                           max="5"
                           value={customNumberOfBreaks}
                           onChange={(e) => setCustomNumberOfBreaks(Math.max(1, Math.min(5, parseInt(e.target.value) || 1)))}
-                          className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200"
+                          className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 form-input"
                         />
                         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">1-5 breaks</div>
                       </div>
                       <button
                         onClick={() => adjustCustomTime('breaks', 'up')}
-                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -572,7 +572,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                   {/* Apply Button */}
                   <button
                     onClick={handleCustomApply}
-                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white rounded-lg transition-colors font-medium"
+                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white rounded-lg transition-colors font-medium btn-primary"
                   >
                     <Save className="w-4 h-4" />
                     <span>Apply Custom Settings</span>
@@ -619,11 +619,11 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                {/* Timer Text with Comic Sans MS Font */}
+                {/* Timer Text with Outfit Font */}
                 <div 
                   className="text-7xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight leading-none select-none"
                   style={{
-                    fontFamily: "'Comic Sans MS', cursive, sans-serif",
+                    fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                     fontWeight: '700',
                     textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                   }}
@@ -643,7 +643,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           {/* Play/Pause Button */}
           <button
             onClick={toggleTimer}
-            className={`flex items-center justify-center w-20 h-20 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-opacity-50 ${
+            className={`flex items-center justify-center w-20 h-20 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-opacity-50 touch-target ${
               isActive
                 ? 'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white focus:ring-red-300'
                 : 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white focus:ring-blue-300'
@@ -656,7 +656,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           {/* Restart Button - Now Next to Play/Pause */}
           <button
             onClick={resetTimer}
-            className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-50"
+            className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-50 touch-target"
             aria-label="Reset timer to original time"
             title="Reset timer to original time"
           >
