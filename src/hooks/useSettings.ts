@@ -3,12 +3,12 @@ import { UserPreferences } from '../types';
 
 const DEFAULT_PREFERENCES: UserPreferences = {
   interventionFrequency: 'Normal',
-  focusSessionLength: 25,
+  focusSessionLength: 25, // Changed to 25 minutes (Pomodoro default)
   breakReminders: true,
   ambientNotifications: false,
   dataSharing: false,
-  breakLength: 5,
-  selectedPreset: undefined,
+  breakLength: 5, // Changed to 5 minutes (Pomodoro default)
+  selectedPreset: 'pomodoro', // Set Pomodoro as default preset
   // Device integration preferences
   smartwatchDataSharing: true,
   calendarDataSharing: true,
@@ -26,6 +26,7 @@ export const useSettings = () => {
       const savedPreferences = localStorage.getItem('brainwave-shift-preferences');
       if (savedPreferences) {
         const parsed = JSON.parse(savedPreferences);
+        // Merge with defaults to ensure all new properties are included
         setPreferences({ ...DEFAULT_PREFERENCES, ...parsed });
       }
     } catch (error) {
