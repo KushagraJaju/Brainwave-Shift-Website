@@ -127,7 +127,7 @@ export class UserDataManager {
   private userData: UserData;
   private listeners: ((data: UserData) => void)[] = [];
   private saveTimeout: NodeJS.Timeout | null = null;
-  private isInitialized = false;
+  private _isInitialized = false;
 
   private constructor() {
     this.userData = this.getDefaultUserData();
@@ -206,12 +206,12 @@ export class UserDataManager {
     try {
       await this.loadUserData();
       this.updateLastActiveDate();
-      this.isInitialized = true;
+      this._isInitialized = true;
       this.notifyListeners();
     } catch (error) {
       console.error('Failed to initialize user data:', error);
       // Use default data if loading fails
-      this.isInitialized = true;
+      this._isInitialized = true;
       this.notifyListeners();
     }
   }
@@ -573,7 +573,7 @@ export class UserDataManager {
   }
 
   public isInitialized(): boolean {
-    return this.isInitialized;
+    return this._isInitialized;
   }
 
   // Cleanup method
