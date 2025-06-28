@@ -4,7 +4,6 @@ import { FocusTimer } from './FocusTimer';
 import { InterventionPanel } from './InterventionPanel';
 import { PhysiologicalMetrics } from './PhysiologicalMetrics';
 import { CalendarInsights } from './CalendarInsights';
-import { VerificationTest } from './VerificationTest';
 import { useCognitiveState } from '../hooks/useCognitiveState';
 import { useInterventions } from '../hooks/useInterventions';
 import { useDeviceIntegration } from '../hooks/useDeviceIntegration';
@@ -95,11 +94,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ preferences }) => {
             <CalendarInsights data={calendarData} />
           )}
         </div>
-      )}
-
-      {/* System Verification Panel - For Testing */}
-      {process.env.NODE_ENV === 'development' && (
-        <VerificationTest />
       )}
 
       {/* Connection Prompt - Show when no devices are connected */}
