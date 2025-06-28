@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, Clock, Settings, Timer, Zap, Target, Plus, Minus, Save, X, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, RotateCcw, Clock, Settings, Timer, Zap, Target, Plus, Minus, Save, X, Volume2, VolumeX, ExternalLink } from 'lucide-react';
 import { UserPreferences, FocusPreset } from '../types';
 import { soundService } from '../services/SoundService';
 import { useSoundSettings } from '../hooks/useSoundSettings';
 import { SoundControls } from './SoundControls';
+import { PopOutTimer } from './PopOutTimer';
 
 interface FocusTimerProps {
   preferences?: UserPreferences;
@@ -54,6 +55,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   const [showOptions, setShowOptions] = useState(false);
   const [optionsMode, setOptionsMode] = useState<'presets' | 'custom'>('presets');
   const [showSoundSettings, setShowSoundSettings] = useState(false);
+  const [isPopOutOpen, setIsPopOutOpen] = useState(false);
+  const [popOutWindow, setPopOutWindow] = useState<Window | null>(null);
   
   // Custom settings state
   const [customFocusTime, setCustomFocusTime] = useState(preferences?.focusSessionLength || 25);
@@ -189,6 +192,15 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     }
   }, [preferences?.breakReminders]);
 
+  // Clean up pop-out window on unmount
+  useEffect(() => {
+    return () => {
+      if (popOutWindow && !popOutWindow.closed) {
+        popOutWindow.close();
+      }
+    };
+  }, [popOutWindow]);
+
   const handlePresetSelect = (preset: FocusPreset) => {
     if (onUpdatePreferences) {
       onUpdatePreferences({
@@ -293,6 +305,95 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     }
   };
 
+  const handlePopOut = () => {
+    if (!preferences) return;
+    
+    // Close existing pop-out window if open
+    if (popOutWindow && !popOutWindow.closed) {
+      popOutWindow.close();
+    }
+
+    // Calculate window position (center of screen)
+    const width = 400;
+    const height = 500;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+
+    // Open new pop-out window
+    const newWindow = window.open(
+      '', 
+      'BrainwaveShiftTimer',
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=no,toolbar=no,menubar=no,location=no,status=no`
+    );
+
+    if (newWindow) {
+      setPopOutWindow(newWindow);
+      setIsPopOutOpen(true);
+
+      // Set up the pop-out window content
+      newWindow.document.title = 'Brainwave Shift Timer';
+      newWindow.document.head.innerHTML = `
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Brainwave Shift Timer</title>
+        <link rel="icon" type="image/svg+xml" href="/vite.svg">
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { 
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);
+            color: #1f2937;
+            overflow: hidden;
+          }
+          .dark body {
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            color: #f9fafb;
+          }
+        </style>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+          tailwind.config = {
+            darkMode: 'class',
+            theme: {
+              extend: {
+                fontFamily: {
+                  'sans': ['Outfit', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+                }
+              }
+            }
+          }
+        </script>
+      `;
+
+      // Create a container for React to render into
+      const container = newWindow.document.createElement('div');
+      container.id = 'pop-out-timer-root';
+      newWindow.document.body.appendChild(container);
+
+      // Handle window close
+      newWindow.addEventListener('beforeunload', () => {
+        setIsPopOutOpen(false);
+        setPopOutWindow(null);
+      });
+
+      // Render the PopOutTimer component
+      import('react-dom/client').then(({ createRoot }) => {
+        const root = createRoot(container);
+        root.render(
+          React.createElement(PopOutTimer, {
+            preferences,
+            onClose: () => {
+              newWindow.close();
+              setIsPopOutOpen(false);
+              setPopOutWindow(null);
+            }
+          })
+        );
+      });
+    }
+  };
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -357,7 +458,23 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           }`}>
             {sessionType} Session
           </span>
-          {/* FIXED: Sound Toggle Button with Perfect Centering */}
+          
+          {/* Pop Out Button */}
+          <button
+            onClick={handlePopOut}
+            disabled={isPopOutOpen}
+            className={`flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 focus-ring touch-target ${
+              isPopOutOpen
+                ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/50 border border-purple-200 dark:border-purple-800'
+            }`}
+            title={isPopOutOpen ? 'Pop-out timer is already open' : 'Open timer in pop-out window'}
+            aria-label={isPopOutOpen ? 'Pop-out timer is already open' : 'Open timer in pop-out window'}
+          >
+            <ExternalLink className="w-4 h-4" />
+          </button>
+          
+          {/* Sound Toggle Button */}
           <div className="flex items-center justify-center">
             <button
               onClick={toggleSound}
@@ -378,6 +495,21 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Pop-out Status */}
+      {isPopOutOpen && (
+        <div className="mb-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+          <div className="flex items-center space-x-2">
+            <ExternalLink className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+            <span className="text-sm font-medium text-purple-800 dark:text-purple-300">
+              Timer is running in pop-out window
+            </span>
+          </div>
+          <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+            The timer will continue running in the separate window for better multitasking
+          </p>
+        </div>
+      )}
 
       {/* Quick Preset Buttons - Only show when timer is not active */}
       {!isActive && !isPaused && (
@@ -778,6 +910,12 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                   <div className="flex items-center space-x-1 text-blue-600 dark:text-blue-400">
                     <Volume2 className="w-3 h-3" />
                     <span className="text-xs">Sound on</span>
+                  </div>
+                )}
+                {isPopOutOpen && (
+                  <div className="flex items-center space-x-1 text-purple-600 dark:text-purple-400">
+                    <ExternalLink className="w-3 h-3" />
+                    <span className="text-xs">Pop-out active</span>
                   </div>
                 )}
               </div>
