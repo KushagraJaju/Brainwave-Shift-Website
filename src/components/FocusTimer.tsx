@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, Pause, RotateCcw, Clock, Settings, Timer, Zap, Target, Plus, Minus, Save, X, Volume2, VolumeX } from 'lucide-react';
 import { UserPreferences, FocusPreset } from '../types';
 import { soundService } from '../services/SoundService';
 import { useSoundSettings } from '../hooks/useSoundSettings';
+import { useSharedTimer } from '../hooks/useSharedTimer';
 import { SoundControls } from './SoundControls';
 
 interface FocusTimerProps {
@@ -48,9 +49,20 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   preferences, 
   onUpdatePreferences 
 }) => {
-  const [isActive, setIsActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [sessionType, setSessionType] = useState<'Focus' | 'Break'>('Focus');
+  // Use shared timer hook instead of local state
+  const {
+    isActive,
+    isPaused,
+    sessionType,
+    formattedTime,
+    progress,
+    start,
+    pause,
+    resume,
+    reset,
+    toggle
+  } = useSharedTimer(preferences);
+
   const [showOptions, setShowOptions] = useState(false);
   const [optionsMode, setOptionsMode] = useState<'presets' | 'custom'>('presets');
   const [showSoundSettings, setShowSoundSettings] = useState(false);
@@ -62,16 +74,6 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   
   // Sound settings hook
   const { settings: soundSettings, toggleSound } = useSoundSettings();
-  
-  // Use preferences for initial time, fallback to default (25 minutes for Pomodoro)
-  const defaultFocusTime = (preferences?.focusSessionLength || 25) * 60;
-  const defaultBreakTime = (preferences?.breakLength || 5) * 60;
-  
-  const [time, setTime] = useState(defaultFocusTime);
-  const [initialTime, setInitialTime] = useState(defaultFocusTime);
-  
-  // Use ref to track the interval and prevent auto-restart issues
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Update custom settings when preferences change
   useEffect(() => {
@@ -81,114 +83,6 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     }
   }, [preferences?.focusSessionLength, preferences?.breakLength]);
 
-  // Update timer when preferences change (only if not active and not paused)
-  useEffect(() => {
-    if (preferences && !isActive && !isPaused) {
-      const newFocusTime = preferences.focusSessionLength * 60;
-      const newBreakTime = (preferences.breakLength || 5) * 60;
-      
-      if (sessionType === 'Focus') {
-        setTime(newFocusTime);
-        setInitialTime(newFocusTime);
-      } else {
-        setTime(newBreakTime);
-        setInitialTime(newBreakTime);
-      }
-    }
-  }, [preferences?.focusSessionLength, preferences?.breakLength, isActive, isPaused, sessionType]);
-
-  // Fixed timer logic to prevent auto-restart and preserve pause state
-  useEffect(() => {
-    // Clear any existing interval
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-
-    // Only start interval if timer is active and not paused
-    if (isActive && !isPaused && time > 0) {
-      intervalRef.current = setInterval(() => {
-        setTime(prevTime => {
-          const newTime = prevTime - 1;
-          
-          // Play tick sound if enabled
-          if (soundSettings.tickSound && newTime % 1 === 0) {
-            soundService.playTickSound();
-          }
-          
-          // Check if timer reached zero
-          if (newTime <= 0) {
-            // Clear interval immediately
-            if (intervalRef.current) {
-              clearInterval(intervalRef.current);
-              intervalRef.current = null;
-            }
-            
-            // Stop the timer completely
-            setIsActive(false);
-            setIsPaused(false);
-            
-            // Play completion sound
-            if (sessionType === 'Focus') {
-              soundService.playFocusCompleteSound();
-            } else {
-              soundService.playBreakCompleteSound();
-            }
-            
-            // Show notification if break reminders are enabled
-            if (preferences?.breakReminders) {
-              if (sessionType === 'Focus') {
-                new Notification('Focus session complete!', {
-                  body: `Time for a ${preferences.breakLength || 5}-minute break.`,
-                  icon: '/BrainwaveShift.png'
-                });
-              } else {
-                new Notification('Break time over!', {
-                  body: 'Ready to start another focus session?',
-                  icon: '/BrainwaveShift.png'
-                });
-              }
-            }
-            
-            // Auto-switch between focus and break
-            setTimeout(() => {
-              if (sessionType === 'Focus') {
-                setSessionType('Break');
-                const breakTime = (preferences?.breakLength || 5) * 60;
-                setTime(breakTime);
-                setInitialTime(breakTime);
-              } else {
-                setSessionType('Focus');
-                const focusTime = (preferences?.focusSessionLength || 25) * 60;
-                setTime(focusTime);
-                setInitialTime(focusTime);
-              }
-            }, 100);
-            
-            return 0;
-          }
-          
-          return newTime;
-        });
-      }, 1000);
-    }
-
-    // Cleanup function
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [isActive, isPaused, time, sessionType, preferences?.breakReminders, preferences?.focusSessionLength, preferences?.breakLength, soundSettings.tickSound]);
-
-  // Request notification permission on component mount
-  useEffect(() => {
-    if (preferences?.breakReminders && 'Notification' in window) {
-      Notification.requestPermission();
-    }
-  }, [preferences?.breakReminders]);
-
   const handlePresetSelect = (preset: FocusPreset) => {
     if (onUpdatePreferences) {
       onUpdatePreferences({
@@ -197,19 +91,6 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         selectedPreset: preset.id,
         breakReminders: true // Enable break reminders when selecting a preset
       });
-    }
-    
-    // Reset timer if not active and not paused
-    if (!isActive && !isPaused) {
-      if (sessionType === 'Focus') {
-        const newTime = preset.focusMinutes * 60;
-        setTime(newTime);
-        setInitialTime(newTime);
-      } else {
-        const newTime = preset.breakMinutes * 60;
-        setTime(newTime);
-        setInitialTime(newTime);
-      }
     }
     
     setShowOptions(false);
@@ -223,19 +104,6 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         selectedPreset: undefined, // Clear preset when using custom
         breakReminders: true
       });
-    }
-    
-    // Reset timer if not active and not paused
-    if (!isActive && !isPaused) {
-      if (sessionType === 'Focus') {
-        const newTime = customFocusTime * 60;
-        setTime(newTime);
-        setInitialTime(newTime);
-      } else {
-        const newTime = customBreakTime * 60;
-        setTime(newTime);
-        setInitialTime(newTime);
-      }
     }
     
     setShowOptions(false);
@@ -260,46 +128,11 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     }
   };
 
-  const toggleTimer = () => {
+  const handleToggleTimer = () => {
     // Initialize audio context on first user interaction
     soundService.initializeOnUserInteraction();
-    
-    if (isActive) {
-      // Pause the timer - PRESERVE CURRENT TIME
-      setIsActive(false);
-      setIsPaused(true);
-      // DO NOT reset time here - this was the bug!
-    } else {
-      // Start or resume the timer
-      setIsActive(true);
-      setIsPaused(false);
-    }
+    toggle();
   };
-
-  const resetTimer = () => {
-    // Stop the timer completely
-    setIsActive(false);
-    setIsPaused(false);
-    
-    // Reset to initial time based on current session type
-    if (sessionType === 'Focus') {
-      const focusTime = (preferences?.focusSessionLength || 25) * 60;
-      setTime(focusTime);
-      setInitialTime(focusTime);
-    } else {
-      const breakTime = (preferences?.breakLength || 5) * 60;
-      setTime(breakTime);
-      setInitialTime(breakTime);
-    }
-  };
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const progress = initialTime > 0 ? ((initialTime - time) / initialTime) * 100 : 0;
 
   // FIXED: Get current preset info - only return preset if selectedPreset ID matches
   const getCurrentPreset = () => {
@@ -689,7 +522,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                     textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                   }}
                 >
-                  {formatTime(time)}
+                  {formattedTime}
                 </div>
                 <div className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">
                   {sessionType} Time
@@ -703,7 +536,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         <div className="flex justify-center items-center space-x-6 mb-12">
           {/* Play/Pause Button */}
           <button
-            onClick={toggleTimer}
+            onClick={handleToggleTimer}
             className={`flex items-center justify-center w-20 h-20 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-opacity-50 touch-target ${
               isActive
                 ? 'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white focus:ring-red-300'
@@ -716,7 +549,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
 
           {/* Restart Button - Now Next to Play/Pause */}
           <button
-            onClick={resetTimer}
+            onClick={reset}
             className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-50 touch-target"
             aria-label="Reset timer to original time"
             title="Reset timer to original time"
