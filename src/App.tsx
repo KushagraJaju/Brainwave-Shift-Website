@@ -1,4 +1,4 @@
-import React, { useState, Suspense, useRef } from 'react';
+import React, { useState, Suspense } from 'react';
 import { Navigation } from './components/Navigation';
 import { Dashboard } from './components/Dashboard';
 import { CognitiveStateIndicator } from './components/CognitiveStateIndicator';
@@ -32,7 +32,6 @@ const LoadingScreen: React.FC = () => (
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const mainContentRef = useRef<HTMLDivElement>(null);
   
   // Initialize theme hook to set up dark mode
   useTheme();
@@ -152,7 +151,6 @@ function App() {
               preferences={preferences}
               onUpdatePreferences={updatePreferences}
               onResetPreferences={resetPreferences}
-              scrollableContainerRef={mainContentRef}
             />
           </div>
         );
@@ -176,7 +174,7 @@ function App() {
         />
         
         {/* Main Content Area - Now with explicit scrolling container */}
-        <div ref={mainContentRef} className="flex-1 lg:ml-64 overflow-y-auto h-screen">
+        <div className="flex-1 lg:ml-64 overflow-y-auto h-screen">
           <main className="p-4 lg:p-8 pt-16 lg:pt-8">
             <ErrorBoundary fallback={
               <div className="card-primary p-6 text-center">
