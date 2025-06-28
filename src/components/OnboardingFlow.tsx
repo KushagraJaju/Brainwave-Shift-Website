@@ -686,7 +686,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
           </div>
         </div>
 
-        {/* Footer - FIXED BUTTON VISIBILITY */}
+        {/* Footer - CRITICAL FIX: Maximum Visibility Next Button */}
         <div className="bg-gray-50 dark:bg-gray-800 px-8 py-6 flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-4">
             <button
@@ -710,17 +710,44 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
             </button>
           </div>
           
-          {/* FIXED: Enhanced Next Button with Better Visibility */}
+          {/* CRITICAL FIX: MAXIMUM VISIBILITY NEXT BUTTON */}
           <button
             onClick={handleNext}
-            className="flex items-center space-x-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 focus-ring border-2 border-blue-700 dark:border-blue-400"
+            className="
+              flex items-center space-x-3 px-10 py-4 
+              bg-gradient-to-r from-blue-600 to-blue-700 
+              hover:from-blue-700 hover:to-blue-800 
+              dark:from-blue-500 dark:to-blue-600 
+              dark:hover:from-blue-600 dark:hover:to-blue-700 
+              text-white font-bold text-lg
+              rounded-xl transition-all duration-200 
+              shadow-2xl hover:shadow-3xl 
+              transform hover:scale-105 active:scale-95
+              border-4 border-blue-800 dark:border-blue-400
+              ring-4 ring-blue-300 dark:ring-blue-500 ring-opacity-50
+              focus:outline-none focus:ring-8 focus:ring-blue-400 focus:ring-opacity-75
+              relative overflow-hidden
+              min-w-[160px] min-h-[56px]
+            "
+            style={{
+              background: 'linear-gradient(135deg, #1e40af 0%, #1d4ed8 50%, #2563eb 100%)',
+              boxShadow: '0 10px 25px rgba(37, 99, 235, 0.5), 0 0 0 4px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+            }}
           >
-            <span className="text-base">{isLastStep ? 'Get Started' : 'Next'}</span>
-            {isLastStep ? (
-              <Play className="w-5 h-5" />
-            ) : (
-              <ChevronRight className="w-5 h-5" />
-            )}
+            {/* Shine effect overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 transform -skew-x-12 animate-pulse"></div>
+            
+            <span className="relative z-10 font-extrabold tracking-wide">
+              {isLastStep ? 'GET STARTED' : 'NEXT'}
+            </span>
+            <div className="relative z-10">
+              {isLastStep ? (
+                <Play className="w-6 h-6 drop-shadow-lg" />
+              ) : (
+                <ChevronRight className="w-6 h-6 drop-shadow-lg" />
+              )}
+            </div>
           </button>
         </div>
       </div>
