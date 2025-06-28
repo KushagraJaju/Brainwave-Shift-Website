@@ -137,7 +137,8 @@ export const useInterventions = (cognitiveState: CognitiveState, preferences: Us
       }
     };
 
-    const interval = setInterval(checkForInterventions, 10000); // Check every 10 seconds
+    // Check for interventions every 15 seconds to match the new monitoring interval
+    const interval = setInterval(checkForInterventions, 15000);
     return () => clearInterval(interval);
   }, [cognitiveState, lastInterventionTime, preferences.interventionFrequency, hasInitialized]);
 

@@ -62,6 +62,12 @@ export class CognitiveMonitor {
   private lastTabFocusTime: Date = new Date();
   private totalFocusTime: number = 0;
 
+  // Configuration constants - Updated to 15-second intervals
+  private readonly MONITORING_INTERVAL = 15000; // 15 seconds (updated from 30 seconds)
+  private readonly FOCUS_UPDATE_INTERVAL = 1000; // 1 second for focus time updates
+  private readonly DIGITAL_WELLNESS_CHECK_INTERVAL = 30000; // 30 seconds for digital wellness checks
+  private readonly PEAK_USAGE_CHECK_INTERVAL = 60000; // 1 minute for peak usage tracking
+
   constructor() {
     this.data = this.getInitialData();
     this.setupEventListeners();
@@ -429,13 +435,13 @@ export class CognitiveMonitor {
     this.totalFocusTime = 0;
     this.data = this.getInitialData();
 
-    // Update metrics every 30 seconds
+    // Update cognitive metrics every 15 seconds (updated from 30 seconds)
     const metricsInterval = setInterval(() => {
       if (!this.isMonitoring) return;
       
       this.calculateCognitiveMetrics();
       this.notifyListeners();
-    }, 30000);
+    }, this.MONITORING_INTERVAL);
 
     // Update focus time every second when tab is active
     const focusInterval = setInterval(() => {
@@ -446,7 +452,7 @@ export class CognitiveMonitor {
         const currentFocusTime = now.getTime() - this.lastTabFocusTime.getTime();
         this.data.browserActivity.focusTime = currentFocusTime;
       }
-    }, 1000);
+    }, this.FOCUS_UPDATE_INTERVAL);
 
     this.intervals.push(metricsInterval, focusInterval);
     this.notifyStatusListeners();
@@ -506,6 +512,16 @@ export class CognitiveMonitor {
     this.keystrokeTimestamps = [];
     this.mouseMovements = [];
     this.data = this.getInitialData();
+  }
+
+  // Getter for monitoring interval (for UI display)
+  public getMonitoringInterval(): number {
+    return this.MONITORING_INTERVAL;
+  }
+
+  // Getter for monitoring interval in seconds (for UI display)
+  public getMonitoringIntervalSeconds(): number {
+    return this.MONITORING_INTERVAL / 1000;
   }
 }
 

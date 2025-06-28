@@ -32,6 +32,7 @@ export const useAnalytics = (cognitiveState: CognitiveState) => {
 
   useEffect(() => {
     // Simulate analytics data based on current cognitive state and digital wellness
+    // Updated to refresh every 15 seconds to match the new monitoring interval
     const updateAnalytics = () => {
       const hour = new Date().getHours();
       
@@ -52,7 +53,8 @@ export const useAnalytics = (cognitiveState: CognitiveState) => {
       }));
     };
 
-    const interval = setInterval(updateAnalytics, 30000); // Update every 30 seconds
+    // Update analytics every 15 seconds to match the new monitoring interval
+    const interval = setInterval(updateAnalytics, 15000);
     updateAnalytics(); // Initial update
     return () => clearInterval(interval);
   }, [cognitiveState, digitalWellnessData]);

@@ -99,6 +99,12 @@ export class DigitalWellnessMonitor {
   private interventionEscalationLevel: number = 0;
   private sessionEngagementScores: number[] = [];
 
+  // Updated timing constants for 15-second monitoring cycle
+  private readonly FOCUS_MODE_CHECK_INTERVAL = 15000; // 15 seconds (updated from 30 seconds)
+  private readonly PEAK_USAGE_CHECK_INTERVAL = 60000; // 1 minute
+  private readonly MINDLESS_SCROLLING_TIMEOUT = 2000; // 2 seconds
+  private readonly MIN_INTERVENTION_INTERVAL = 5 * 60 * 1000; // 5 minutes minimum between interventions
+
   constructor() {
     this.dailyData = this.getInitialData();
     this.settings = this.getDefaultSettings();
@@ -356,7 +362,7 @@ export class DigitalWellnessMonitor {
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
         this.checkForMindlessScrolling();
-      }, 2000); // Check 2 seconds after scrolling stops
+      }, this.MINDLESS_SCROLLING_TIMEOUT);
     });
 
     // Monitor clicks and interactions
@@ -376,15 +382,15 @@ export class DigitalWellnessMonitor {
       this.checkCurrentUrl();
     });
 
-    // Check for focus mode violations
+    // Check for focus mode violations - updated to 15-second intervals
     setInterval(() => {
       this.checkFocusMode();
-    }, 30000); // Check every 30 seconds
+    }, this.FOCUS_MODE_CHECK_INTERVAL);
 
     // Update peak usage hours
     setInterval(() => {
       this.updatePeakUsageHours();
-    }, 60000); // Check every minute
+    }, this.PEAK_USAGE_CHECK_INTERVAL);
   }
 
   private updatePeakUsageHours(): void {
@@ -573,7 +579,7 @@ export class DigitalWellnessMonitor {
     const timeSinceLastIntervention = now - this.lastInterventionTime.getTime();
 
     // Don't trigger interventions too frequently
-    if (timeSinceLastIntervention < 5 * 60 * 1000) return; // 5 minutes minimum
+    if (timeSinceLastIntervention < this.MIN_INTERVENTION_INTERVAL) return;
 
     if (sessionLength >= this.settings.timeThresholds.firm) {
       this.triggerMindfulnessIntervention('time-limit-firm');
@@ -785,6 +791,15 @@ export class DigitalWellnessMonitor {
     this.sessionEngagementScores = [];
     this.loadHistoricalData(); // Reload weekly data
     this.notifyListeners();
+  }
+
+  // Getter for monitoring intervals (for UI display)
+  public getFocusModeCheckInterval(): number {
+    return this.FOCUS_MODE_CHECK_INTERVAL;
+  }
+
+  public getFocusModeCheckIntervalSeconds(): number {
+    return this.FOCUS_MODE_CHECK_INTERVAL / 1000;
   }
 }
 
