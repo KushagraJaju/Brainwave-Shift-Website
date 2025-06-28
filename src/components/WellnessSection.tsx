@@ -99,9 +99,9 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
         </div>
       </div>
 
-      {/* Wellness Sections - Permanently Expanded 2x2 Grid Layout */}
+      {/* Wellness Sections - Reordered 2x2 Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Row 1: Digital Wellness & Mindfulness */}
+        {/* Row 1: Digital Wellness & Wellness Interventions */}
         <WellnessCard
           title="Digital Wellness"
           icon={<Smartphone className="w-5 h-5" />}
@@ -111,6 +111,20 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
           <DigitalWellnessPanel />
         </WellnessCard>
 
+        <WellnessCard
+          title="Wellness Interventions"
+          icon={<Activity className="w-5 h-5" />}
+          description="Personalized wellness recommendations based on your cognitive state"
+          badge={interventions.filter(i => !i.completed).length > 0 ? `${interventions.filter(i => !i.completed).length} pending` : undefined}
+        >
+          <InterventionPanel
+            interventions={interventions}
+            onComplete={completeIntervention}
+            onDismiss={dismissIntervention}
+          />
+        </WellnessCard>
+
+        {/* Row 2: Mindfulness & Breathing & Wellness Insights */}
         <WellnessCard
           title="Mindfulness & Breathing"
           icon={<Heart className="w-5 h-5" />}
@@ -143,20 +157,6 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
               </button>
             </div>
           </div>
-        </WellnessCard>
-
-        {/* Row 2: Wellness Interventions & Wellness Insights */}
-        <WellnessCard
-          title="Wellness Interventions"
-          icon={<Activity className="w-5 h-5" />}
-          description="Personalized wellness recommendations based on your cognitive state"
-          badge={interventions.filter(i => !i.completed).length > 0 ? `${interventions.filter(i => !i.completed).length} pending` : undefined}
-        >
-          <InterventionPanel
-            interventions={interventions}
-            onComplete={completeIntervention}
-            onDismiss={dismissIntervention}
-          />
         </WellnessCard>
 
         <WellnessCard
