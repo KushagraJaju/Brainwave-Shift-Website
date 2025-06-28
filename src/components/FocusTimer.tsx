@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Square, Clock, Settings, Timer, Zap, Target, Plus, Minus, Save, X } from 'lucide-react';
+import { Play, Pause, RotateCcw, Clock, Settings, Timer, Zap, Target, Plus, Minus, Save, X } from 'lucide-react';
 import { UserPreferences, FocusPreset } from '../types';
 
 interface FocusTimerProps {
@@ -635,14 +635,15 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           </div>
         </div>
 
-        {/* Reset Button - Centered below the horizontal layout */}
+        {/* Reset Button - Centered below the horizontal layout with NEW RESTART ICON */}
         <div className="flex justify-center mb-8">
           <button
             onClick={resetTimer}
             className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-50"
             aria-label="Reset timer"
+            title="Reset timer to original time"
           >
-            <Square className="w-5 h-5" />
+            <RotateCcw className="w-5 h-5" />
           </button>
         </div>
 
