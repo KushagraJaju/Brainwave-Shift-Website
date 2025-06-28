@@ -686,8 +686,8 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
           </div>
         </div>
 
-        {/* Footer - FIXED BUTTON VISIBILITY */}
-        <div className="bg-gray-50 dark:bg-gray-800 px-8 py-6 flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
+        {/* Footer - FIXED BUTTON VISIBILITY WITH INCREASED BOTTOM MARGIN */}
+        <div className="bg-gray-50 dark:bg-gray-800 px-8 py-6 pb-8 flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-4">
             <button
               onClick={handlePrevious}
@@ -710,10 +710,11 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
             </button>
           </div>
           
-          {/* FIXED: Enhanced Next Button with Better Visibility */}
+          {/* FIXED: Enhanced Next Button with Better Visibility and Increased Bottom Margin */}
           <button
             onClick={handleNext}
             className="flex items-center space-x-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 focus-ring border-2 border-blue-700 dark:border-blue-400"
+            style={{ marginBottom: '8px' }} // Additional bottom margin for safety
           >
             <span className="text-base">{isLastStep ? 'Get Started' : 'Next'}</span>
             {isLastStep ? (
