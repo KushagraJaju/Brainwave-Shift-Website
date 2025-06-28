@@ -42,30 +42,33 @@ export const Navigation: React.FC<NavigationProps> = ({
 
   return (
     <>
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Button - FIXED Z-INDEX */}
       <button
         onClick={onMobileMenuToggle}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-white dark:bg-calm-800 rounded-xl shadow-soft dark:shadow-gentle-dark border border-calm-200 dark:border-calm-700 focus-ring"
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-white dark:bg-calm-800 rounded-xl shadow-soft dark:shadow-gentle-dark border border-calm-200 dark:border-calm-700 focus-ring mobile-menu-button"
         aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+        style={{ zIndex: 9998 }} // Ensure it's always above everything except modals
       >
         {isMobileMenuOpen ? <X className="w-5 h-5 text-calm-700 dark:text-calm-300" /> : <Menu className="w-5 h-5 text-calm-700 dark:text-calm-300" />}
       </button>
 
-      {/* Mobile Overlay */}
+      {/* Mobile Overlay - FIXED Z-INDEX */}
       {isMobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-40 backdrop-blur-xs"
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 backdrop-blur-xs mobile-menu-overlay"
+          style={{ zIndex: 41 }} // Below menu button but above main content
           onClick={onMobileMenuToggle}
           aria-hidden="true"
         />
       )}
 
-      {/* Sidebar - Now Fixed */}
+      {/* Sidebar - FIXED Z-INDEX */}
       <nav 
         className={`
-          fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-calm-800 shadow-soft dark:shadow-gentle-dark border-r border-calm-200 dark:border-calm-700 transform transition-transform duration-300 ease-in-out
+          fixed inset-y-0 left-0 w-64 bg-white dark:bg-calm-800 shadow-soft dark:shadow-gentle-dark border-r border-calm-200 dark:border-calm-700 transform transition-transform duration-300 ease-in-out mobile-navigation
           ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
+        style={{ zIndex: 45 }} // Above mobile overlay but below menu button
         role="navigation"
         aria-label="Main navigation"
       >

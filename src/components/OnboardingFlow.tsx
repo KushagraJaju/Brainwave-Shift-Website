@@ -612,7 +612,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
   };
 
   return (
-    <div className="modal-overlay-critical flex items-center justify-center p-4">
+    <div className={`modal-overlay-critical modal-open flex items-center justify-center p-4`}>
       <div className={`
         modal-content-fix bg-white dark:bg-calm-800 rounded-2xl shadow-2xl dark:shadow-gentle-dark max-w-4xl w-full max-h-[90vh] overflow-hidden
         transform transition-all duration-500 ease-out border border-calm-200 dark:border-calm-700
