@@ -13,8 +13,13 @@ import {
   Play,
   Sparkles,
   Target,
-  Activity
+  Activity,
+  Sun,
+  Moon,
+  Monitor,
+  Palette
 } from 'lucide-react';
+import { useTheme } from '../hooks/useTheme';
 
 interface OnboardingStep {
   id: string;
@@ -33,12 +38,119 @@ interface OnboardingFlowProps {
 export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSkip }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     // Animate in after a short delay
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
+
+  const ThemePreview: React.FC<{ 
+    themeMode: 'light' | 'dark'; 
+    isSelected: boolean; 
+    onSelect: () => void;
+  }> = ({ themeMode, isSelected, onSelect }) => {
+    const isDark = themeMode === 'dark';
+    
+    return (
+      <button
+        onClick={onSelect}
+        className={`relative w-full p-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${
+          isSelected 
+            ? 'border-blue-500 shadow-lg ring-2 ring-blue-200 dark:ring-blue-800' 
+            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+        }`}
+      >
+        {/* Selected indicator */}
+        {isSelected && (
+          <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+            <CheckCircle className="w-4 h-4 text-white" />
+          </div>
+        )}
+        
+        {/* Theme preview mockup */}
+        <div className={`rounded-lg overflow-hidden border ${
+          isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
+        }`}>
+          {/* Header bar */}
+          <div className={`h-8 flex items-center px-3 space-x-2 ${
+            isDark ? 'bg-gray-800' : 'bg-gray-50'
+          }`}>
+            <div className="flex space-x-1">
+              <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+              <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+            </div>
+            <div className={`flex-1 h-1 rounded ${
+              isDark ? 'bg-gray-700' : 'bg-gray-200'
+            }`}></div>
+          </div>
+          
+          {/* Content area */}
+          <div className="p-3 space-y-2">
+            {/* Navigation */}
+            <div className="flex space-x-1">
+              <div className={`w-8 h-2 rounded ${
+                isDark ? 'bg-blue-400' : 'bg-blue-500'
+              }`}></div>
+              <div className={`w-6 h-2 rounded ${
+                isDark ? 'bg-gray-600' : 'bg-gray-300'
+              }`}></div>
+              <div className={`w-7 h-2 rounded ${
+                isDark ? 'bg-gray-600' : 'bg-gray-300'
+              }`}></div>
+            </div>
+            
+            {/* Main content */}
+            <div className="space-y-1">
+              <div className={`w-full h-2 rounded ${
+                isDark ? 'bg-gray-700' : 'bg-gray-200'
+              }`}></div>
+              <div className={`w-3/4 h-2 rounded ${
+                isDark ? 'bg-gray-700' : 'bg-gray-200'
+              }`}></div>
+              <div className={`w-1/2 h-2 rounded ${
+                isDark ? 'bg-gray-700' : 'bg-gray-200'
+              }`}></div>
+            </div>
+            
+            {/* Cards */}
+            <div className="grid grid-cols-2 gap-1 mt-2">
+              <div className={`h-6 rounded ${
+                isDark ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'
+              }`}></div>
+              <div className={`h-6 rounded ${
+                isDark ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'
+              }`}></div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Theme info */}
+        <div className="mt-3 text-center">
+          <div className="flex items-center justify-center space-x-2 mb-1">
+            {isDark ? (
+              <Moon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            ) : (
+              <Sun className="w-4 h-4 text-yellow-500" />
+            )}
+            <span className={`font-medium ${
+              isDark ? 'text-gray-700 dark:text-gray-300' : 'text-gray-800 dark:text-gray-200'
+            }`}>
+              {isDark ? 'Dark Mode' : 'Light Mode'}
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {isDark 
+              ? 'Easy on the eyes, perfect for low-light environments' 
+              : 'Clean and bright, ideal for daytime use'
+            }
+          </p>
+        </div>
+      </button>
+    );
+  };
 
   const steps: OnboardingStep[] = [
     {
@@ -69,6 +181,92 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
                 <Sparkles className="w-6 h-6 text-purple-500 dark:text-purple-400 mb-2" />
                 <div className="text-sm font-medium text-purple-800 dark:text-purple-300">AI-Powered Insights</div>
                 <div className="text-xs text-purple-600 dark:text-purple-400">Personalized recommendations</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'theme-selection',
+      title: 'Choose Your Preferred Theme',
+      description: 'Select the appearance that works best for you',
+      icon: <Palette className="w-8 h-8" />,
+      content: (
+        <div className="space-y-6">
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto">
+              <Palette className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+                Customize Your Experience
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed max-w-md mx-auto">
+                Choose between light and dark themes to match your preference and working environment. 
+                You can always change this later in settings.
+              </p>
+            </div>
+          </div>
+
+          {/* Theme Selection Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-lg mx-auto">
+            <ThemePreview
+              themeMode="light"
+              isSelected={theme === 'light'}
+              onSelect={() => setTheme('light')}
+            />
+            <ThemePreview
+              themeMode="dark"
+              isSelected={theme === 'dark'}
+              onSelect={() => setTheme('dark')}
+            />
+          </div>
+
+          {/* System Theme Option */}
+          <div className="max-w-lg mx-auto">
+            <button
+              onClick={() => setTheme('system')}
+              className={`w-full p-4 rounded-xl border-2 transition-all duration-300 ${
+                theme === 'system'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+              }`}
+            >
+              <div className="flex items-center justify-center space-x-3">
+                <div className={`p-2 rounded-lg ${
+                  theme === 'system' 
+                    ? 'bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-400' 
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400'
+                }`}>
+                  <Monitor className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <div className="font-medium text-gray-800 dark:text-gray-200">
+                    Follow System Preference
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    Automatically switch between light and dark based on your device settings
+                  </div>
+                </div>
+                {theme === 'system' && (
+                  <CheckCircle className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                )}
+              </div>
+            </button>
+          </div>
+
+          {/* Current Selection Display */}
+          <div className="text-center">
+            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Current selection:</span>
+              <div className="flex items-center space-x-1">
+                {theme === 'light' && <Sun className="w-4 h-4 text-yellow-500" />}
+                {theme === 'dark' && <Moon className="w-4 h-4 text-gray-600 dark:text-gray-400" />}
+                {theme === 'system' && <Monitor className="w-4 h-4 text-blue-500 dark:text-blue-400" />}
+                <span className="font-medium text-gray-800 dark:text-gray-200 capitalize">
+                  {theme === 'system' ? 'System' : `${theme} Mode`}
+                </span>
               </div>
             </div>
           </div>
@@ -412,6 +610,22 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                   <span>Review analytics to identify patterns</span>
                 </div>
+              </div>
+            </div>
+            
+            {/* Theme confirmation */}
+            <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <Palette className="w-4 h-4 text-purple-500 dark:text-purple-400" />
+                <span className="text-sm font-medium text-purple-800 dark:text-purple-300">Theme Selected</span>
+              </div>
+              <div className="flex items-center justify-center space-x-2">
+                {theme === 'light' && <Sun className="w-4 h-4 text-yellow-500" />}
+                {theme === 'dark' && <Moon className="w-4 h-4 text-gray-600 dark:text-gray-400" />}
+                {theme === 'system' && <Monitor className="w-4 h-4 text-blue-500 dark:text-blue-400" />}
+                <span className="text-sm text-purple-700 dark:text-purple-400 capitalize">
+                  {theme === 'system' ? 'System Preference' : `${theme} Mode`}
+                </span>
               </div>
             </div>
           </div>
