@@ -664,9 +664,6 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                 >
                   {formattedTime}
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">
-                  {sessionType} Time
-                </div>
                 {/* Session counter */}
                 {totalFocusSessions > 1 && (
                   <div className="mt-2 text-xs text-blue-600 dark:text-blue-400 font-medium">
