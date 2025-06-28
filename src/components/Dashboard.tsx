@@ -62,10 +62,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ preferences }) => {
           </div>
         </div>
 
-        {/* Focus Timer - Center Column */}
+        {/* Focus Timer - Center Column - NO PRESETS */}
         <div className="lg:col-span-1 h-full">
           <div className="h-full">
-            <FocusTimer preferences={preferences} />
+            <FocusTimer 
+              preferences={preferences} 
+              showPresets={false}
+            />
           </div>
         </div>
 

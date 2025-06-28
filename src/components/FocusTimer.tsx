@@ -9,6 +9,7 @@ import { SoundControls } from './SoundControls';
 interface FocusTimerProps {
   preferences?: UserPreferences;
   onUpdatePreferences?: (updates: Partial<UserPreferences>) => void;
+  showPresets?: boolean; // New prop to control preset visibility
 }
 
 // Focus presets with the current 90/15 as Flow State
@@ -47,7 +48,8 @@ const FOCUS_PRESETS: FocusPreset[] = [
 
 export const FocusTimer: React.FC<FocusTimerProps> = ({ 
   preferences, 
-  onUpdatePreferences 
+  onUpdatePreferences,
+  showPresets = true // Default to true for backward compatibility
 }) => {
   // Use shared timer hook instead of local state
   const {
@@ -227,8 +229,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         </div>
       </div>
 
-      {/* Quick Preset Buttons - Only show when timer is not active */}
-      {!isActive && !isPaused && (
+      {/* Quick Preset Buttons - Only show when showPresets is true and timer is not active */}
+      {showPresets && !isActive && !isPaused && (
         <div className="mb-8">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Quick Presets:</span>
