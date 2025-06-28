@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Activity, 
   Smartphone, 
   Heart, 
-  ChevronDown, 
-  ChevronUp,
   Target,
   Clock,
   TrendingUp
@@ -24,38 +22,20 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
   cognitiveState,
   preferences
 }) => {
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['digital-wellness']));
   const { interventions, completeIntervention, dismissIntervention } = useInterventions(cognitiveState, preferences);
   const { data: digitalWellnessData } = useDigitalWellness();
 
-  const toggleSection = (sectionId: string) => {
-    setExpandedSections(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(sectionId)) {
-        newSet.delete(sectionId);
-      } else {
-        newSet.add(sectionId);
-      }
-      return newSet;
-    });
-  };
-
   const WellnessCard: React.FC<{
-    id: string;
     title: string;
     icon: React.ReactNode;
     description: string;
     children: React.ReactNode;
-    defaultExpanded?: boolean;
-  }> = ({ id, title, icon, description, children, defaultExpanded = false }) => {
-    const isExpanded = expandedSections.has(id);
-    
+    badge?: string;
+  }> = ({ title, icon, description, children, badge }) => {
     return (
       <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark border border-calm-200 dark:border-calm-700 transition-all duration-300 hover:shadow-gentle dark:hover:shadow-soft-dark h-full flex flex-col">
-        <button
-          onClick={() => toggleSection(id)}
-          className="w-full p-6 text-left focus-ring rounded-t-xl hover:bg-calm-50 dark:hover:bg-calm-700 transition-colors duration-200"
-        >
+        {/* Header - No longer clickable */}
+        <div className="p-6 border-b border-calm-200 dark:border-calm-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-wellness-100 dark:bg-wellness-900/30 rounded-lg text-wellness-600 dark:text-wellness-400">
@@ -66,33 +46,19 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
                 <p className="text-body-small text-calm-600 dark:text-calm-400 mt-1">{description}</p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              {id === 'digital-wellness' && digitalWellnessData.dailySocialMediaTime > 0 && (
-                <div className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-full text-xs font-medium border border-purple-200 dark:border-purple-800">
-                  {Math.round(digitalWellnessData.dailySocialMediaTime / (1000 * 60))}m today
-                </div>
-              )}
-              {id === 'interventions' && interventions.filter(i => !i.completed).length > 0 && (
-                <div className="bg-wellness-100 dark:bg-wellness-900/30 text-wellness-700 dark:text-wellness-300 px-2 py-1 rounded-full text-xs font-medium border border-wellness-200 dark:border-wellness-800">
-                  {interventions.filter(i => !i.completed).length} pending
-                </div>
-              )}
-              {isExpanded ? (
-                <ChevronUp className="w-5 h-5 text-calm-500 dark:text-calm-400" />
-              ) : (
-                <ChevronDown className="w-5 h-5 text-calm-500 dark:text-calm-400" />
-              )}
-            </div>
+            {/* Badge - No chevron icons */}
+            {badge && (
+              <div className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full text-xs font-medium border border-purple-200 dark:border-purple-800">
+                {badge}
+              </div>
+            )}
           </div>
-        </button>
+        </div>
         
-        {isExpanded && (
-          <div className="px-6 pb-6 flex-1 animate-fade-in">
-            <div className="border-t border-calm-200 dark:border-calm-700 pt-6 h-full">
-              {children}
-            </div>
-          </div>
-        )}
+        {/* Content - Always visible */}
+        <div className="p-6 flex-1 animate-fade-in">
+          {children}
+        </div>
       </div>
     );
   };
@@ -133,21 +99,19 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
         </div>
       </div>
 
-      {/* Wellness Sections - NEW 2x2 Grid Layout */}
+      {/* Wellness Sections - Permanently Expanded 2x2 Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Row 1: Digital Wellness & Mindfulness */}
         <WellnessCard
-          id="digital-wellness"
           title="Digital Wellness"
           icon={<Smartphone className="w-5 h-5" />}
           description="Monitor and optimize your social media usage and digital habits"
-          defaultExpanded={true}
+          badge={digitalWellnessData.dailySocialMediaTime > 0 ? `${Math.round(digitalWellnessData.dailySocialMediaTime / (1000 * 60))}m today` : undefined}
         >
           <DigitalWellnessPanel />
         </WellnessCard>
 
         <WellnessCard
-          id="mindfulness"
           title="Mindfulness & Breathing"
           icon={<Heart className="w-5 h-5" />}
           description="Guided breathing exercises and mindfulness practices"
@@ -183,10 +147,10 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
 
         {/* Row 2: Wellness Interventions & Wellness Insights */}
         <WellnessCard
-          id="interventions"
           title="Wellness Interventions"
           icon={<Activity className="w-5 h-5" />}
           description="Personalized wellness recommendations based on your cognitive state"
+          badge={interventions.filter(i => !i.completed).length > 0 ? `${interventions.filter(i => !i.completed).length} pending` : undefined}
         >
           <InterventionPanel
             interventions={interventions}
@@ -196,7 +160,6 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
         </WellnessCard>
 
         <WellnessCard
-          id="insights"
           title="Wellness Insights"
           icon={<TrendingUp className="w-5 h-5" />}
           description="Personalized insights and recommendations for optimal wellness"
@@ -249,6 +212,19 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
                   <p className="text-xs text-green-700 dark:text-green-400">
                     Excellent job taking mindful breaks today. This conscious approach to digital wellness 
                     is helping maintain your cognitive performance.
+                  </p>
+                </div>
+              )}
+              
+              {/* Default insight when no specific conditions are met */}
+              {digitalWellnessData.cognitiveImpactScore >= 60 && 
+               cognitiveState.emotionalState !== 'Stressed' && 
+               digitalWellnessData.mindfulBreaksTaken <= 3 && (
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-3 rounded-lg">
+                  <h5 className="font-medium text-blue-800 dark:text-blue-300 mb-1 text-sm">Wellness Status</h5>
+                  <p className="text-xs text-blue-700 dark:text-blue-400">
+                    Your wellness metrics are looking good. Keep maintaining healthy digital habits and taking regular breaks 
+                    to sustain optimal cognitive performance.
                   </p>
                 </div>
               )}
