@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, Clock, Settings, Timer, Zap, Target, Plus, Minus, Save, X } from 'lucide-react';
+import { Play, Pause, RotateCcw, Clock, Settings, Timer, Zap, Target, Plus, Minus, Save, X, Volume2, VolumeX } from 'lucide-react';
 import { UserPreferences, FocusPreset } from '../types';
+import { soundService } from '../services/SoundService';
+import { useSoundSettings } from '../hooks/useSoundSettings';
+import { SoundControls } from './SoundControls';
 
 interface FocusTimerProps {
   preferences?: UserPreferences;
@@ -50,11 +53,15 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   const [sessionType, setSessionType] = useState<'Focus' | 'Break'>('Focus');
   const [showOptions, setShowOptions] = useState(false);
   const [optionsMode, setOptionsMode] = useState<'presets' | 'custom'>('presets');
+  const [showSoundSettings, setShowSoundSettings] = useState(false);
   
   // Custom settings state
   const [customFocusTime, setCustomFocusTime] = useState(preferences?.focusSessionLength || 25);
   const [customBreakTime, setCustomBreakTime] = useState(preferences?.breakLength || 5);
   const [customNumberOfBreaks, setCustomNumberOfBreaks] = useState(1);
+  
+  // Sound settings hook
+  const { settings: soundSettings, toggleSound } = useSoundSettings();
   
   // Use preferences for initial time, fallback to default (25 minutes for Pomodoro)
   const defaultFocusTime = (preferences?.focusSessionLength || 25) * 60;
@@ -104,6 +111,11 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         setTime(prevTime => {
           const newTime = prevTime - 1;
           
+          // Play tick sound if enabled
+          if (soundSettings.tickSound && newTime % 1 === 0) {
+            soundService.playTickSound();
+          }
+          
           // Check if timer reached zero
           if (newTime <= 0) {
             // Clear interval immediately
@@ -115,6 +127,13 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
             // Stop the timer completely
             setIsActive(false);
             setIsPaused(false);
+            
+            // Play completion sound
+            if (sessionType === 'Focus') {
+              soundService.playFocusCompleteSound();
+            } else {
+              soundService.playBreakCompleteSound();
+            }
             
             // Show notification if break reminders are enabled
             if (preferences?.breakReminders) {
@@ -161,7 +180,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         intervalRef.current = null;
       }
     };
-  }, [isActive, isPaused, time, sessionType, preferences?.breakReminders, preferences?.focusSessionLength, preferences?.breakLength]);
+  }, [isActive, isPaused, time, sessionType, preferences?.breakReminders, preferences?.focusSessionLength, preferences?.breakLength, soundSettings.tickSound]);
 
   // Request notification permission on component mount
   useEffect(() => {
@@ -242,6 +261,9 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   };
 
   const toggleTimer = () => {
+    // Initialize audio context on first user interaction
+    soundService.initializeOnUserInteraction();
+    
     if (isActive) {
       // Pause the timer - PRESERVE CURRENT TIME
       setIsActive(false);
@@ -335,6 +357,18 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           }`}>
             {sessionType} Session
           </span>
+          {/* Sound Toggle Button */}
+          <button
+            onClick={toggleSound}
+            className={`p-2 rounded-lg transition-colors duration-200 focus-ring touch-target ${
+              soundSettings.enabled 
+                ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50' 
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'
+            }`}
+            title={soundSettings.enabled ? 'Sound notifications enabled' : 'Sound notifications disabled'}
+          >
+            {soundSettings.enabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+          </button>
         </div>
       </div>
 
@@ -343,13 +377,28 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         <div className="mb-8">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Quick Presets:</span>
-            <button
-              onClick={() => setShowOptions(!showOptions)}
-              className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
-            >
-              {showOptions ? 'Hide Options' : 'More Options'}
-            </button>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setShowSoundSettings(!showSoundSettings)}
+                className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors"
+              >
+                {showSoundSettings ? 'Hide Sound' : 'Sound Settings'}
+              </button>
+              <button
+                onClick={() => setShowOptions(!showOptions)}
+                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+              >
+                {showOptions ? 'Hide Options' : 'More Options'}
+              </button>
+            </div>
           </div>
+          
+          {/* Sound Settings Panel */}
+          {showSoundSettings && (
+            <div className="mb-4 bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+              <SoundControls showAdvanced={true} />
+            </div>
+          )}
           
           <div className="grid grid-cols-4 gap-2 mb-3">
             {FOCUS_PRESETS.map((preset) => (
@@ -670,6 +719,9 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
             <div className="flex items-center justify-center space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-sm font-medium">Session in progress</span>
+              {soundSettings.enabled && (
+                <span className="text-xs text-green-600 dark:text-green-400">• Sound enabled</span>
+              )}
             </div>
           ) : isPaused ? (
             <div className="flex items-center justify-center space-x-2 py-2">
@@ -677,7 +729,12 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               <span className="text-sm font-medium">Timer paused - click play to resume</span>
             </div>
           ) : (
-            <span className="text-sm">Click play to start your {sessionType.toLowerCase()} session</span>
+            <div className="flex items-center justify-center space-x-2">
+              <span className="text-sm">Click play to start your {sessionType.toLowerCase()} session</span>
+              {soundSettings.enabled && (
+                <span className="text-xs text-blue-600 dark:text-blue-400">• Sound notifications ready</span>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -703,12 +760,20 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               <span className="font-medium text-gray-800 dark:text-gray-200">
                 {preferences.focusSessionLength}m focus / {preferences.breakLength || 5}m break
               </span>
-              {preferences.breakReminders && (
-                <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-xs">Notifications on</span>
-                </div>
-              )}
+              <div className="flex items-center space-x-3">
+                {preferences.breakReminders && (
+                  <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-xs">Notifications on</span>
+                  </div>
+                )}
+                {soundSettings.enabled && (
+                  <div className="flex items-center space-x-1 text-blue-600 dark:text-blue-400">
+                    <Volume2 className="w-3 h-3" />
+                    <span className="text-xs">Sound on</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

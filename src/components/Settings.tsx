@@ -22,6 +22,7 @@ import { UserPreferences } from '../types';
 import { useDeviceIntegration } from '../hooks/useDeviceIntegration';
 import { DeviceConnectionModal } from './DeviceConnectionModal';
 import { ThemeSelector } from './ThemeToggle';
+import { SoundControls } from './SoundControls';
 
 interface SettingsProps {
   preferences: UserPreferences;
@@ -149,6 +150,15 @@ export const Settings: React.FC<SettingsProps> = ({
             <ThemeSelector />
           </SettingCard>
 
+          {/* Sound Settings */}
+          <SettingCard
+            icon={<Volume2 className="w-5 h-5" />}
+            title="Sound Notifications"
+            description="Configure audio notifications for timer events and focus sessions"
+          >
+            <SoundControls showAdvanced={true} />
+          </SettingCard>
+
           <SettingCard
             icon={<Monitor className="w-5 h-5" />}
             title="Cognitive Monitoring"
@@ -164,7 +174,7 @@ export const Settings: React.FC<SettingsProps> = ({
                   onChange={(e) => onUpdatePreferences({
                     interventionFrequency: e.target.value as UserPreferences['interventionFrequency']
                   })}
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-calm-700 text-gray-900 dark:text-gray-100"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-calm-700 text-gray-900 dark:text-gray-100 form-select"
                 >
                   <option value="Minimal">Minimal - Only critical interventions</option>
                   <option value="Normal">Normal - Balanced approach</option>

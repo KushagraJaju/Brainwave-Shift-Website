@@ -161,6 +161,42 @@
     min-height: 44px; /* Improved touch target */
   }
 
+  /* Range slider styling */
+  .slider {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .slider::-webkit-slider-track {
+    @apply bg-gray-200 dark:bg-gray-700 rounded-lg;
+    height: 8px;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    @apply bg-blue-500 dark:bg-blue-400 rounded-full;
+    height: 20px;
+    width: 20px;
+    margin-top: -6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .slider::-moz-range-track {
+    @apply bg-gray-200 dark:bg-gray-700 rounded-lg;
+    height: 8px;
+    border: none;
+  }
+
+  .slider::-moz-range-thumb {
+    @apply bg-blue-500 dark:bg-blue-400 rounded-full border-0;
+    height: 20px;
+    width: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
   /* Loading states */
   .loading-skeleton {
     @apply bg-gradient-to-r from-calm-200 via-calm-100 to-calm-200 dark:from-calm-700 dark:via-calm-600 dark:to-calm-700 bg-[length:200%_100%] animate-pulse;
