@@ -64,12 +64,6 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   
   // Use ref to track the interval and prevent auto-restart issues
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isActiveRef = useRef(isActive);
-
-  // Update refs when state changes
-  useEffect(() => {
-    isActiveRef.current = isActive;
-  }, [isActive]);
 
   // Update custom settings when preferences change
   useEffect(() => {
@@ -79,9 +73,9 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     }
   }, [preferences?.focusSessionLength, preferences?.breakLength]);
 
-  // Update timer when preferences change (only if not active)
+  // Update timer when preferences change (only if not active and not paused)
   useEffect(() => {
-    if (preferences && !isActive) {
+    if (preferences && !isActive && !isPaused) {
       const newFocusTime = preferences.focusSessionLength * 60;
       const newBreakTime = (preferences.breakLength || 5) * 60;
       
@@ -93,9 +87,9 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         setInitialTime(newBreakTime);
       }
     }
-  }, [preferences?.focusSessionLength, preferences?.breakLength, isActive, sessionType]);
+  }, [preferences?.focusSessionLength, preferences?.breakLength, isActive, isPaused, sessionType]);
 
-  // Fixed timer logic to prevent auto-restart
+  // Fixed timer logic to prevent auto-restart and preserve pause state
   useEffect(() => {
     // Clear any existing interval
     if (intervalRef.current) {
@@ -117,7 +111,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               intervalRef.current = null;
             }
             
-            // Stop the timer
+            // Stop the timer completely
             setIsActive(false);
             setIsPaused(false);
             
@@ -185,8 +179,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
       });
     }
     
-    // Reset timer if not active
-    if (!isActive) {
+    // Reset timer if not active and not paused
+    if (!isActive && !isPaused) {
       if (sessionType === 'Focus') {
         const newTime = preset.focusMinutes * 60;
         setTime(newTime);
@@ -211,8 +205,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
       });
     }
     
-    // Reset timer if not active
-    if (!isActive) {
+    // Reset timer if not active and not paused
+    if (!isActive && !isPaused) {
       if (sessionType === 'Focus') {
         const newTime = customFocusTime * 60;
         setTime(newTime);
@@ -243,9 +237,10 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
 
   const toggleTimer = () => {
     if (isActive) {
-      // Pause the timer
+      // Pause the timer - PRESERVE CURRENT TIME
       setIsActive(false);
       setIsPaused(true);
+      // DO NOT reset time here - this was the bug!
     } else {
       // Start or resume the timer
       setIsActive(true);
@@ -641,7 +636,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         </div>
 
         {/* Reset Button - Centered below the horizontal layout */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-8">
           <button
             onClick={resetTimer}
             className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-50"
@@ -651,15 +646,15 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           </button>
         </div>
 
-        {/* Status Text */}
-        <div className="text-center text-gray-600 dark:text-gray-400">
+        {/* Status Text with Enhanced Spacing */}
+        <div className="text-center text-gray-600 dark:text-gray-400 my-6 py-4">
           {isActive ? (
             <div className="flex items-center justify-center space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-sm font-medium">Session in progress</span>
             </div>
           ) : isPaused ? (
-            <div className="flex items-center justify-center space-x-2">
+            <div className="flex items-center justify-center space-x-2 py-2">
               <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
               <span className="text-sm font-medium">Timer paused - click play to resume</span>
             </div>
@@ -669,9 +664,9 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         </div>
       </div>
 
-      {/* Settings Section - At bottom */}
+      {/* Settings Section - At bottom with enhanced spacing */}
       {preferences && (
-        <div className="border-t border-gray-100 dark:border-gray-700 pt-4 mt-auto">
+        <div className="border-t border-gray-100 dark:border-gray-700 pt-6 mt-6">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center space-x-2">
               <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" />
