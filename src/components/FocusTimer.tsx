@@ -137,27 +137,26 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   const progress = ((initialTime - time) / initialTime) * 100;
 
   return (
-    <div className="space-y-6">
-      {/* Main Timer Component */}
-      <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 transition-all duration-300 hover:shadow-xl dark:hover:shadow-soft-dark border border-calm-200 dark:border-calm-700">
-        {/* Header Section - Consistent with other dashboard sections */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Focus Timer</h2>
-          <div className="flex items-center space-x-3">
-            <Timer className="w-5 h-5 text-blue-500 dark:text-blue-400" />
-            <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-              sessionType === 'Focus' 
-                ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300' 
-                : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
-            }`}>
-              {sessionType} Session
-            </span>
-          </div>
+    <div className="card-primary p-6 h-full flex flex-col">
+      {/* Header Section */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Focus Timer</h2>
+        <div className="flex items-center space-x-3">
+          <Timer className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+            sessionType === 'Focus' 
+              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300' 
+              : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+          }`}>
+            {sessionType} Session
+          </span>
         </div>
+      </div>
 
-        {/* Timer Display */}
-        <div className="text-center mb-6">
-          {/* Circular Progress - Smaller and more proportional */}
+      {/* Timer Display - Centered and Flexible */}
+      <div className="flex-1 flex flex-col justify-center">
+        <div className="text-center mb-8">
+          {/* Circular Progress */}
           <div className="relative w-40 h-40 mx-auto mb-6">
             <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 160 160">
               <circle
@@ -196,8 +195,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
             </div>
           </div>
 
-          {/* Controls - Better positioned and styled */}
-          <div className="flex items-center justify-center space-x-4 mb-4">
+          {/* Controls */}
+          <div className="flex items-center justify-center space-x-4 mb-6">
             <button
               onClick={toggleTimer}
               className={`flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
@@ -216,7 +215,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
             </button>
           </div>
 
-          {/* Status Text - More subtle */}
+          {/* Status Text */}
           <div className="text-gray-600 dark:text-gray-400">
             {isActive ? (
               <div className="flex items-center justify-center space-x-2">
@@ -228,39 +227,28 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
             )}
           </div>
         </div>
-
-        {/* Settings Section - Better integrated */}
-        {preferences && (
-          <div className="border-t border-gray-100 dark:border-gray-700 pt-4">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center space-x-2">
-                <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                <span className="text-gray-600 dark:text-gray-400">Current Settings:</span>
-              </div>
-              <div className="flex items-center space-x-4">
-                <span className="font-medium text-gray-800 dark:text-gray-200">
-                  {preferences.focusSessionLength}m focus / {preferences.breakLength || 5}m break
-                </span>
-                {preferences.breakReminders && (
-                  <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-xs">Notifications on</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Session Presets - Now positioned below the timer */}
-      {preferences && onUpdatePreferences && (
-        <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 transition-all duration-300 hover:shadow-xl dark:hover:shadow-soft-dark border border-calm-200 dark:border-calm-700">
-          <FocusPresets
-            selectedPreset={preferences.selectedPreset}
-            onPresetSelect={handlePresetSelect}
-            preferences={preferences}
-          />
+      {/* Settings Section - At bottom */}
+      {preferences && (
+        <div className="border-t border-gray-100 dark:border-gray-700 pt-4 mt-auto">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center space-x-2">
+              <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <span className="text-gray-600 dark:text-gray-400">Current Settings:</span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="font-medium text-gray-800 dark:text-gray-200">
+                {preferences.focusSessionLength}m focus / {preferences.breakLength || 5}m break
+              </span>
+              {preferences.breakReminders && (
+                <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-xs">Notifications on</span>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
