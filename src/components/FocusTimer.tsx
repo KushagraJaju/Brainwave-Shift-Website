@@ -164,13 +164,13 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   const getPresetIcon = (iconName: string) => {
     switch (iconName) {
       case 'clock':
-        return <Clock className="w-4 h-4" />;
+        return <Clock className="w-4 h-4" aria-hidden="true" />;
       case 'target':
-        return <Target className="w-4 h-4" />;
+        return <Target className="w-4 h-4" aria-hidden="true" />;
       case 'zap':
-        return <Zap className="w-4 h-4" />;
+        return <Zap className="w-4 h-4" aria-hidden="true" />;
       default:
-        return <Clock className="w-4 h-4" />;
+        return <Clock className="w-4 h-4" aria-hidden="true" />;
     }
   };
 
@@ -198,7 +198,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Focus Timer</h2>
         <div className="flex items-center space-x-3">
-          <Timer className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+          <Timer className="w-5 h-5 text-blue-500 dark:text-blue-400" aria-hidden="true" />
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${
             sessionType === 'Focus' 
               ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300' 
@@ -220,9 +220,9 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               aria-label={soundSettings.enabled ? 'Disable sound notifications' : 'Enable sound notifications'}
             >
               {soundSettings.enabled ? (
-                <Volume2 className="w-4 h-4" />
+                <Volume2 className="w-4 h-4" aria-hidden="true" />
               ) : (
-                <VolumeX className="w-4 h-4" />
+                <VolumeX className="w-4 h-4" aria-hidden="true" />
               )}
             </button>
           </div>
@@ -267,6 +267,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
                     : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                 }`}
+                aria-label={`Select ${preset.name} preset: ${preset.focusMinutes} minutes focus, ${preset.breakMinutes} minutes break`}
               >
                 <div className="flex items-center justify-center mb-1">
                   {getPresetIcon(preset.icon)}
@@ -289,9 +290,10 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                   ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
+              aria-label="Customize timer settings"
             >
               <div className="flex items-center justify-center mb-1">
-                <Settings className="w-4 h-4" />
+                <Settings className="w-4 h-4" aria-hidden="true" />
               </div>
               <div className="text-xs font-medium">Custom</div>
               <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -315,6 +317,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                         ? 'bg-blue-500 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                     }`}
+                    aria-pressed={optionsMode === 'presets'}
                   >
                     Presets
                   </button>
@@ -325,14 +328,16 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                         ? 'bg-purple-500 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                     }`}
+                    aria-pressed={optionsMode === 'custom'}
                   >
                     Custom
                   </button>
                   <button
                     onClick={() => setShowOptions(false)}
                     className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 touch-target focus-ring"
+                    aria-label="Close options panel"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -349,6 +354,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                           : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
+                      aria-label={`Select ${preset.name} preset: ${preset.description}`}
                     >
                       <div className="flex items-center space-x-3">
                         <div className={`p-2 rounded-lg bg-gradient-to-r ${preset.color} text-white`}>
@@ -370,96 +376,108 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                 <div className="space-y-6">
                   {/* Focus Time Setting */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    <label htmlFor="focus-time" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                       Focus Time (minutes)
                     </label>
                     <div className="flex items-center space-x-4">
                       <button
                         onClick={() => adjustCustomTime('focus', 'down')}
                         className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target focus-ring"
+                        aria-label="Decrease focus time by 5 minutes"
                       >
-                        <Minus className="w-4 h-4" />
+                        <Minus className="w-4 h-4" aria-hidden="true" />
                       </button>
                       <div className="flex-1 text-center">
                         <input
+                          id="focus-time"
                           type="number"
                           min="5"
                           max="120"
                           value={customFocusTime}
                           onChange={(e) => setCustomFocusTime(Math.max(5, Math.min(120, parseInt(e.target.value) || 5)))}
                           className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 form-input focus-ring"
+                          aria-label="Focus time in minutes"
                         />
                         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">5-120 minutes</div>
                       </div>
                       <button
                         onClick={() => adjustCustomTime('focus', 'up')}
                         className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target focus-ring"
+                        aria-label="Increase focus time by 5 minutes"
                       >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </div>
                   </div>
 
                   {/* Break Time Setting */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    <label htmlFor="break-time" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                       Break Time (minutes)
                     </label>
                     <div className="flex items-center space-x-4">
                       <button
                         onClick={() => adjustCustomTime('break', 'down')}
                         className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target focus-ring"
+                        aria-label="Decrease break time by 5 minutes"
                       >
-                        <Minus className="w-4 h-4" />
+                        <Minus className="w-4 h-4" aria-hidden="true" />
                       </button>
                       <div className="flex-1 text-center">
                         <input
+                          id="break-time"
                           type="number"
                           min="1"
                           max="60"
                           value={customBreakTime}
                           onChange={(e) => setCustomBreakTime(Math.max(1, Math.min(60, parseInt(e.target.value) || 1)))}
                           className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 form-input focus-ring"
+                          aria-label="Break time in minutes"
                         />
                         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">1-60 minutes</div>
                       </div>
                       <button
                         onClick={() => adjustCustomTime('break', 'up')}
                         className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target focus-ring"
+                        aria-label="Increase break time by 5 minutes"
                       >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </div>
                   </div>
 
                   {/* Number of Breaks Setting */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    <label htmlFor="break-count" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                       Number of Breaks
                     </label>
                     <div className="flex items-center space-x-4">
                       <button
                         onClick={() => adjustCustomTime('breaks', 'down')}
                         className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target focus-ring"
+                        aria-label="Decrease number of breaks"
                       >
-                        <Minus className="w-4 h-4" />
+                        <Minus className="w-4 h-4" aria-hidden="true" />
                       </button>
                       <div className="flex-1 text-center">
                         <input
+                          id="break-count"
                           type="number"
                           min="1"
                           max="5"
                           value={customNumberOfBreaks}
                           onChange={(e) => setCustomNumberOfBreaks(Math.max(1, Math.min(5, parseInt(e.target.value) || 1)))}
                           className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 form-input focus-ring"
+                          aria-label="Number of breaks"
                         />
                         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">1-5 breaks</div>
                       </div>
                       <button
                         onClick={() => adjustCustomTime('breaks', 'up')}
                         className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target focus-ring"
+                        aria-label="Increase number of breaks"
                       >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </div>
                   </div>
@@ -479,8 +497,9 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                   <button
                     onClick={handleCustomApply}
                     className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white rounded-lg transition-colors font-medium btn-primary focus-ring"
+                    aria-label="Apply custom timer settings"
                   >
-                    <Save className="w-4 h-4" />
+                    <Save className="w-4 h-4" aria-hidden="true" />
                     <span>Apply Custom Settings</span>
                   </button>
                 </div>
@@ -496,8 +515,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         <div className="flex items-center justify-center mb-12">
           {/* CENTER: Enlarged Timer Circle with More Space */}
           <div className="flex flex-col items-center">
-            <div className="relative w-64 h-64 mb-8">
-              <svg className="w-64 h-64 transform -rotate-90" viewBox="0 0 264 264">
+            <div className="relative w-64 h-64 mb-8" role="timer" aria-label={`${sessionType} timer: ${formattedTime}`}>
+              <svg className="w-64 h-64 transform -rotate-90" viewBox="0 0 264 264" aria-hidden="true">
                 <circle
                   cx="132"
                   cy="132"
@@ -533,6 +552,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                     fontWeight: '700',
                     textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                   }}
+                  aria-hidden="true" // The parent div has the aria-label
                 >
                   {formattedTime}
                 </div>
@@ -549,32 +569,31 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           {/* Play/Pause Button */}
           <button
             onClick={handleToggleTimer}
-            className={`flex items-center justify-center w-20 h-20 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-opacity-50 touch-target ${
+            className={`flex items-center justify-center w-20 h-20 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus-ring touch-target ${
               isActive
-                ? 'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white focus:ring-red-300'
-                : 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white focus:ring-blue-300'
+                ? 'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white'
+                : 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white'
             }`}
             aria-label={isActive ? 'Pause timer' : 'Start timer'}
           >
-            {isActive ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 ml-1" />}
+            {isActive ? <Pause className="w-8 h-8" aria-hidden="true" /> : <Play className="w-8 h-8 ml-1" aria-hidden="true" />}
           </button>
 
           {/* Restart Button - Now Next to Play/Pause */}
           <button
             onClick={reset}
-            className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-50 touch-target"
+            className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus-ring touch-target"
             aria-label="Reset timer to original time"
-            title="Reset timer to original time"
           >
-            <RotateCcw className="w-6 h-6" />
+            <RotateCcw className="w-6 h-6" aria-hidden="true" />
           </button>
         </div>
 
         {/* Status Text with Enhanced Spacing */}
-        <div className="text-center text-gray-600 dark:text-gray-400 mb-8 py-6">
+        <div className="text-center text-gray-600 dark:text-gray-400 mb-8 py-6" aria-live="polite">
           {isActive ? (
             <div className="flex items-center justify-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" aria-hidden="true"></div>
               <span className="text-sm font-medium">Session in progress</span>
               {soundSettings.enabled && (
                 <span className="text-xs text-green-600 dark:text-green-400">• Sound enabled</span>
@@ -582,7 +601,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
             </div>
           ) : isPaused ? (
             <div className="flex items-center justify-center space-x-2 py-2">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-yellow-500 rounded-full" aria-hidden="true"></div>
               <span className="text-sm font-medium">Timer paused - click play to resume</span>
             </div>
           ) : (
@@ -601,7 +620,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         <div className="border-t border-gray-100 dark:border-gray-700 pt-6 mt-8">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center space-x-2">
-              <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" />
               <span className="text-gray-600 dark:text-gray-400">Current:</span>
               {currentPreset ? (
                 <span className="text-blue-600 dark:text-blue-400 font-medium">
@@ -620,13 +639,13 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               <div className="flex items-center space-x-3">
                 {preferences.breakReminders && (
                   <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-green-500 rounded-full" aria-hidden="true"></div>
                     <span className="text-xs">Notifications on</span>
                   </div>
                 )}
                 {soundSettings.enabled && (
                   <div className="flex items-center space-x-1 text-blue-600 dark:text-blue-400">
-                    <Volume2 className="w-3 h-3" />
+                    <Volume2 className="w-3 h-3" aria-hidden="true" />
                     <span className="text-xs">Sound on</span>
                   </div>
                 )}

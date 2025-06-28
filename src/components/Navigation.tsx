@@ -47,9 +47,11 @@ export const Navigation: React.FC<NavigationProps> = ({
         onClick={onMobileMenuToggle}
         className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-white dark:bg-calm-800 rounded-xl shadow-soft dark:shadow-gentle-dark border border-calm-200 dark:border-calm-700 focus-ring mobile-menu-button"
         aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={isMobileMenuOpen}
+        aria-controls="main-navigation"
         style={{ zIndex: 9998 }} // Ensure it's always above everything except modals
       >
-        {isMobileMenuOpen ? <X className="w-5 h-5 text-calm-700 dark:text-calm-300" /> : <Menu className="w-5 h-5 text-calm-700 dark:text-calm-300" />}
+        {isMobileMenuOpen ? <X className="w-5 h-5 text-calm-700 dark:text-calm-300" aria-hidden="true" /> : <Menu className="w-5 h-5 text-calm-700 dark:text-calm-300" aria-hidden="true" />}
       </button>
 
       {/* Mobile Overlay - FIXED Z-INDEX */}
@@ -71,6 +73,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         style={{ zIndex: 45 }} // Above mobile overlay but below menu button
         role="navigation"
         aria-label="Main navigation"
+        id="main-navigation"
       >
         <div className="flex flex-col h-full">
           {/* Header - Fixed at top of sidebar */}
@@ -106,7 +109,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                   >
                     <Icon className={`w-5 h-5 transition-colors duration-200 ${
                       isActive ? 'text-focus-600 dark:text-focus-400' : 'text-calm-500 dark:text-calm-500 group-hover:text-calm-700 dark:group-hover:text-calm-300'
-                    }`} />
+                    }`} aria-hidden="true" />
                     <span className="text-label">{item.label}</span>
                   </button>
                 );
@@ -128,12 +131,18 @@ export const Navigation: React.FC<NavigationProps> = ({
               <p className="text-body-small text-calm-600 dark:text-calm-400 mt-1 leading-relaxed pb-4">
                 AI-powered mental co-pilot for optimal performance
               </p>
-              <a href="https://www.bolt.new" target="_blank">
-              <img
-              src="/Bolt_logo_blk.png"
-              alt="Built with bolt"
-              className="h-20 w-20 "
-            /> </a>
+              <a 
+                href="https://www.bolt.new" 
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Built with Bolt"
+              >
+                <img
+                  src="/Bolt_logo_blk.png"
+                  alt="Built with Bolt"
+                  className="h-20 w-20"
+                /> 
+              </a>
             </div>
           </div>
         </div>

@@ -485,6 +485,8 @@ header {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
   z-index: 9999 !important;
@@ -534,4 +536,28 @@ header {
   .modal-overlay-critical.modal-open {
     display: flex !important;
   }
+}
+
+/* High contrast mode improvements */
+@media (forced-colors: active) {
+  .focus-ring:focus {
+    outline: 3px solid CanvasText !important;
+  }
+  
+  button, a {
+    forced-color-adjust: none;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    background-color: ButtonText;
+  }
+  
+  .slider::-moz-range-thumb {
+    background-color: ButtonText;
+  }
+}
+
+/* Skip to content link for keyboard users */
+.skip-to-content {
+  @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:p-4 focus:bg-white focus:text-black focus:rounded-lg focus:shadow-lg;
 }
