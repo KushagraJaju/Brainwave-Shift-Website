@@ -1,0 +1,5 @@
+/* /index.html 200
+
+# OAuth callback routes
+/oauth/callback/google /index.html 200
+/oauth/callback/microsoft /index.html 200

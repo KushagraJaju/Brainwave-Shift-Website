@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Watch, Calendar, Smartphone, Heart, Clock, Shield, CheckCircle } from 'lucide-react';
+import { X, Watch, Calendar, Smartphone, Heart, Clock, Shield, CheckCircle, AlertTriangle } from 'lucide-react';
 
 interface DeviceConnectionModalProps {
   isOpen: boolean;
@@ -29,10 +29,38 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
   ];
 
   const calendarProviders = [
-    { id: 'google', name: 'Google Calendar', icon: '📅', description: 'Meetings, events, focus blocks' },
-    { id: 'outlook', name: 'Microsoft Outlook', icon: '📧', description: 'Work calendar integration' },
-    { id: 'apple', name: 'Apple Calendar', icon: '🍎', description: 'Personal and work events' },
-    { id: 'notion', name: 'Notion Calendar', icon: '📝', description: 'Task and event management' }
+    { 
+      id: 'google', 
+      name: 'Google Calendar', 
+      icon: '📅', 
+      description: 'Meetings, events, focus blocks',
+      enabled: true,
+      oauth: true
+    },
+    { 
+      id: 'microsoft', 
+      name: 'Microsoft Calendar', 
+      icon: '📧', 
+      description: 'Outlook calendar integration',
+      enabled: true,
+      oauth: true
+    },
+    { 
+      id: 'apple', 
+      name: 'Apple Calendar', 
+      icon: '🍎', 
+      description: 'Personal and work events',
+      enabled: false,
+      comingSoon: true
+    },
+    { 
+      id: 'notion', 
+      name: 'Notion Calendar', 
+      icon: '📝', 
+      description: 'Task and event management',
+      enabled: false,
+      comingSoon: true
+    }
   ];
 
   const providers = deviceType === 'smartwatch' ? smartwatchProviders : calendarProviders;
@@ -118,29 +146,80 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
             {/* Provider Selection */}
             <div className="space-y-3 mb-6">
               <h3 className="font-semibold text-gray-800 dark:text-gray-200">Choose your {deviceType === 'smartwatch' ? 'smartwatch' : 'calendar'} provider:</h3>
-              {providers.map((provider) => (
-                <button
-                  key={provider.id}
-                  onClick={() => setSelectedProvider(provider.id)}
-                  className={`w-full p-4 rounded-lg border-2 transition-all duration-200 text-left ${
-                    selectedProvider === provider.id
-                      ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-calm-700 bg-white dark:bg-calm-800'
-                  }`}
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="text-2xl">{provider.icon}</div>
-                    <div className="flex-1">
-                      <h4 className="font-medium text-gray-800 dark:text-gray-200">{provider.name}</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{provider.description}</p>
+              {providers.map((provider) => {
+                const isEnabled = 'enabled' in provider ? provider.enabled : true;
+                const isComingSoon = 'comingSoon' in provider ? provider.comingSoon : false;
+                const hasOAuth = 'oauth' in provider ? provider.oauth : false;
+                
+                return (
+                  <button
+                    key={provider.id}
+                    onClick={() => isEnabled && setSelectedProvider(provider.id)}
+                    disabled={!isEnabled}
+                    className={`w-full p-4 rounded-lg border-2 transition-all duration-200 text-left ${
+                      !isEnabled
+                        ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 opacity-60 cursor-not-allowed'
+                        : selectedProvider === provider.id
+                          ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-calm-700 bg-white dark:bg-calm-800'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="text-2xl">{provider.icon}</div>
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <h4 className={`font-medium ${isEnabled ? 'text-gray-800 dark:text-gray-200' : 'text-gray-500 dark:text-gray-400'}`}>
+                            {provider.name}
+                          </h4>
+                          {hasOAuth && isEnabled && (
+                            <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium rounded-full border border-green-200 dark:border-green-800">
+                              OAuth 2.0
+                            </span>
+                          )}
+                          {isComingSoon && (
+                            <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-xs font-medium rounded-full border border-yellow-200 dark:border-yellow-800">
+                              Coming Soon
+                            </span>
+                          )}
+                        </div>
+                        <p className={`text-sm ${isEnabled ? 'text-gray-600 dark:text-gray-400' : 'text-gray-500 dark:text-gray-500'}`}>
+                          {provider.description}
+                        </p>
+                        {hasOAuth && isEnabled && (
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                            Secure authentication via {provider.name} OAuth
+                          </p>
+                        )}
+                      </div>
+                      {isEnabled && selectedProvider === provider.id && (
+                        <CheckCircle className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                      )}
                     </div>
-                    {selectedProvider === provider.id && (
-                      <CheckCircle className="w-5 h-5 text-blue-500 dark:text-blue-400" />
-                    )}
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
+
+            {/* OAuth Information for Calendar */}
+            {deviceType === 'calendar' && selectedProvider && (
+              <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="flex items-start space-x-3">
+                  <Shield className="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-1">Secure OAuth Connection</h4>
+                    <p className="text-sm text-blue-700 dark:text-blue-400 mb-2">
+                      You'll be redirected to {providers.find(p => p.id === selectedProvider)?.name} to authorize access to your calendar data.
+                    </p>
+                    <div className="text-xs text-blue-600 dark:text-blue-500 space-y-1">
+                      <div>• Read-only access to calendar events</div>
+                      <div>• Meeting schedule analysis</div>
+                      <div>• Focus time optimization</div>
+                      <div>• No ability to create or modify events</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Privacy Notice */}
             <div className="mb-6 p-4 bg-gray-50 dark:bg-calm-700 rounded-lg border border-gray-200 dark:border-calm-600">
@@ -166,10 +245,13 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
               </button>
               <button
                 onClick={handleConnect}
-                disabled={!selectedProvider}
+                disabled={!selectedProvider || !providers.find(p => p.id === selectedProvider && ('enabled' in p ? p.enabled : true))}
                 className="px-6 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
               >
-                Connect {selectedProvider ? providers.find(p => p.id === selectedProvider)?.name : 'Device'}
+                {selectedProvider && providers.find(p => p.id === selectedProvider && ('oauth' in p ? p.oauth : false))
+                  ? `Connect via OAuth`
+                  : `Connect ${selectedProvider ? providers.find(p => p.id === selectedProvider)?.name : 'Device'}`
+                }
               </button>
             </div>
           </div>
@@ -178,9 +260,17 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
         {connectionStep === 'connecting' && (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 dark:border-blue-400 mx-auto mb-4"></div>
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">Connecting...</h3>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+              {providers.find(p => p.id === selectedProvider && ('oauth' in p ? p.oauth : false))
+                ? 'Redirecting to OAuth...'
+                : 'Connecting...'
+              }
+            </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Establishing secure connection with {providers.find(p => p.id === selectedProvider)?.name}
+              {providers.find(p => p.id === selectedProvider && ('oauth' in p ? p.oauth : false))
+                ? `You'll be redirected to ${providers.find(p => p.id === selectedProvider)?.name} to authorize access`
+                : `Establishing secure connection with ${providers.find(p => p.id === selectedProvider)?.name}`
+              }
             </p>
           </div>
         )}
