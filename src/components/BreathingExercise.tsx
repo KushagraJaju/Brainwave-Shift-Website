@@ -29,7 +29,7 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [cycleCount, setCycleCount] = useState(0);
   const [totalCycles, setTotalCycles] = useState(5);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -334,7 +334,7 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
           {/* Breathing Visual Guide */}
           <div className="my-12 flex items-center justify-center">
             <div 
-              className={`w-56 h-56 rounded-full bg-gradient-to-br ${getPhaseColor()} flex items-center justify-center transition-all duration-1000 ease-in-out shadow-xl`}
+              className={`w-40 h-40 rounded-full bg-gradient-to-br ${getPhaseColor()} flex items-center justify-center transition-all duration-1000 ease-in-out shadow-xl`}
               style={{ 
                 transform: `scale(${getBreathingScale()})`,
                 filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.15))'
@@ -344,8 +344,8 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
                 {isActive && currentPhaseData && (
                   <>
                     <div className="text-2xl font-bold mb-1">{currentPhaseData.name}</div>
-                    <div className="text-5xl font-bold">{timeRemaining}</div>
-                    <div className="text-sm mt-2 opacity-90 max-w-36 mx-auto leading-tight">
+                    <div className="text-4xl font-bold">{timeRemaining}</div>
+                    <div className="text-xs mt-2 opacity-90 max-w-28 mx-auto leading-tight">
                       {currentPhaseData.instruction}
                     </div>
                   </>
@@ -427,7 +427,7 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
           {!soundEnabled && (
             <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-500">
               <VolumeX className="w-4 h-4" />
-              <span>Sound guidance disabled</span>
+              <span>Sound off (toggle in settings)</span>
             </div>
           )}
         </div>
