@@ -247,13 +247,59 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
         {digitalWellnessView === 'today' ? (
           /* Today's Digital Wellness View */
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {/* EXPANDED GRID: 2 rows x 3-4 columns to accommodate focus metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+              {/* Row 1: Focus Metrics */}
+              <StatCard
+                icon={<Clock className="w-6 h-6 text-white" />}
+                title="Daily Focus"
+                value={formatTime(analyticsData.dailyFocusTime)}
+                subtitle="Deep work sessions today"
+                color="bg-blue-500"
+                trend="up"
+                trendValue="+12%"
+              />
+              
+              <StatCard
+                icon={<Calendar className="w-6 h-6 text-white" />}
+                title="Weekly Focus"
+                value={formatTime(analyticsData.weeklyFocusTime)}
+                subtitle="Total focus time this week"
+                color="bg-purple-500"
+                trend="stable"
+                trendValue="±2%"
+              />
+              
+              <StatCard
+                icon={<Brain className="w-6 h-6 text-white" />}
+                title="Focus Quality"
+                value={`${analyticsData.averageFocusQuality}%`}
+                subtitle="Average cognitive performance"
+                color="bg-green-500"
+                trend={analyticsData.averageFocusQuality > 75 ? 'up' : analyticsData.averageFocusQuality < 60 ? 'down' : 'stable'}
+                trendValue={analyticsData.averageFocusQuality > 75 ? '+8%' : analyticsData.averageFocusQuality < 60 ? '-5%' : '±1%'}
+              />
+              
+              {/* Row 1 (continued): Digital Wellness Score */}
+              <StatCard
+                icon={<BarChart3 className="w-6 h-6 text-white" />}
+                title="Digital Wellness"
+                value={`${analyticsData.digitalWellnessScore}`}
+                subtitle="Overall digital health score"
+                color="bg-teal-500"
+                trend={analyticsData.digitalWellnessScore > 80 ? 'up' : analyticsData.digitalWellnessScore < 60 ? 'down' : 'stable'}
+                trendValue={analyticsData.digitalWellnessScore > 80 ? 'Excellent' : analyticsData.digitalWellnessScore < 60 ? 'Needs Work' : 'Good'}
+              />
+            </div>
+
+            {/* Second row of metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
               <StatCard
                 icon={<Smartphone className="w-6 h-6 text-white" />}
                 title="Social Media Time"
                 value={formatTimeShort(totalSocialMediaMinutes)}
                 subtitle="Total usage today"
-                color="bg-purple-500"
+                color="bg-orange-500"
                 trend={totalSocialMediaMinutes > weeklyAverageMinutes ? 'up' : totalSocialMediaMinutes < weeklyAverageMinutes * 0.7 ? 'down' : 'stable'}
                 trendValue={totalSocialMediaMinutes > weeklyAverageMinutes ? 'Above avg' : totalSocialMediaMinutes < weeklyAverageMinutes * 0.7 ? 'Below avg' : 'Normal'}
               />
@@ -263,7 +309,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
                 title="Mindless Sessions"
                 value={digitalData.mindlessScrollingSessions.toString()}
                 subtitle="Low engagement periods"
-                color="bg-orange-500"
+                color="bg-red-500"
                 trend={digitalData.mindlessScrollingSessions > 3 ? 'up' : 'down'}
                 trendValue={digitalData.mindlessScrollingSessions > 3 ? 'High' : 'Good'}
               />
@@ -273,19 +319,20 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
                 title="Mindful Breaks"
                 value={analyticsData.mindfulBreaksTaken.toString()}
                 subtitle="Conscious pause moments"
-                color="bg-green-500"
+                color="bg-emerald-500"
                 trend="up"
                 trendValue="+3 today"
               />
               
+              {/* Additional metric to balance the grid */}
               <StatCard
-                icon={<BarChart3 className="w-6 h-6 text-white" />}
-                title="Digital Wellness"
-                value={`${analyticsData.digitalWellnessScore}`}
-                subtitle="Overall digital health score"
-                color="bg-teal-500"
-                trend={analyticsData.digitalWellnessScore > 80 ? 'up' : analyticsData.digitalWellnessScore < 60 ? 'down' : 'stable'}
-                trendValue={analyticsData.digitalWellnessScore > 80 ? 'Excellent' : analyticsData.digitalWellnessScore < 60 ? 'Needs Work' : 'Good'}
+                icon={<Activity className="w-6 h-6 text-white" />}
+                title="Session Count"
+                value={digitalData.sessionCount.toString()}
+                subtitle="Total digital sessions today"
+                color="bg-indigo-500"
+                trend="stable"
+                trendValue="Normal"
               />
             </div>
 
@@ -408,7 +455,29 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
         ) : (
           /* Weekly Digital Wellness View */
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {/* EXPANDED GRID for Weekly View with Focus Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+              {/* Row 1: Focus Metrics */}
+              <StatCard
+                icon={<Calendar className="w-6 h-6 text-white" />}
+                title="Weekly Focus"
+                value={formatTime(analyticsData.weeklyFocusTime)}
+                subtitle="Total focus time this week"
+                color="bg-blue-500"
+                trend="stable"
+                trendValue="±2%"
+              />
+              
+              <StatCard
+                icon={<Brain className="w-6 h-6 text-white" />}
+                title="Focus Quality"
+                value={`${analyticsData.averageFocusQuality}%`}
+                subtitle="Weekly average performance"
+                color="bg-green-500"
+                trend={analyticsData.averageFocusQuality > 75 ? 'up' : analyticsData.averageFocusQuality < 60 ? 'down' : 'stable'}
+                trendValue={analyticsData.averageFocusQuality > 75 ? '+8%' : analyticsData.averageFocusQuality < 60 ? '-5%' : '±1%'}
+              />
+              
               <StatCard
                 icon={<BarChart3 className="w-6 h-6 text-white" />}
                 title="Weekly Average"
@@ -426,13 +495,16 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
                 subtitle="Top platform this week"
                 color="bg-orange-500"
               />
-              
+            </div>
+
+            {/* Second row of weekly metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
               <StatCard
                 icon={<Heart className="w-6 h-6 text-white" />}
                 title="Weekly Mindful Breaks"
                 value={weeklyTrends.weeklyMindfulBreaks.toString()}
                 subtitle="Conscious pause moments"
-                color="bg-green-500"
+                color="bg-emerald-500"
                 trend="up"
                 trendValue="+15 this week"
               />
@@ -445,6 +517,26 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
                 color="bg-teal-500"
                 trend={weeklyTrends.averageCognitiveImpact > 80 ? 'up' : weeklyTrends.averageCognitiveImpact < 60 ? 'down' : 'stable'}
                 trendValue={weeklyTrends.averageCognitiveImpact > 80 ? 'Excellent' : weeklyTrends.averageCognitiveImpact < 60 ? 'Needs Work' : 'Good'}
+              />
+              
+              <StatCard
+                icon={<Eye className="w-6 h-6 text-white" />}
+                title="Mindless Sessions"
+                value={weeklyTrends.weeklyMindlessSessions.toString()}
+                subtitle="Weekly total"
+                color="bg-red-500"
+                trend={weeklyTrends.weeklyMindlessSessions > 15 ? 'up' : 'down'}
+                trendValue={weeklyTrends.weeklyMindlessSessions > 15 ? 'High' : 'Good'}
+              />
+              
+              <StatCard
+                icon={<Clock className="w-6 h-6 text-white" />}
+                title="Peak Usage Days"
+                value={weeklyTrends.peakUsageDays.length.toString()}
+                subtitle="Days above average"
+                color="bg-indigo-500"
+                trend="stable"
+                trendValue="Normal"
               />
             </div>
 
