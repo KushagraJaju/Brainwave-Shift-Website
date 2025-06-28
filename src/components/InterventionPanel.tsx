@@ -16,15 +16,15 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
   const getInterventionIcon = (type: Intervention['type']) => {
     switch (type) {
       case 'Break':
-        return <Clock className="w-5 h-5" />;
+        return <Clock className="w-5 h-5" aria-hidden="true" />;
       case 'Breathing':
-        return <Activity className="w-5 h-5" />;
+        return <Activity className="w-5 h-5" aria-hidden="true" />;
       case 'Posture':
-        return <AlertCircle className="w-5 h-5" />;
+        return <AlertCircle className="w-5 h-5" aria-hidden="true" />;
       case 'Movement':
-        return <Activity className="w-5 h-5" />;
+        return <Activity className="w-5 h-5" aria-hidden="true" />;
       default:
-        return <AlertCircle className="w-5 h-5" />;
+        return <AlertCircle className="w-5 h-5" aria-hidden="true" />;
     }
   };
 
@@ -54,20 +54,11 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
     }
   };
 
+  // Filter out completed interventions
   const activeInterventions = interventions.filter(i => !i.completed);
 
-  if (activeInterventions.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <CheckCircle className="w-16 h-16 text-wellness-500 dark:text-wellness-400 mx-auto mb-4" />
-        <h3 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-2">All Caught Up!</h3>
-        <p className="text-body text-calm-600 dark:text-calm-400">No interventions needed right now. We'll notify you when it's time for a break.</p>
-      </div>
-    );
-  }
-
   return (
-    <div>
+    <div className="h-full flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-heading-3 text-calm-800 dark:text-calm-200">Active Recommendations</h3>
         <span className="bg-wellness-100 dark:bg-wellness-900/30 text-wellness-800 dark:text-wellness-300 text-label font-medium px-3 py-1 rounded-full border border-wellness-200 dark:border-wellness-800">
@@ -75,52 +66,65 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
         </span>
       </div>
 
-      <div className="space-y-4">
-        {activeInterventions.map((intervention) => (
-          <div
-            key={intervention.id}
-            className={`border-2 rounded-lg p-4 transition-all duration-200 ${getPriorityColor(intervention.priority)}`}
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex items-start space-x-3">
-                <div className={`${getIconColor(intervention.priority)} mt-1`}>
-                  {getInterventionIcon(intervention.type)}
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-1">
-                    {intervention.title}
-                  </h4>
-                  <p className="text-body-small text-calm-600 dark:text-calm-400 mb-2">
-                    {intervention.description}
-                  </p>
-                  <div className="flex items-center space-x-4 text-body-small text-calm-500 dark:text-calm-400">
-                    <span>{intervention.duration} min</span>
-                    <span>{intervention.priority} priority</span>
-                    <span>{intervention.timestamp.toLocaleTimeString()}</span>
+      <div className="flex-1 flex flex-col">
+        {activeInterventions.length === 0 ? (
+          <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
+            <CheckCircle className="w-16 h-16 text-wellness-500 dark:text-wellness-400 mx-auto mb-4" aria-hidden="true" />
+            <h4 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-2">All Caught Up!</h4>
+            <p className="text-body text-calm-600 dark:text-calm-400">No interventions needed right now. We'll notify you when it's time for a break.</p>
+          </div>
+        ) : (
+          <div className="space-y-4 flex-1 overflow-y-auto">
+            {activeInterventions.map((intervention) => (
+              <div
+                key={intervention.id}
+                className={`border-2 rounded-lg p-4 transition-all duration-200 ${getPriorityColor(intervention.priority)}`}
+                role="region"
+                aria-label={`${intervention.priority} priority ${intervention.type} recommendation`}
+                data-intervention-id={intervention.id}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start space-x-3 flex-1">
+                    <div className={`${getIconColor(intervention.priority)} mt-1`}>
+                      {getInterventionIcon(intervention.type)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-1">
+                        {intervention.title}
+                      </h4>
+                      <p className="text-body-small text-calm-600 dark:text-calm-400 mb-2">
+                        {intervention.description}
+                      </p>
+                      <div className="flex items-center space-x-4 text-body-small text-calm-500 dark:text-calm-400">
+                        <span>{intervention.duration} min</span>
+                        <span>{intervention.priority} priority</span>
+                        <span>{intervention.timestamp.toLocaleTimeString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2 ml-2">
+                    <button
+                      onClick={() => onComplete(intervention.id)}
+                      className="p-2 text-wellness-600 dark:text-wellness-400 hover:bg-wellness-100 dark:hover:bg-wellness-900/30 rounded-full transition-colors duration-200 focus-ring"
+                      title="Complete intervention"
+                      aria-label={`Complete ${intervention.title}`}
+                    >
+                      <CheckCircle className="w-5 h-5" aria-hidden="true" />
+                    </button>
+                    <button
+                      onClick={() => onDismiss(intervention.id)}
+                      className="p-2 text-calm-400 dark:text-calm-500 hover:bg-calm-100 dark:hover:bg-calm-700 rounded-full transition-colors duration-200 focus-ring"
+                      title="Dismiss intervention"
+                      aria-label={`Dismiss ${intervention.title}`}
+                    >
+                      <X className="w-5 h-5" aria-hidden="true" />
+                    </button>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => onComplete(intervention.id)}
-                  className="p-2 text-wellness-600 dark:text-wellness-400 hover:bg-wellness-100 dark:hover:bg-wellness-900/30 rounded-full transition-colors duration-200 focus-ring"
-                  title="Complete intervention"
-                  aria-label="Complete intervention"
-                >
-                  <CheckCircle className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => onDismiss(intervention.id)}
-                  className="p-2 text-calm-400 dark:text-calm-500 hover:bg-calm-100 dark:hover:bg-calm-700 rounded-full transition-colors duration-200 focus-ring"
-                  title="Dismiss intervention"
-                  aria-label="Dismiss intervention"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

@@ -37,16 +37,16 @@ export const MonitoringMetrics: React.FC = () => {
           bg: 'bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-900/20 dark:to-teal-900/20',
           border: 'border-blue-300 dark:border-blue-700',
           text: 'text-blue-700 dark:text-blue-300',
-          progress: '#0ea5e9', // blue-500
-          sparkline: '#0ea5e9',
+          progress: '#3b82f6', // blue-500
+          sparkline: '#3b82f6',
           shadow: 'shadow-blue-100 dark:shadow-blue-900/20'
         },
         medium: {
           bg: 'bg-gradient-to-br from-blue-25 to-teal-25 dark:from-blue-900/10 dark:to-teal-900/10',
           border: 'border-blue-200 dark:border-blue-800',
           text: 'text-blue-600 dark:text-blue-400',
-          progress: '#38bdf8', // blue-400
-          sparkline: '#38bdf8',
+          progress: '#60a5fa', // blue-400
+          sparkline: '#60a5fa',
           shadow: 'shadow-blue-50 dark:shadow-blue-900/10'
         },
         low: {
@@ -169,9 +169,99 @@ export const MonitoringMetrics: React.FC = () => {
     return `${sign}${change}%`;
   };
 
-  // Enhanced mini sparkline component with better styling
-  const MiniSparkline: React.FC<{ data: number[]; color: string }> = ({ data, color }) => {
-    if (data.length < 2) return null;
+  // Enhanced circular progress component with proper animations
+  const CircularProgress: React.FC<{ 
+    score: number; 
+    size: number; 
+    strokeWidth: number; 
+    color: string;
+    className?: string;
+  }> = ({ score, size, strokeWidth, color, className = '' }) => {
+    const radius = (size - strokeWidth) / 2;
+    const circumference = radius * 2 * Math.PI;
+    const offset = circumference - (score / 100) * circumference;
+
+    return (
+      <div className={`relative ${className}`}>
+        <svg 
+          width={size} 
+          height={size} 
+          className="transform -rotate-90 drop-shadow-sm"
+          style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}
+        >
+          <defs>
+            <linearGradient id={`gradient-${color.replace('#', '')}`} x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={color} stopOpacity="0.8" />
+              <stop offset="100%" stopColor={color} stopOpacity="1" />
+            </linearGradient>
+          </defs>
+          {/* Background circle */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="currentColor"
+            strokeWidth={strokeWidth}
+            fill="none"
+            className="text-slate-200 dark:text-slate-700"
+          />
+          {/* Progress circle */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke={`url(#gradient-${color.replace('#', '')})`}
+            strokeWidth={strokeWidth}
+            fill="none"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            className="transition-all duration-1000 ease-out"
+            style={{
+              transformOrigin: 'center',
+              animation: 'drawCircle 1s ease-out forwards'
+            }}
+          />
+        </svg>
+        <style jsx>{`
+          @keyframes drawCircle {
+            from {
+              stroke-dashoffset: ${circumference};
+            }
+            to {
+              stroke-dashoffset: ${offset};
+            }
+          }
+        `}</style>
+      </div>
+    );
+  };
+
+  // Enhanced mini sparkline component with smooth animations
+  const MiniSparkline: React.FC<{ 
+    data: number[]; 
+    color: string; 
+    className?: string;
+  }> = ({ data, color, className = '' }) => {
+    if (data.length < 2) {
+      // Show placeholder dots if insufficient data
+      return (
+        <div className={`flex justify-center items-center ${className}`}>
+          <svg width="64" height="18">
+            {[...Array(5)].map((_, i) => (
+              <circle
+                key={i}
+                cx={8 + i * 12}
+                cy={9}
+                r="1.5"
+                fill={color}
+                opacity="0.3"
+              />
+            ))}
+          </svg>
+        </div>
+      );
+    }
 
     const max = Math.max(...data);
     const min = Math.min(...data);
@@ -184,24 +274,30 @@ export const MonitoringMetrics: React.FC = () => {
     }).join(' ');
 
     return (
-      <div className="flex justify-center">
+      <div className={`flex justify-center ${className}`}>
         <svg width="64" height="18" className="drop-shadow-sm">
           <defs>
-            <linearGradient id={`gradient-${color.replace('#', '')}`} x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor={color} stopOpacity="0.8" />
+            <linearGradient id={`sparkline-gradient-${color.replace('#', '')}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor={color} stopOpacity="0.6" />
               <stop offset="100%" stopColor={color} stopOpacity="1" />
             </linearGradient>
           </defs>
+          {/* Main line */}
           <polyline
             points={points}
             fill="none"
-            stroke={`url(#gradient-${color.replace('#', '')})`}
+            stroke={`url(#sparkline-gradient-${color.replace('#', '')})`}
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
             className="drop-shadow-sm"
+            style={{
+              strokeDasharray: '100',
+              strokeDashoffset: '100',
+              animation: 'drawLine 1s ease-out forwards'
+            }}
           />
-          {/* Add dots for data points */}
+          {/* Data points */}
           {data.slice(-3).map((value, index) => {
             const x = ((data.length - 3 + index) / (data.length - 1)) * 64;
             const y = 18 - ((value - min) / range) * 14;
@@ -213,53 +309,26 @@ export const MonitoringMetrics: React.FC = () => {
                 r="1.5"
                 fill={color}
                 className="drop-shadow-sm"
+                style={{
+                  opacity: '0',
+                  animation: `fadeInPoint 0.5s ease-out ${0.5 + index * 0.1}s forwards`
+                }}
               />
             );
           })}
         </svg>
-      </div>
-    );
-  };
-
-  // Enhanced progress ring component with better styling
-  const ProgressRing: React.FC<{ score: number; size: number; strokeWidth: number; color: string }> = ({ 
-    score, size, strokeWidth, color 
-  }) => {
-    const radius = (size - strokeWidth) / 2;
-    const circumference = radius * 2 * Math.PI;
-    const offset = circumference - (score / 100) * circumference;
-
-    return (
-      <div className="relative">
-        <svg width={size} height={size} className="transform -rotate-90 drop-shadow-sm">
-          <defs>
-            <linearGradient id={`ring-gradient-${color.replace('#', '')}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={color} stopOpacity="0.8" />
-              <stop offset="100%" stopColor={color} stopOpacity="1" />
-            </linearGradient>
-          </defs>
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            stroke="currentColor"
-            strokeWidth={strokeWidth}
-            fill="none"
-            className="text-slate-200 dark:text-slate-700"
-          />
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            stroke={`url(#ring-gradient-${color.replace('#', '')})`}
-            strokeWidth={strokeWidth}
-            fill="none"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-            strokeLinecap="round"
-            className="transition-all duration-1000 ease-out drop-shadow-sm"
-          />
-        </svg>
+        <style jsx>{`
+          @keyframes drawLine {
+            to {
+              stroke-dashoffset: 0;
+            }
+          }
+          @keyframes fadeInPoint {
+            to {
+              opacity: 1;
+            }
+          }
+        `}</style>
       </div>
     );
   };
@@ -300,7 +369,7 @@ export const MonitoringMetrics: React.FC = () => {
             {/* Focus Score Card */}
             <div className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${getMetricColors('focus', data.cognitiveMetrics.focusScore).bg} ${getMetricColors('focus', data.cognitiveMetrics.focusScore).border} ${getMetricColors('focus', data.cognitiveMetrics.focusScore).shadow}`}>
               <div className="flex items-center justify-between mb-3">
-                <ProgressRing 
+                <CircularProgress 
                   score={data.cognitiveMetrics.focusScore} 
                   size={36} 
                   strokeWidth={3} 
@@ -328,7 +397,7 @@ export const MonitoringMetrics: React.FC = () => {
             {/* Load Score Card */}
             <div className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${getMetricColors('load', data.cognitiveMetrics.loadScore).bg} ${getMetricColors('load', data.cognitiveMetrics.loadScore).border} ${getMetricColors('load', data.cognitiveMetrics.loadScore).shadow}`}>
               <div className="flex items-center justify-between mb-3">
-                <ProgressRing 
+                <CircularProgress 
                   score={data.cognitiveMetrics.loadScore} 
                   size={36} 
                   strokeWidth={3} 
@@ -356,7 +425,7 @@ export const MonitoringMetrics: React.FC = () => {
             {/* Stress Score Card */}
             <div className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${getMetricColors('stress', data.cognitiveMetrics.stressScore).bg} ${getMetricColors('stress', data.cognitiveMetrics.stressScore).border} ${getMetricColors('stress', data.cognitiveMetrics.stressScore).shadow}`}>
               <div className="flex items-center justify-between mb-3">
-                <ProgressRing 
+                <CircularProgress 
                   score={data.cognitiveMetrics.stressScore} 
                   size={36} 
                   strokeWidth={3} 
@@ -384,7 +453,7 @@ export const MonitoringMetrics: React.FC = () => {
             {/* Overall Score Card */}
             <div className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${getMetricColors('overall', data.cognitiveMetrics.overallScore).bg} ${getMetricColors('overall', data.cognitiveMetrics.overallScore).border} ${getMetricColors('overall', data.cognitiveMetrics.overallScore).shadow}`}>
               <div className="flex items-center justify-between mb-3">
-                <ProgressRing 
+                <CircularProgress 
                   score={data.cognitiveMetrics.overallScore} 
                   size={36} 
                   strokeWidth={3} 

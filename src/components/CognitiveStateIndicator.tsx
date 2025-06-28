@@ -37,7 +37,7 @@ export const CognitiveStateIndicator: React.FC<CognitiveStateIndicatorProps> = (
   };
 
   return (
-    <div className="card-primary p-6 transition-all duration-300 hover:shadow-gentle dark:hover:shadow-gentle-dark h-full">
+    <div className="card-primary p-6 h-full flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-heading-2 text-calm-800 dark:text-calm-200">Cognitive State</h2>
         <div className="flex items-center space-x-2">
@@ -46,9 +46,9 @@ export const CognitiveStateIndicator: React.FC<CognitiveStateIndicatorProps> = (
         </div>
       </div>
 
-      <div className="space-y-6">
-        {/* Cognitive Score */}
-        <div className="text-center">
+      <div className="flex-1 flex flex-col justify-center">
+        {/* Cognitive Score - Centered */}
+        <div className="text-center mb-8">
           <div className="relative w-32 h-32 mx-auto mb-4">
             <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
               <circle
@@ -86,7 +86,7 @@ export const CognitiveStateIndicator: React.FC<CognitiveStateIndicatorProps> = (
         </div>
 
         {/* State Indicators */}
-        <div className="grid grid-cols-1 gap-4">
+        <div className="space-y-3 flex-1">
           <div className="flex items-center justify-between p-4 card-secondary">
             <div className="flex items-center space-x-3">
               <Brain className="w-5 h-5 text-focus-500 dark:text-focus-400" />
@@ -118,7 +118,7 @@ export const CognitiveStateIndicator: React.FC<CognitiveStateIndicatorProps> = (
           </div>
         </div>
 
-        <div className="text-center pt-2">
+        <div className="text-center pt-4 mt-auto">
           <p className="text-body-small text-calm-500 dark:text-calm-400">
             Last updated: {cognitiveState.timestamp.toLocaleTimeString()}
           </p>

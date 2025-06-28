@@ -1,6 +1,7 @@
 import React from 'react';
 import { Activity, Mouse, Keyboard, Watch, Wifi, WifiOff } from 'lucide-react';
 import { useDataSourceStatus } from '../hooks/useDataSourceStatus';
+import { cognitiveMonitor } from '../services/CognitiveMonitor';
 
 export const MonitoringStatus: React.FC = () => {
   const status = useDataSourceStatus();
@@ -72,7 +73,7 @@ export const MonitoringStatus: React.FC = () => {
         ))}
       </div>
       
-      {/* Real-time indicator */}
+      {/* Real-time indicator with updated interval */}
       <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
         <div className="flex items-center space-x-2">
           <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
@@ -81,7 +82,7 @@ export const MonitoringStatus: React.FC = () => {
           </span>
         </div>
         <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-          Cognitive metrics update every 30 seconds
+          Cognitive metrics update every {cognitiveMonitor.getMonitoringIntervalSeconds()} seconds
         </p>
       </div>
     </div>

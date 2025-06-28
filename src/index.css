@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Base typography improvements */
+/* Base typography improvements with Outfit font */
 @layer base {
   html {
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
@@ -12,15 +12,20 @@
   }
   
   body {
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-weight: 400;
-    line-height: 1.5;
+    line-height: 1.6;
     letter-spacing: -0.01em;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     @apply bg-calm-50 text-calm-900 dark:bg-calm-900 dark:text-calm-100;
     transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Apply Outfit to all text elements */
+  h1, h2, h3, h4, h5, h6, p, span, div, button, input, select, textarea, label {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   /* Improved focus states for accessibility */
@@ -42,66 +47,154 @@
   .dark *:focus-visible {
     outline-color: #60a5fa;
   }
+
+  /* Enhanced input styling */
+  input, select, textarea {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 500;
+  }
+
+  /* Button text styling */
+  button {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 500;
+  }
 }
 
-/* Typography scale */
+/* Typography scale with Outfit font */
 @layer components {
   .text-display {
     @apply text-4xl font-bold tracking-tight leading-tight;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   
   .text-heading-1 {
     @apply text-3xl font-semibold tracking-tight leading-tight;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   
   .text-heading-2 {
     @apply text-2xl font-semibold tracking-tight leading-snug;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   
   .text-heading-3 {
     @apply text-xl font-semibold tracking-tight leading-snug;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   
   .text-heading-4 {
     @apply text-lg font-medium tracking-tight leading-snug;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   
   .text-body-large {
     @apply text-lg font-normal leading-relaxed;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   
   .text-body {
     @apply text-base font-normal leading-normal;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   
   .text-body-small {
     @apply text-sm font-normal leading-normal;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   
   .text-caption {
     @apply text-xs font-medium tracking-wide uppercase leading-tight;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   
   .text-label {
     @apply text-sm font-medium leading-tight;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
-  /* Enhanced card components with dark mode */
+  /* Enhanced card components with dark mode and consistent spacing */
   .card-primary {
     @apply bg-white dark:bg-calm-800 rounded-xl shadow-soft dark:shadow-gentle-dark border border-calm-200 dark:border-calm-700 transition-all duration-300 hover:shadow-gentle dark:hover:shadow-soft-dark hover:border-calm-300 dark:hover:border-calm-600;
+    padding: 1.5rem;
   }
   
   .card-secondary {
     @apply bg-calm-50 dark:bg-calm-800/50 rounded-lg border border-calm-200 dark:border-calm-700 transition-all duration-200;
+    padding: 1rem;
   }
 
-  /* Button improvements with dark mode */
+  /* Standardized button styles with consistent spacing */
   .btn-primary {
     @apply px-6 py-3 bg-focus-500 hover:bg-focus-600 dark:bg-focus-600 dark:hover:bg-focus-700 text-white font-medium rounded-lg transition-all duration-200 shadow-gentle hover:shadow-soft focus:ring-2 focus:ring-focus-500 focus:ring-offset-2 dark:focus:ring-offset-calm-900;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 500;
+    min-height: 44px; /* Improved touch target */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .btn-secondary {
     @apply px-6 py-3 bg-calm-100 hover:bg-calm-200 dark:bg-calm-700 dark:hover:bg-calm-600 text-calm-700 dark:text-calm-300 font-medium rounded-lg transition-all duration-200 border border-calm-300 dark:border-calm-600 hover:border-calm-400 dark:hover:border-calm-500;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 500;
+    min-height: 44px; /* Improved touch target */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Consistent form input styling */
+  .form-input {
+    @apply w-full px-4 py-3 border border-calm-300 dark:border-calm-600 rounded-lg focus:ring-2 focus:ring-focus-500 focus:border-transparent bg-white dark:bg-calm-700 text-calm-900 dark:text-calm-100 transition-all duration-200;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 500;
+    min-height: 44px; /* Improved touch target */
+  }
+
+  /* Consistent select styling */
+  .form-select {
+    @apply w-full px-4 py-3 border border-calm-300 dark:border-calm-600 rounded-lg focus:ring-2 focus:ring-focus-500 focus:border-transparent bg-white dark:bg-calm-700 text-calm-900 dark:text-calm-100 transition-all duration-200;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 500;
+    min-height: 44px; /* Improved touch target */
+  }
+
+  /* Range slider styling */
+  .slider {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .slider::-webkit-slider-track {
+    @apply bg-gray-200 dark:bg-gray-700 rounded-lg;
+    height: 8px;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    @apply bg-blue-500 dark:bg-blue-400 rounded-full;
+    height: 20px;
+    width: 20px;
+    margin-top: -6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .slider::-moz-range-track {
+    @apply bg-gray-200 dark:bg-gray-700 rounded-lg;
+    height: 8px;
+    border: none;
+  }
+
+  .slider::-moz-range-thumb {
+    @apply bg-blue-500 dark:bg-blue-400 rounded-full border-0;
+    height: 20px;
+    width: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
   /* Loading states */
@@ -117,6 +210,50 @@
   /* Enhanced focus indicators with dark mode */
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-focus-500 dark:focus:ring-focus-400 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-calm-900;
+  }
+
+  /* Consistent spacing utilities */
+  .section-spacing {
+    @apply py-8 px-4 lg:px-8;
+  }
+
+  .card-spacing {
+    @apply p-6;
+  }
+
+  .button-spacing {
+    @apply space-x-3;
+  }
+
+  /* Grid and flexbox consistency */
+  .grid-responsive {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+
+  /* Text overflow handling */
+  .text-truncate {
+    @apply truncate;
+  }
+
+  .text-wrap {
+    @apply break-words;
+  }
+
+  /* Responsive text sizing */
+  .text-responsive-lg {
+    @apply text-lg md:text-xl lg:text-2xl;
+  }
+
+  .text-responsive-base {
+    @apply text-sm md:text-base lg:text-lg;
   }
 }
 
@@ -136,6 +273,29 @@
     perspective: 1000px;
   }
 
+  /* Improved mobile touch targets */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Consistent spacing system */
+  .space-section {
+    @apply space-y-8;
+  }
+
+  .space-component {
+    @apply space-y-6;
+  }
+
+  .space-element {
+    @apply space-y-4;
+  }
+
+  .space-tight {
+    @apply space-y-2;
+  }
+
   /* Reduced motion preferences */
   @media (prefers-reduced-motion: reduce) {
     * {
@@ -144,22 +304,49 @@
       transition-duration: 0.01ms !important;
     }
   }
+
+  /* Enhanced responsive breakpoints */
+  @media (max-width: 640px) {
+    .mobile-stack {
+      @apply flex-col space-y-4 space-x-0;
+    }
+    
+    .mobile-full {
+      @apply w-full;
+    }
+    
+    .mobile-center {
+      @apply text-center;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .tablet-grid {
+      @apply grid-cols-2;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .desktop-grid {
+      @apply grid-cols-3;
+    }
+  }
 }
 
 /* Custom scrollbar for webkit browsers with dark mode */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
   @apply bg-calm-100 dark:bg-calm-800;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
   @apply bg-calm-300 dark:bg-calm-600;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -200,12 +387,177 @@
   @apply from-blue-700 to-purple-800;
 }
 
-/* Dark mode backdrop blur improvements */
-.dark .backdrop-blur-sm {
-  backdrop-filter: blur(4px) brightness(0.8);
+/* Enhanced button hover states */
+button:hover {
+  transform: translateY(-1px);
 }
 
-/* Dark mode shadow improvements for overlays */
-.dark .fixed.inset-0.bg-black.bg-opacity-50 {
-  @apply bg-opacity-70;
+button:active {
+  transform: translateY(0);
+}
+
+/* Improved card hover effects */
+.card-primary:hover {
+  transform: translateY(-2px);
+}
+
+/* Enhanced input focus states */
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Consistent icon sizing */
+.icon-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+.icon-md {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.icon-lg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.icon-xl {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Improved table styling */
+table {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Enhanced list styling */
+ul, ol {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Consistent badge styling */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Enhanced tooltip styling */
+.tooltip {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 500;
+}
+
+/* Improved modal styling */
+.modal {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Enhanced notification styling */
+.notification {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 500;
+}
+
+/* CRITICAL: Z-INDEX HIERARCHY - PRODUCTION READY */
+/* Base application layer */
+.app-base {
+  z-index: 0;
+}
+
+/* Navigation and header elements */
+nav {
+  z-index: 40 !important;
+}
+
+header {
+  z-index: 30 !important;
+}
+
+/* Dropdown menus and tooltips */
+.dropdown, .tooltip {
+  z-index: 50 !important;
+}
+
+/* Modal overlays - highest priority but only when actually open */
+.modal-overlay, .modal-overlay-critical {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  /* CRITICAL: Only show when modal is actually open */
+  pointer-events: auto !important;
+}
+
+/* Modal content */
+.modal-content, .modal-content-fix {
+  position: relative !important;
+  z-index: 10000 !important;
+  pointer-events: auto !important;
+}
+
+/* Mobile menu button - should be above navigation */
+.mobile-menu-button {
+  z-index: 9998 !important;
+}
+
+/* Ensure proper stacking context */
+.stacking-context {
+  position: relative;
+  z-index: 0;
+}
+
+/* CRITICAL: Mobile-specific fixes */
+@media (max-width: 1024px) {
+  /* Ensure mobile navigation is always accessible */
+  .mobile-navigation {
+    z-index: 45 !important;
+    pointer-events: auto !important;
+  }
+  
+  /* Mobile menu overlay should not block navigation button */
+  .mobile-menu-overlay {
+    z-index: 41 !important;
+  }
+  
+  /* Ensure modal overlays don't interfere with mobile navigation */
+  .modal-overlay-critical:not(.modal-open) {
+    display: none !important;
+  }
+  
+  .modal-overlay-critical.modal-open {
+    display: flex !important;
+  }
+}
+
+/* High contrast mode improvements */
+@media (forced-colors: active) {
+  .focus-ring:focus {
+    outline: 3px solid CanvasText !important;
+  }
+  
+  button, a {
+    forced-color-adjust: none;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    background-color: ButtonText;
+  }
+  
+  .slider::-moz-range-thumb {
+    background-color: ButtonText;
+  }
+}
+
+/* Skip to content link for keyboard users */
+.skip-to-content {
+  @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:p-4 focus:bg-white focus:text-black focus:rounded-lg focus:shadow-lg;
 }

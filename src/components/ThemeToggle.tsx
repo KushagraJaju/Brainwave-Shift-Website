@@ -16,11 +16,11 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   const getThemeIcon = (themeMode: Theme) => {
     switch (themeMode) {
       case 'light':
-        return <Sun className="w-4 h-4" />;
+        return <Sun className="w-4 h-4" aria-hidden="true" />;
       case 'dark':
-        return <Moon className="w-4 h-4" />;
+        return <Moon className="w-4 h-4" aria-hidden="true" />;
       case 'system':
-        return <Monitor className="w-4 h-4" />;
+        return <Monitor className="w-4 h-4" aria-hidden="true" />;
     }
   };
 
@@ -48,11 +48,13 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
           text-calm-700 dark:text-calm-300 focus-ring
         `}
         title={`Current theme: ${getThemeLabel(theme)} (${resolvedTheme})`}
+        aria-label={`Toggle theme, current theme is ${getThemeLabel(theme)}`}
+        aria-pressed={theme === 'dark'}
       >
         <div className="relative">
           {getThemeIcon(theme)}
           {theme === 'system' && (
-            <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-blue-500 rounded-full"></div>
+            <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-blue-500 rounded-full" aria-hidden="true"></div>
           )}
         </div>
         {showLabel && (
@@ -70,19 +72,19 @@ export const ThemeSelector: React.FC<{ className?: string }> = ({ className = ''
     {
       value: 'light',
       label: 'Light',
-      icon: <Sun className="w-4 h-4" />,
+      icon: <Sun className="w-4 h-4" aria-hidden="true" />,
       description: 'Light theme'
     },
     {
       value: 'dark',
       label: 'Dark',
-      icon: <Moon className="w-4 h-4" />,
+      icon: <Moon className="w-4 h-4" aria-hidden="true" />,
       description: 'Dark theme'
     },
     {
       value: 'system',
       label: 'System',
-      icon: <Monitor className="w-4 h-4" />,
+      icon: <Monitor className="w-4 h-4" aria-hidden="true" />,
       description: 'Follow system preference'
     }
   ];
@@ -96,12 +98,14 @@ export const ThemeSelector: React.FC<{ className?: string }> = ({ className = ''
             key={option.value}
             onClick={() => setTheme(option.value)}
             className={`
-              flex flex-col items-center space-y-2 p-3 rounded-lg border-2 transition-all duration-200
+              flex flex-col items-center space-y-2 p-3 rounded-lg border-2 transition-all duration-200 focus-ring
               ${theme === option.value
                 ? 'border-focus-500 bg-focus-50 dark:bg-focus-900/20 text-focus-700 dark:text-focus-300'
                 : 'border-calm-200 dark:border-calm-700 bg-white dark:bg-calm-800 text-calm-600 dark:text-calm-400 hover:border-calm-300 dark:hover:border-calm-600'
               }
             `}
+            aria-label={`Set theme to ${option.label}`}
+            aria-pressed={theme === option.value}
           >
             <div className={`p-2 rounded-lg ${
               theme === option.value 

@@ -50,23 +50,37 @@ export const Dashboard: React.FC<DashboardProps> = ({ preferences }) => {
         </div>
       </div>
 
-      {/* Main Dashboard Grid - Core Cognitive Metrics Only */}
+      {/* Main Dashboard Grid - Fixed Layout with Equal Heights */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1">
-          <CognitiveStateIndicator 
-            cognitiveState={cognitiveState} 
-            isMonitoring={isMonitoring}
-          />
+        {/* Cognitive State - Left Column */}
+        <div className="lg:col-span-1 h-full">
+          <div className="h-full">
+            <CognitiveStateIndicator 
+              cognitiveState={cognitiveState} 
+              isMonitoring={isMonitoring}
+            />
+          </div>
         </div>
-        <div className="lg:col-span-1">
-          <FocusTimer preferences={preferences} />
+
+        {/* Focus Timer - Center Column - NO PRESETS ON DASHBOARD */}
+        <div className="lg:col-span-1 h-full">
+          <div className="h-full">
+            <FocusTimer 
+              preferences={preferences} 
+              showPresets={false}
+            />
+          </div>
         </div>
-        <div className="lg:col-span-1">
-          <InterventionPanel
-            interventions={interventions}
-            onComplete={completeIntervention}
-            onDismiss={dismissIntervention}
-          />
+
+        {/* Active Recommendations - Right Column */}
+        <div className="lg:col-span-1 h-full">
+          <div className="card-primary p-6 h-full flex flex-col">
+            <InterventionPanel
+              interventions={interventions}
+              onComplete={completeIntervention}
+              onDismiss={dismissIntervention}
+            />
+          </div>
         </div>
       </div>
 

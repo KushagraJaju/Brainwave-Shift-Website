@@ -1,4 +1,5 @@
 import { DeviceIntegration, SmartwatchData, CalendarData, CalendarEvent } from '../types';
+import { calendarOAuthService } from './CalendarOAuthService';
 
 export class DeviceIntegrationService {
   private integrations: Map<string, DeviceIntegration> = new Map();
@@ -10,6 +11,7 @@ export class DeviceIntegrationService {
 
   constructor() {
     this.initializeDefaultIntegrations();
+    this.setupOAuthCallbackHandler();
   }
 
   private initializeDefaultIntegrations(): void {
@@ -46,6 +48,41 @@ export class DeviceIntegrationService {
     });
   }
 
+  private setupOAuthCallbackHandler(): void {
+    // Listen for OAuth callback messages from popup windows
+    window.addEventListener('message', (event) => {
+      if (event.origin !== window.location.origin) return;
+      
+      if (event.data.type === 'OAUTH_CALLBACK') {
+        this.handleOAuthCallback(event.data.provider, event.data.code, event.data.state);
+      }
+    });
+  }
+
+  private async handleOAuthCallback(provider: string, code: string, state: string): Promise<void> {
+    try {
+      if (provider === 'google' || provider === 'microsoft') {
+        const success = await calendarOAuthService.handleOAuthCallback(provider, code, state);
+        
+        if (success) {
+          const integration = this.integrations.get('calendar');
+          if (integration) {
+            integration.status = 'connected';
+            integration.provider = provider === 'google' ? 'Google Calendar' : 'Microsoft Calendar';
+            integration.lastSync = new Date();
+            this.integrations.set('calendar', integration);
+            
+            // Start fetching calendar data
+            this.startCalendarDataGeneration(provider);
+            this.notifyListeners();
+          }
+        }
+      }
+    } catch (error) {
+      console.error('OAuth callback error:', error);
+    }
+  }
+
   public getIntegrations(): DeviceIntegration[] {
     return Array.from(this.integrations.values());
   }
@@ -79,26 +116,49 @@ export class DeviceIntegrationService {
     const integration = this.integrations.get('calendar');
     if (!integration) return false;
 
-    // Simulate connection process
-    integration.status = 'connecting';
-    this.notifyListeners();
+    try {
+      integration.status = 'connecting';
+      this.notifyListeners();
 
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate connection delay
+      if (provider === 'google' || provider === 'microsoft') {
+        // Initiate OAuth flow
+        await calendarOAuthService.initiateOAuth(provider);
+        return true; // OAuth flow will complete asynchronously
+      } else {
+        // For other providers, simulate connection (they're disabled for now)
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        integration.status = 'connected';
+        integration.provider = provider;
+        integration.lastSync = new Date();
+        this.integrations.set('calendar', integration);
 
-    integration.status = 'connected';
-    integration.provider = provider;
-    integration.lastSync = new Date();
-    this.integrations.set('calendar', integration);
-
-    // Start generating mock calendar data
-    this.startCalendarDataGeneration();
-    this.notifyListeners();
-    return true;
+        // Start generating mock calendar data for non-OAuth providers
+        this.startCalendarDataGeneration();
+        this.notifyListeners();
+        return true;
+      }
+    } catch (error) {
+      console.error('Calendar connection error:', error);
+      integration.status = 'disconnected';
+      this.notifyListeners();
+      return false;
+    }
   }
 
   public disconnectDevice(deviceId: string): void {
     const integration = this.integrations.get(deviceId);
     if (!integration || integration.type === 'browser') return; // Can't disconnect browser
+
+    // Handle OAuth disconnection
+    if (deviceId === 'calendar' && integration.provider) {
+      const provider = integration.provider.toLowerCase();
+      if (provider.includes('google')) {
+        calendarOAuthService.disconnect('google');
+      } else if (provider.includes('microsoft')) {
+        calendarOAuthService.disconnect('microsoft');
+      }
+    }
 
     integration.status = 'disconnected';
     integration.provider = undefined;
@@ -179,13 +239,13 @@ export class DeviceIntegrationService {
     };
   }
 
-  private startCalendarDataGeneration(): void {
+  private startCalendarDataGeneration(provider?: string): void {
     // Generate initial calendar data
-    this.generateCalendarData();
+    this.generateCalendarData(provider);
 
     // Update calendar data every 5 minutes
     const interval = setInterval(() => {
-      this.generateCalendarData();
+      this.generateCalendarData(provider);
       this.notifyDataListeners();
     }, 300000);
 
@@ -200,52 +260,32 @@ export class DeviceIntegrationService {
     }
   }
 
-  private generateCalendarData(): void {
+  private async generateCalendarData(provider?: string): Promise<void> {
     const now = new Date();
-    const events: CalendarEvent[] = [];
-    
-    // Generate events for the next 3 days
-    for (let day = 0; day < 3; day++) {
-      const date = new Date(now);
-      date.setDate(date.getDate() + day);
-      
-      // Generate 3-8 events per day
-      const eventCount = 3 + Math.floor(Math.random() * 6);
-      
-      for (let i = 0; i < eventCount; i++) {
-        const startHour = 9 + Math.floor(Math.random() * 9); // 9 AM to 6 PM
-        const duration = [30, 60, 90, 120][Math.floor(Math.random() * 4)]; // 30min to 2h
-        
-        const startTime = new Date(date);
-        startTime.setHours(startHour, Math.random() > 0.5 ? 0 : 30, 0, 0);
-        
-        const endTime = new Date(startTime);
-        endTime.setMinutes(endTime.getMinutes() + duration);
-        
-        const eventTypes = ['meeting', 'focus-block', 'break', 'deadline'] as const;
-        const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
-        
-        const titles = {
-          meeting: ['Team Standup', 'Client Review', 'Project Planning', 'Strategy Session', '1:1 with Manager'],
-          'focus-block': ['Deep Work Block', 'Code Review', 'Design Session', 'Research Time', 'Writing Block'],
-          break: ['Lunch Break', 'Coffee Break', 'Walk Break', 'Meditation', 'Gym Session'],
-          deadline: ['Project Deadline', 'Report Due', 'Presentation Prep', 'Code Freeze', 'Review Deadline']
-        };
-        
-        events.push({
-          id: `event-${day}-${i}`,
-          title: titles[eventType][Math.floor(Math.random() * titles[eventType].length)],
-          startTime,
-          endTime,
-          type: eventType,
-          attendees: eventType === 'meeting' ? 2 + Math.floor(Math.random() * 8) : undefined,
-          isOnline: Math.random() > 0.3 // 70% online meetings
-        });
-      }
-    }
+    let events: CalendarEvent[] = [];
 
-    // Sort events by start time
-    events.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+    // Try to fetch real calendar data if OAuth is connected
+    if (provider && (provider === 'google' || provider === 'microsoft')) {
+      try {
+        const realEvents = await calendarOAuthService.getCalendarEvents(provider);
+        events = realEvents.map(event => ({
+          id: event.id,
+          title: event.title,
+          startTime: event.start,
+          endTime: event.end,
+          type: this.categorizeEvent(event.title),
+          attendees: event.attendees?.length || 0,
+          isOnline: event.location?.includes('http') || event.description?.includes('zoom') || event.description?.includes('teams') || false
+        }));
+      } catch (error) {
+        console.error('Failed to fetch real calendar data, using mock data:', error);
+        // Fall back to mock data
+        events = this.generateMockEvents();
+      }
+    } else {
+      // Generate mock events for non-OAuth providers
+      events = this.generateMockEvents();
+    }
 
     // Calculate meeting density for today
     const todayEvents = events.filter(event => {
@@ -296,6 +336,70 @@ export class DeviceIntegrationService {
       insights,
       lastSync: new Date()
     };
+  }
+
+  private categorizeEvent(title: string): 'meeting' | 'focus-block' | 'break' | 'deadline' {
+    const lowerTitle = title.toLowerCase();
+    
+    if (lowerTitle.includes('deadline') || lowerTitle.includes('due') || lowerTitle.includes('submit')) {
+      return 'deadline';
+    }
+    if (lowerTitle.includes('focus') || lowerTitle.includes('deep work') || lowerTitle.includes('coding')) {
+      return 'focus-block';
+    }
+    if (lowerTitle.includes('break') || lowerTitle.includes('lunch') || lowerTitle.includes('coffee')) {
+      return 'break';
+    }
+    return 'meeting';
+  }
+
+  private generateMockEvents(): CalendarEvent[] {
+    const now = new Date();
+    const events: CalendarEvent[] = [];
+    
+    // Generate events for the next 3 days
+    for (let day = 0; day < 3; day++) {
+      const date = new Date(now);
+      date.setDate(date.getDate() + day);
+      
+      // Generate 3-8 events per day
+      const eventCount = 3 + Math.floor(Math.random() * 6);
+      
+      for (let i = 0; i < eventCount; i++) {
+        const startHour = 9 + Math.floor(Math.random() * 9); // 9 AM to 6 PM
+        const duration = [30, 60, 90, 120][Math.floor(Math.random() * 4)]; // 30min to 2h
+        
+        const startTime = new Date(date);
+        startTime.setHours(startHour, Math.random() > 0.5 ? 0 : 30, 0, 0);
+        
+        const endTime = new Date(startTime);
+        endTime.setMinutes(endTime.getMinutes() + duration);
+        
+        const eventTypes = ['meeting', 'focus-block', 'break', 'deadline'] as const;
+        const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+        
+        const titles = {
+          meeting: ['Team Standup', 'Client Review', 'Project Planning', 'Strategy Session', '1:1 with Manager'],
+          'focus-block': ['Deep Work Block', 'Code Review', 'Design Session', 'Research Time', 'Writing Block'],
+          break: ['Lunch Break', 'Coffee Break', 'Walk Break', 'Meditation', 'Gym Session'],
+          deadline: ['Project Deadline', 'Report Due', 'Presentation Prep', 'Code Freeze', 'Review Deadline']
+        };
+        
+        events.push({
+          id: `event-${day}-${i}`,
+          title: titles[eventType][Math.floor(Math.random() * titles[eventType].length)],
+          startTime,
+          endTime,
+          type: eventType,
+          attendees: eventType === 'meeting' ? 2 + Math.floor(Math.random() * 8) : undefined,
+          isOnline: Math.random() > 0.3 // 70% online meetings
+        });
+      }
+    }
+
+    // Sort events by start time
+    events.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+    return events;
   }
 
   public getSmartwatchData(): SmartwatchData | null {

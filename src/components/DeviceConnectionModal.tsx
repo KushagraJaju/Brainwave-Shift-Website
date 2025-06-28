@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Watch, Calendar, Smartphone, Heart, Clock, Shield, CheckCircle } from 'lucide-react';
+import { X, Watch, Calendar, Smartphone, Heart, Clock, Shield, CheckCircle, AlertTriangle } from 'lucide-react';
 
 interface DeviceConnectionModalProps {
   isOpen: boolean;
@@ -22,17 +22,73 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
   if (!isOpen) return null;
 
   const smartwatchProviders = [
-    { id: 'apple', name: 'Apple Watch', icon: '⌚', description: 'Heart rate, activity, sleep data' },
-    { id: 'fitbit', name: 'Fitbit', icon: '🏃', description: 'Comprehensive health tracking' },
-    { id: 'garmin', name: 'Garmin', icon: '🏔️', description: 'Advanced fitness metrics' },
-    { id: 'samsung', name: 'Samsung Galaxy Watch', icon: '⌚', description: 'Health and wellness data' }
+    { 
+      id: 'apple', 
+      name: 'Apple Watch', 
+      icon: '⌚', 
+      description: 'Heart rate, activity, sleep data',
+      enabled: false,
+      comingSoon: true
+    },
+    { 
+      id: 'fitbit', 
+      name: 'Fitbit', 
+      icon: '🏃', 
+      description: 'Comprehensive health tracking',
+      enabled: false,
+      comingSoon: true
+    },
+    { 
+      id: 'garmin', 
+      name: 'Garmin', 
+      icon: '🏔️', 
+      description: 'Advanced fitness metrics',
+      enabled: false,
+      comingSoon: true
+    },
+    { 
+      id: 'samsung', 
+      name: 'Samsung Galaxy Watch', 
+      icon: '⌚', 
+      description: 'Health and wellness data',
+      enabled: false,
+      comingSoon: true
+    }
   ];
 
   const calendarProviders = [
-    { id: 'google', name: 'Google Calendar', icon: '📅', description: 'Meetings, events, focus blocks' },
-    { id: 'outlook', name: 'Microsoft Outlook', icon: '📧', description: 'Work calendar integration' },
-    { id: 'apple', name: 'Apple Calendar', icon: '🍎', description: 'Personal and work events' },
-    { id: 'notion', name: 'Notion Calendar', icon: '📝', description: 'Task and event management' }
+    { 
+      id: 'google', 
+      name: 'Google Calendar', 
+      icon: '📅', 
+      description: 'Meetings, events, focus blocks',
+      enabled: true,
+      oauth: true
+    },
+    { 
+      id: 'microsoft', 
+      name: 'Microsoft Calendar', 
+      icon: '📧', 
+      description: 'Outlook calendar integration',
+      enabled: false,
+      comingSoon: true
+    },
+    { 
+      id: 'apple', 
+      name: 'Apple Calendar', 
+      icon: '🍎', 
+      description: 'Personal and work events',
+      enabled: false,
+      comingSoon: true
+    },
+    { 
+      id: 'notion', 
+      name: 'Notion Calendar', 
+      icon: '📝', 
+      description: 'Task and event management',
+      enabled: false,
+      comingSoon: true
+    }
   ];
 
   const providers = deviceType === 'smartwatch' ? smartwatchProviders : calendarProviders;
@@ -56,7 +112,7 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
   };
 
   const getDeviceIcon = () => {
-    return deviceType === 'smartwatch' ? <Watch className="w-6 h-6" /> : <Calendar className="w-6 h-6" />;
+    return deviceType === 'smartwatch' ? <Watch className="w-6 h-6" aria-hidden="true" /> : <Calendar className="w-6 h-6" aria-hidden="true" />;
   };
 
   const getDeviceTitle = () => {
@@ -76,8 +132,17 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-      <div className="bg-white dark:bg-calm-800 rounded-xl shadow-2xl dark:shadow-gentle-dark max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-calm-200 dark:border-calm-700">
+    <div 
+      className="modal-overlay-critical flex items-center justify-center p-4" 
+      role="dialog" 
+      aria-modal="true" 
+      aria-labelledby="connection-modal-title"
+      aria-describedby="connection-modal-description"
+    >
+      <div 
+        className="modal-content-fix relative bg-white dark:bg-calm-800 rounded-xl shadow-2xl dark:shadow-gentle-dark max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-calm-200 dark:border-calm-700"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-calm-700">
           <div className="flex items-center space-x-3">
@@ -85,15 +150,16 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
               {getDeviceIcon()}
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">{getDeviceTitle()}</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{getDeviceDescription()}</p>
+              <h2 id="connection-modal-title" className="text-xl font-semibold text-gray-800 dark:text-gray-200">{getDeviceTitle()}</h2>
+              <p id="connection-modal-description" className="text-sm text-gray-600 dark:text-gray-400">{getDeviceDescription()}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-calm-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-calm-700 rounded-lg transition-colors focus-ring"
+            aria-label="Close modal"
           >
-            <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+            <X className="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" />
           </button>
         </div>
 
@@ -102,13 +168,13 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
             {/* Data Benefits */}
             <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
               <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2 flex items-center space-x-2">
-                <Heart className="w-4 h-4 text-red-500 dark:text-red-400" />
+                <Heart className="w-4 h-4 text-red-500 dark:text-red-400" aria-hidden="true" />
                 <span>Enhanced Cognitive Insights</span>
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
                 {getDataTypes().map((dataType, index) => (
                   <div key={index} className="flex items-center space-x-2">
-                    <div className="w-1.5 h-1.5 bg-blue-500 dark:bg-blue-400 rounded-full"></div>
+                    <div className="w-1.5 h-1.5 bg-blue-500 dark:bg-blue-400 rounded-full" aria-hidden="true"></div>
                     <span>{dataType}</span>
                   </div>
                 ))}
@@ -118,34 +184,107 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
             {/* Provider Selection */}
             <div className="space-y-3 mb-6">
               <h3 className="font-semibold text-gray-800 dark:text-gray-200">Choose your {deviceType === 'smartwatch' ? 'smartwatch' : 'calendar'} provider:</h3>
-              {providers.map((provider) => (
-                <button
-                  key={provider.id}
-                  onClick={() => setSelectedProvider(provider.id)}
-                  className={`w-full p-4 rounded-lg border-2 transition-all duration-200 text-left ${
-                    selectedProvider === provider.id
-                      ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-calm-700 bg-white dark:bg-calm-800'
-                  }`}
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="text-2xl">{provider.icon}</div>
-                    <div className="flex-1">
-                      <h4 className="font-medium text-gray-800 dark:text-gray-200">{provider.name}</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{provider.description}</p>
+              {providers.map((provider) => {
+                const isEnabled = 'enabled' in provider ? provider.enabled : true;
+                const isComingSoon = 'comingSoon' in provider ? provider.comingSoon : false;
+                const hasOAuth = 'oauth' in provider ? provider.oauth : false;
+                
+                return (
+                  <button
+                    key={provider.id}
+                    onClick={() => isEnabled && setSelectedProvider(provider.id)}
+                    disabled={!isEnabled}
+                    className={`w-full p-4 rounded-lg border-2 transition-all duration-200 text-left focus-ring ${
+                      !isEnabled
+                        ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 opacity-60 cursor-not-allowed'
+                        : selectedProvider === provider.id
+                          ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-calm-700 bg-white dark:bg-calm-800'
+                    }`}
+                    aria-pressed={selectedProvider === provider.id}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="text-2xl" aria-hidden="true">{provider.icon}</div>
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <h4 className={`font-medium ${isEnabled ? 'text-gray-800 dark:text-gray-200' : 'text-gray-500 dark:text-gray-400'}`}>
+                            {provider.name}
+                          </h4>
+                          {hasOAuth && isEnabled && (
+                            <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium rounded-full border border-green-200 dark:border-green-800">
+                              OAuth 2.0
+                            </span>
+                          )}
+                          {isComingSoon && (
+                            <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-xs font-medium rounded-full border border-yellow-200 dark:border-yellow-800">
+                              Coming Soon
+                            </span>
+                          )}
+                        </div>
+                        <p className={`text-sm ${isEnabled ? 'text-gray-600 dark:text-gray-400' : 'text-gray-500 dark:text-gray-500'}`}>
+                          {provider.description}
+                        </p>
+                        {hasOAuth && isEnabled && (
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                            Secure authentication via {provider.name} OAuth
+                          </p>
+                        )}
+                      </div>
+                      {isEnabled && selectedProvider === provider.id && (
+                        <CheckCircle className="w-5 h-5 text-blue-500 dark:text-blue-400" aria-hidden="true" />
+                      )}
                     </div>
-                    {selectedProvider === provider.id && (
-                      <CheckCircle className="w-5 h-5 text-blue-500 dark:text-blue-400" />
-                    )}
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
+
+            {/* OAuth Information for Calendar - Only show for Google */}
+            {deviceType === 'calendar' && selectedProvider === 'google' && (
+              <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="flex items-start space-x-3">
+                  <Shield className="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5" aria-hidden="true" />
+                  <div>
+                    <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-1">Secure OAuth Connection</h4>
+                    <p className="text-sm text-blue-700 dark:text-blue-400 mb-2">
+                      You'll be redirected to {providers.find(p => p.id === selectedProvider)?.name} to authorize access to your calendar data.
+                    </p>
+                    <div className="text-xs text-blue-600 dark:text-blue-500 space-y-1">
+                      <div>• Read-only access to calendar events</div>
+                      <div>• Meeting schedule analysis</div>
+                      <div>• Focus time optimization</div>
+                      <div>• No ability to create or modify events</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Coming Soon Notice for Smartwatch */}
+            {deviceType === 'smartwatch' && (
+              <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                <div className="flex items-start space-x-3">
+                  <Clock className="w-5 h-5 text-yellow-500 dark:text-yellow-400 mt-0.5" aria-hidden="true" />
+                  <div>
+                    <h4 className="font-medium text-yellow-800 dark:text-yellow-300 mb-1">Smartwatch Integration Coming Soon</h4>
+                    <p className="text-sm text-yellow-700 dark:text-yellow-400 mb-2">
+                      We're working on secure integrations with major smartwatch providers to bring you physiological monitoring capabilities.
+                    </p>
+                    <div className="text-xs text-yellow-600 dark:text-yellow-500 space-y-1">
+                      <div>• Apple Watch - Health data integration</div>
+                      <div>• Fitbit - Comprehensive wellness tracking</div>
+                      <div>• Garmin - Advanced fitness metrics</div>
+                      <div>• Samsung Galaxy Watch - Health monitoring</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Privacy Notice */}
             <div className="mb-6 p-4 bg-gray-50 dark:bg-calm-700 rounded-lg border border-gray-200 dark:border-calm-600">
               <div className="flex items-start space-x-3">
-                <Shield className="w-5 h-5 text-green-500 dark:text-green-400 mt-0.5" />
+                <Shield className="w-5 h-5 text-green-500 dark:text-green-400 mt-0.5" aria-hidden="true" />
                 <div>
                   <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-1">Privacy & Security</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -160,34 +299,57 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
             <div className="flex items-center justify-between">
               <button
                 onClick={onClose}
-                className="px-6 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                className="px-6 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors focus-ring"
+                aria-label="Cancel connection"
               >
                 Cancel
               </button>
-              <button
-                onClick={handleConnect}
-                disabled={!selectedProvider}
-                className="px-6 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
-              >
-                Connect {selectedProvider ? providers.find(p => p.id === selectedProvider)?.name : 'Device'}
-              </button>
+              {deviceType === 'calendar' ? (
+                <button
+                  onClick={handleConnect}
+                  disabled={!selectedProvider || !providers.find(p => p.id === selectedProvider && ('enabled' in p ? p.enabled : true))}
+                  className="px-6 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors focus-ring"
+                  aria-label={selectedProvider ? `Connect to ${providers.find(p => p.id === selectedProvider)?.name}` : 'Connect device'}
+                >
+                  {selectedProvider && providers.find(p => p.id === selectedProvider && ('oauth' in p ? p.oauth : false))
+                    ? `Connect via OAuth`
+                    : `Connect ${selectedProvider ? providers.find(p => p.id === selectedProvider)?.name : 'Device'}`
+                  }
+                </button>
+              ) : (
+                <button
+                  disabled
+                  className="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 rounded-lg cursor-not-allowed"
+                  aria-label="Smartwatch connection coming soon"
+                >
+                  Coming Soon
+                </button>
+              )}
             </div>
           </div>
         )}
 
         {connectionStep === 'connecting' && (
-          <div className="p-8 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 dark:border-blue-400 mx-auto mb-4"></div>
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">Connecting...</h3>
+          <div className="p-8 text-center" aria-live="polite">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 dark:border-blue-400 mx-auto mb-4" aria-hidden="true"></div>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+              {providers.find(p => p.id === selectedProvider && ('oauth' in p ? p.oauth : false))
+                ? 'Redirecting to OAuth...'
+                : 'Connecting...'
+              }
+            </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Establishing secure connection with {providers.find(p => p.id === selectedProvider)?.name}
+              {providers.find(p => p.id === selectedProvider && ('oauth' in p ? p.oauth : false))
+                ? `You'll be redirected to ${providers.find(p => p.id === selectedProvider)?.name} to authorize access`
+                : `Establishing secure connection with ${providers.find(p => p.id === selectedProvider)?.name}`
+              }
             </p>
           </div>
         )}
 
         {connectionStep === 'success' && (
-          <div className="p-8 text-center">
-            <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="p-8 text-center" aria-live="polite">
+            <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4" aria-hidden="true">
               <CheckCircle className="w-8 h-8 text-green-500 dark:text-green-400" />
             </div>
             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">Successfully Connected!</h3>

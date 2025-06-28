@@ -1,57 +1,57 @@
 import { useState, useEffect } from 'react';
 import { UserPreferences } from '../types';
-
-const DEFAULT_PREFERENCES: UserPreferences = {
-  interventionFrequency: 'Normal',
-  focusSessionLength: 25,
-  breakReminders: true,
-  ambientNotifications: false,
-  dataSharing: false,
-  breakLength: 5,
-  selectedPreset: undefined,
-  // Device integration preferences
-  smartwatchDataSharing: true,
-  calendarDataSharing: true,
-  physiologicalMonitoring: true,
-  calendarInsights: true
-};
+import { userDataManager } from '../services/UserDataManager';
 
 export const useSettings = () => {
-  const [preferences, setPreferences] = useState<UserPreferences>(DEFAULT_PREFERENCES);
+  const [preferences, setPreferences] = useState<UserPreferences | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load settings from localStorage on mount
   useEffect(() => {
-    try {
-      const savedPreferences = localStorage.getItem('brainwave-shift-preferences');
-      if (savedPreferences) {
-        const parsed = JSON.parse(savedPreferences);
-        setPreferences({ ...DEFAULT_PREFERENCES, ...parsed });
+    // Wait for user data manager to initialize
+    const checkInitialization = () => {
+      if (userDataManager.isInitialized()) {
+        const userData = userDataManager.getUserData();
+        setPreferences(userData.preferences);
+        setIsLoading(false);
+      } else {
+        setTimeout(checkInitialization, 100);
       }
-    } catch (error) {
-      console.error('Failed to load preferences from localStorage:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    };
+
+    checkInitialization();
+
+    // Subscribe to data changes
+    const unsubscribe = userDataManager.subscribe((userData) => {
+      setPreferences(userData.preferences);
+    });
+
+    return unsubscribe;
   }, []);
 
-  // Save settings to localStorage whenever preferences change
-  useEffect(() => {
-    if (!isLoading) {
-      try {
-        localStorage.setItem('brainwave-shift-preferences', JSON.stringify(preferences));
-      } catch (error) {
-        console.error('Failed to save preferences to localStorage:', error);
-      }
-    }
-  }, [preferences, isLoading]);
-
   const updatePreferences = (updates: Partial<UserPreferences>) => {
-    setPreferences(prev => ({ ...prev, ...updates }));
+    userDataManager.updatePreferences(updates);
   };
 
   const resetPreferences = () => {
-    setPreferences(DEFAULT_PREFERENCES);
+    const defaultPreferences: UserPreferences = {
+      interventionFrequency: 'Normal',
+      focusSessionLength: 25,
+      breakLength: 5,
+      breakReminders: true,
+      ambientNotifications: false,
+      dataSharing: false,
+      selectedPreset: 'pomodoro',
+      smartwatchDataSharing: true,
+      calendarDataSharing: true,
+      physiologicalMonitoring: true,
+      calendarInsights: true,
+      digitalWellnessEnabled: true,
+      mindfulnessReminders: true,
+      numberOfBreaks: 1,
+      currentTaskName: ''
+    };
+    
+    userDataManager.updatePreferences(defaultPreferences);
   };
 
   return {

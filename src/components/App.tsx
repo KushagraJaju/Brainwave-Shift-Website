@@ -1,23 +1,23 @@
 import React, { useState, Suspense } from 'react';
-import { Navigation } from './components/Navigation';
-import { Dashboard } from './components/Dashboard';
-import { CognitiveStateIndicator } from './components/CognitiveStateIndicator';
-import { FocusTimer } from './components/FocusTimer';
-import { WellnessSection } from './components/WellnessSection';
-import { AnalyticsDashboard } from './components/AnalyticsDashboard';
-import { Settings } from './components/Settings';
-import { MonitoringStatus } from './components/MonitoringStatus';
-import { MonitoringMetrics } from './components/MonitoringMetrics';
-import { DigitalWellnessIntervention } from './components/DigitalWellnessIntervention';
-import { LoadingSpinner } from './components/LoadingSpinner';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { OnboardingFlow } from './components/OnboardingFlow';
-import { useCognitiveState } from './hooks/useCognitiveState';
-import { useAnalytics } from './hooks/useAnalytics';
-import { useSettings } from './hooks/useSettings';
-import { useDigitalWellness } from './hooks/useDigitalWellness';
-import { useTheme } from './hooks/useTheme';
-import { useOnboarding } from './hooks/useOnboarding';
+import { Navigation } from './Navigation';
+import { Dashboard } from './Dashboard';
+import { CognitiveStateIndicator } from './CognitiveStateIndicator';
+import { FocusTimer } from './FocusTimer';
+import { WellnessSection } from './WellnessSection';
+import { AnalyticsDashboard } from './AnalyticsDashboard';
+import { Settings } from './Settings';
+import { MonitoringStatus } from './MonitoringStatus';
+import { MonitoringMetrics } from './MonitoringMetrics';
+import { DigitalWellnessIntervention } from './DigitalWellnessIntervention';
+import { LoadingSpinner } from './LoadingSpinner';
+import { ErrorBoundary } from './ErrorBoundary';
+import { OnboardingFlow } from './OnboardingFlow';
+import { useCognitiveState } from '../hooks/useCognitiveState';
+import { useAnalytics } from '../hooks/useAnalytics';
+import { useSettings } from '../hooks/useSettings';
+import { useDigitalWellness } from '../hooks/useDigitalWellness';
+import { useTheme } from '../hooks/useTheme';
+import { useOnboarding } from '../hooks/useOnboarding';
 
 // Loading component for better UX
 const LoadingScreen: React.FC = () => (
@@ -127,6 +127,7 @@ function App() {
               <FocusTimer 
                 preferences={preferences} 
                 onUpdatePreferences={updatePreferences}
+                showPresets={true}
               />
             </div>
           </div>
@@ -146,7 +147,7 @@ function App() {
         );
       case 'settings':
         return (
-          <div className="animate-fade-in">
+          <div className="animate-fade-in will-change-opacity will-change-transform">
             <Settings 
               preferences={preferences}
               onUpdatePreferences={updatePreferences}
@@ -175,7 +176,7 @@ function App() {
         
         {/* Main Content Area - Now with explicit scrolling container */}
         <div className="flex-1 lg:ml-64 overflow-y-auto h-screen">
-          <main className="p-4 lg:p-8 pt-16 lg:pt-8">
+          <main id="main-content" className="p-4 lg:p-8 pt-16 lg:pt-8">
             <ErrorBoundary fallback={
               <div className="card-primary p-6 text-center">
                 <p className="text-body text-calm-600 dark:text-calm-400">Unable to load this section. Please try again.</p>
