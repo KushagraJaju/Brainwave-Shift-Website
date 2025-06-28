@@ -102,7 +102,7 @@ function App() {
       case 'monitor':
         return (
           <div className="space-y-6 animate-fade-in">
-            <div className="card-primary p-6">
+            <div className="card-primary">
               <h2 className="text-heading-2 text-calm-800 dark:text-calm-200 mb-6">Cognitive Monitoring</h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <CognitiveStateIndicator 
@@ -110,7 +110,7 @@ function App() {
                   isMonitoring={isMonitoring}
                 />
                 <div className="space-y-4">
-                  <div className="card-secondary p-4">
+                  <div className="card-secondary">
                     <h3 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-2">Monitoring Status</h3>
                     <div className="flex items-center justify-between">
                       <span className="text-body text-calm-600 dark:text-calm-400">Active Monitoring</span>
@@ -139,7 +139,7 @@ function App() {
       case 'focus':
         return (
           <div className="space-y-6 animate-fade-in">
-            <div className="card-primary p-6">
+            <div className="card-primary">
               <h2 className="text-heading-2 text-calm-800 dark:text-calm-200 mb-6">Focus Management</h2>
               <FocusTimer 
                 preferences={preferences} 
