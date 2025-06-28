@@ -18,7 +18,6 @@ import { useSettings } from './hooks/useSettings';
 import { useDigitalWellness } from './hooks/useDigitalWellness';
 import { useTheme } from './hooks/useTheme';
 import { useOnboarding } from './hooks/useOnboarding';
-import { useUserData } from './hooks/useUserData';
 
 // Loading component for better UX
 const LoadingScreen: React.FC = () => (
@@ -36,17 +35,6 @@ function App() {
   
   // Initialize theme hook to set up dark mode
   useTheme();
-  
-  // Initialize user data management
-  const { 
-    userData, 
-    isLoading: userDataLoading, 
-    recordFeatureUsage,
-    recordFocusSession,
-    recordIntervention,
-    recordMindfulBreak,
-    recordCognitiveScore
-  } = useUserData();
   
   // Initialize onboarding hook
   const { 
@@ -69,13 +57,8 @@ function App() {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    recordFeatureUsage(`tab_${tab}`);
-  };
-
-  // Show loading state while user data or onboarding status are being loaded
-  if (isLoading || onboardingLoading || userDataLoading) {
+  // Show loading state while preferences or onboarding status are being loaded
+  if (isLoading || onboardingLoading) {
     return <LoadingScreen />;
   }
 
@@ -185,7 +168,7 @@ function App() {
       <div className="min-h-screen bg-calm-50 dark:bg-calm-900 flex transition-colors duration-300">
         <Navigation
           activeTab={activeTab}
-          onTabChange={handleTabChange}
+          onTabChange={setActiveTab}
           isMobileMenuOpen={isMobileMenuOpen}
           onMobileMenuToggle={handleMobileMenuToggle}
         />
