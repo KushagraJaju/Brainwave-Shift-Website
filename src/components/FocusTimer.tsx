@@ -530,50 +530,86 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         </div>
       )}
 
-      {/* Timer Display - Centered and Flexible */}
+      {/* NEW HORIZONTAL TIMER LAYOUT */}
       <div className="flex-1 flex flex-col justify-center">
-        <div className="text-center mb-8">
-          {/* Circular Progress */}
-          <div className="relative w-48 h-48 mx-auto mb-6">
-            <svg className="w-48 h-48 transform -rotate-90" viewBox="0 0 200 200">
-              <circle
-                cx="100"
-                cy="100"
-                r="85"
-                stroke="currentColor"
-                strokeWidth="10"
-                fill="none"
-                className="text-gray-200 dark:text-gray-700"
-              />
-              <circle
-                cx="100"
-                cy="100"
-                r="85"
-                stroke="currentColor"
-                strokeWidth="10"
-                fill="none"
-                strokeDasharray={`${progress * 5.34} 534`}
-                className={`transition-all duration-1000 ease-out ${
-                  sessionType === 'Focus' ? 'text-blue-500 dark:text-blue-400' : 'text-green-500 dark:text-green-400'
-                }`}
-                strokeLinecap="round"
-                style={{
-                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
-                }}
-              />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              {/* Enhanced Timer Text Display with Professional Monospace Font */}
-              <div className="text-center">
-                <div 
-                  className="text-6xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight leading-none select-none"
+        <div className="flex items-center justify-center space-x-8 mb-8">
+          
+          {/* LEFT: Progress Ring */}
+          <div className="flex flex-col items-center">
+            <div className="relative w-20 h-20 mb-2">
+              <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 80 80">
+                <circle
+                  cx="40"
+                  cy="40"
+                  r="32"
+                  stroke="currentColor"
+                  strokeWidth="6"
+                  fill="none"
+                  className="text-gray-200 dark:text-gray-700"
+                />
+                <circle
+                  cx="40"
+                  cy="40"
+                  r="32"
+                  stroke="currentColor"
+                  strokeWidth="6"
+                  fill="none"
+                  strokeDasharray={`${progress * 2.01} 201`}
+                  className={`transition-all duration-1000 ease-out ${
+                    sessionType === 'Focus' ? 'text-blue-500 dark:text-blue-400' : 'text-green-500 dark:text-green-400'
+                  }`}
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                  {Math.round(progress)}%
+                </span>
+              </div>
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+              Progress
+            </div>
+          </div>
+
+          {/* CENTER: Enlarged Timer Circle */}
+          <div className="flex flex-col items-center">
+            <div className="relative w-64 h-64 mb-4">
+              <svg className="w-64 h-64 transform -rotate-90" viewBox="0 0 264 264">
+                <circle
+                  cx="132"
+                  cy="132"
+                  r="120"
+                  stroke="currentColor"
+                  strokeWidth="8"
+                  fill="none"
+                  className="text-gray-200 dark:text-gray-700"
+                />
+                <circle
+                  cx="132"
+                  cy="132"
+                  r="120"
+                  stroke="currentColor"
+                  strokeWidth="8"
+                  fill="none"
+                  strokeDasharray={`${progress * 7.54} 754`}
+                  className={`transition-all duration-1000 ease-out ${
+                    sessionType === 'Focus' ? 'text-blue-500 dark:text-blue-400' : 'text-green-500 dark:text-green-400'
+                  }`}
+                  strokeLinecap="round"
                   style={{
-                    fontFamily: "'SF Mono', 'Monaco', 'Consolas', 'Roboto Mono', 'Menlo', 'Courier New', monospace",
+                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))'
+                  }}
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                {/* Timer Text with Comic Sans MS Font */}
+                <div 
+                  className="text-7xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight leading-none select-none"
+                  style={{
+                    fontFamily: "'Comic Sans MS', cursive, sans-serif",
                     fontWeight: '700',
-                    letterSpacing: '-0.02em',
-                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
-                    fontFeatureSettings: '"tnum" 1, "lnum" 1', // Tabular and lining numbers for consistent spacing
-                    fontVariantNumeric: 'tabular-nums lining-nums'
+                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                   }}
                 >
                   {formatTime(time)}
@@ -585,44 +621,51 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="flex items-center justify-center space-x-4 mb-6">
+          {/* RIGHT: Play/Pause Button */}
+          <div className="flex flex-col items-center">
             <button
               onClick={toggleTimer}
-              className={`flex items-center justify-center w-14 h-14 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-opacity-50 ${
+              className={`flex items-center justify-center w-20 h-20 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-opacity-50 mb-2 ${
                 isActive
                   ? 'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white focus:ring-red-300'
                   : 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white focus:ring-blue-300'
               }`}
               aria-label={isActive ? 'Pause timer' : 'Start timer'}
             >
-              {isActive ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-1" />}
+              {isActive ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 ml-1" />}
             </button>
-            <button
-              onClick={resetTimer}
-              className="flex items-center justify-center w-14 h-14 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-50"
-              aria-label="Reset timer"
-            >
-              <Square className="w-6 h-6" />
-            </button>
+            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+              {isActive ? 'Pause' : isPaused ? 'Resume' : 'Start'}
+            </div>
           </div>
+        </div>
 
-          {/* Status Text */}
-          <div className="text-gray-600 dark:text-gray-400">
-            {isActive ? (
-              <div className="flex items-center justify-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium">Session in progress</span>
-              </div>
-            ) : isPaused ? (
-              <div className="flex items-center justify-center space-x-2">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                <span className="text-sm font-medium">Timer paused - click play to resume</span>
-              </div>
-            ) : (
-              <span className="text-sm">Click play to start your {sessionType.toLowerCase()} session</span>
-            )}
-          </div>
+        {/* Reset Button - Centered below the horizontal layout */}
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={resetTimer}
+            className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-50"
+            aria-label="Reset timer"
+          >
+            <Square className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Status Text */}
+        <div className="text-center text-gray-600 dark:text-gray-400">
+          {isActive ? (
+            <div className="flex items-center justify-center space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium">Session in progress</span>
+            </div>
+          ) : isPaused ? (
+            <div className="flex items-center justify-center space-x-2">
+              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              <span className="text-sm font-medium">Timer paused - click play to resume</span>
+            </div>
+          ) : (
+            <span className="text-sm">Click play to start your {sessionType.toLowerCase()} session</span>
+          )}
         </div>
       </div>
 
