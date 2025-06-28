@@ -9,7 +9,12 @@ import {
   CheckCircle,
   FileText,
   HardDrive,
-  Trash2
+  Trash2,
+  Settings,
+  Activity,
+  Smartphone,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { useUserData } from '../hooks/useUserData';
 
@@ -28,6 +33,7 @@ export const DataManagement: React.FC = () => {
   const [isImporting, setIsImporting] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showDetailedBreakdown, setShowDetailedBreakdown] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -109,6 +115,19 @@ export const DataManagement: React.FC = () => {
     }
   };
 
+  // Group data into main categories
+  const getGroupedDataSize = () => {
+    const breakdown = dataSize.breakdown;
+    
+    return {
+      userPreferencesSettings: (breakdown.preferences || 0) + (breakdown.soundSettings || 0) + (breakdown.appState || 0),
+      sessionAnalytics: (breakdown.analytics || 0) + (breakdown.focusSessions || 0) + (breakdown.interventions || 0),
+      deviceIntegration: (breakdown.deviceIntegrations || 0) + (breakdown.digitalWellness || 0)
+    };
+  };
+
+  const groupedData = getGroupedDataSize();
+
   if (!userData) {
     return (
       <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-calm-200 dark:border-calm-700">
@@ -162,7 +181,7 @@ export const DataManagement: React.FC = () => {
           </div>
         )}
 
-        {/* Data Overview */}
+        {/* Simplified Data Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
             <div className="flex items-center space-x-2 mb-2">
@@ -191,17 +210,60 @@ export const DataManagement: React.FC = () => {
           </div>
         </div>
 
-        {/* Data Breakdown */}
+        {/* Grouped Storage Breakdown */}
         <div className="mb-6">
-          <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">Storage Breakdown</h4>
-          <div className="space-y-2">
-            {Object.entries(dataSize.breakdown).map(([key, size]) => (
-              <div key={key} className="flex items-center justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
-                <span className="font-medium text-gray-800 dark:text-gray-200">{formatBytes(size)}</span>
-              </div>
-            ))}
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Storage Overview</h4>
+            <button
+              onClick={() => setShowDetailedBreakdown(!showDetailedBreakdown)}
+              className="flex items-center space-x-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+            >
+              <span>{showDetailedBreakdown ? 'Hide Details' : 'Show Details'}</span>
+              {showDetailedBreakdown ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
           </div>
+          
+          {/* Simplified grouped breakdown */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center space-x-2">
+                <Settings className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                <span className="text-gray-600 dark:text-gray-400">User Preferences & Settings</span>
+              </div>
+              <span className="font-medium text-gray-800 dark:text-gray-200">{formatBytes(groupedData.userPreferencesSettings)}</span>
+            </div>
+            
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center space-x-2">
+                <Activity className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                <span className="text-gray-600 dark:text-gray-400">Session & Analytics Data</span>
+              </div>
+              <span className="font-medium text-gray-800 dark:text-gray-200">{formatBytes(groupedData.sessionAnalytics)}</span>
+            </div>
+            
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center space-x-2">
+                <Smartphone className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                <span className="text-gray-600 dark:text-gray-400">Device & Integration Data</span>
+              </div>
+              <span className="font-medium text-gray-800 dark:text-gray-200">{formatBytes(groupedData.deviceIntegration)}</span>
+            </div>
+          </div>
+
+          {/* Detailed breakdown (collapsible) */}
+          {showDetailedBreakdown && (
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <h5 className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Detailed Breakdown</h5>
+              <div className="space-y-1">
+                {Object.entries(dataSize.breakdown).map(([key, size]) => (
+                  <div key={key} className="flex items-center justify-between text-xs">
+                    <span className="text-gray-500 dark:text-gray-400 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
+                    <span className="font-medium text-gray-700 dark:text-gray-300">{formatBytes(size)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
