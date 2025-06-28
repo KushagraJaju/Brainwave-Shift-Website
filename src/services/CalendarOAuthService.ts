@@ -35,7 +35,7 @@ export class CalendarOAuthService {
     switch (provider) {
       case 'google':
         return {
-          clientId: process.env.VITE_GOOGLE_CLIENT_ID || 'your-google-client-id',
+          clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || 'your-google-client-id',
           redirectUri: `${baseRedirectUri}/google`,
           scope: 'https://www.googleapis.com/auth/calendar.readonly',
           authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
@@ -44,7 +44,7 @@ export class CalendarOAuthService {
       
       case 'microsoft':
         return {
-          clientId: process.env.VITE_MICROSOFT_CLIENT_ID || 'your-microsoft-client-id',
+          clientId: import.meta.env.VITE_MICROSOFT_CLIENT_ID || 'your-microsoft-client-id',
           redirectUri: `${baseRedirectUri}/microsoft`,
           scope: 'https://graph.microsoft.com/calendars.read',
           authUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
@@ -105,7 +105,7 @@ export class CalendarOAuthService {
         },
         body: new URLSearchParams({
           client_id: config.clientId,
-          client_secret: process.env.VITE_GOOGLE_CLIENT_SECRET || process.env.VITE_MICROSOFT_CLIENT_SECRET || '',
+          client_secret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET || import.meta.env.VITE_MICROSOFT_CLIENT_SECRET || '',
           code: code,
           grant_type: 'authorization_code',
           redirect_uri: config.redirectUri,
@@ -259,7 +259,7 @@ export class CalendarOAuthService {
         },
         body: new URLSearchParams({
           client_id: config.clientId,
-          client_secret: process.env.VITE_GOOGLE_CLIENT_SECRET || process.env.VITE_MICROSOFT_CLIENT_SECRET || '',
+          client_secret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET || import.meta.env.VITE_MICROSOFT_CLIENT_SECRET || '',
           refresh_token: refreshToken,
           grant_type: 'refresh_token',
         }),
