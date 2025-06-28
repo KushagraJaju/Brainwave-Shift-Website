@@ -652,9 +652,9 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                {/* Timer Text with Outfit Font */}
+                {/* Timer Text with Outfit Font - REDUCED SIZE */}
                 <div 
-                  className="text-7xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight leading-none select-none"
+                  className="text-6xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight leading-none select-none"
                   style={{
                     fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                     fontWeight: '700',
