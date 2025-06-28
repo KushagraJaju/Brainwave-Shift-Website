@@ -255,28 +255,6 @@
   .text-responsive-base {
     @apply text-sm md:text-base lg:text-lg;
   }
-
-  /* CRITICAL: Modal overlay classes - FIXED FOR MOBILE */
-  .modal-overlay-critical {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    z-index: 9999 !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-    background: rgba(0, 0, 0, 0.5) !important;
-    /* CRITICAL: Only show when modal is actually open */
-    pointer-events: auto !important;
-  }
-
-  /* Ensure modal content is above overlay */
-  .modal-content-fix {
-    position: relative !important;
-    z-index: 10000 !important;
-    pointer-events: auto !important;
-  }
 }
 
 /* Performance optimizations */
@@ -504,17 +482,29 @@ header {
 
 /* Modal overlays - highest priority but only when actually open */
 .modal-overlay, .modal-overlay-critical {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
   z-index: 9999 !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  /* CRITICAL: Only show when modal is actually open */
+  pointer-events: auto !important;
 }
 
 /* Modal content */
 .modal-content, .modal-content-fix {
+  position: relative !important;
   z-index: 10000 !important;
+  pointer-events: auto !important;
 }
 
 /* Mobile menu button - should be above navigation */
 .mobile-menu-button {
-  z-index: 50 !important;
+  z-index: 9998 !important;
 }
 
 /* Ensure proper stacking context */
@@ -537,12 +527,11 @@ header {
   }
   
   /* Ensure modal overlays don't interfere with mobile navigation */
-  .modal-overlay-critical {
-    /* Only apply overlay when modal is actually open */
-    display: none;
+  .modal-overlay-critical:not(.modal-open) {
+    display: none !important;
   }
   
   .modal-overlay-critical.modal-open {
-    display: block !important;
+    display: flex !important;
   }
 }
