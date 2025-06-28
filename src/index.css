@@ -504,7 +504,7 @@ ul, ol {
 
 /* Ensure navigation doesn't interfere with modal */
 nav {
-  z-index: 40 !important;
+  z-index: 5 !important;
 }
 
 /* Header z-index fix */
