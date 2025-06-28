@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Watch, Calendar, Smartphone, Heart, Clock, Shield, CheckCircle, AlertTriangle } from 'lucide-react';
 
 interface DeviceConnectionModalProps {
@@ -131,18 +131,62 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
       : ['Meeting schedule analysis', 'Focus time optimization', 'Deadline tracking', 'Cognitive load prediction'];
   };
 
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      {/* Enhanced Blur Overlay with Higher Z-index */}
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-md transition-all duration-300"
-        onClick={onClose}
-        style={{ zIndex: -1 }}
-        aria-hidden="true"
-      />
+  const ThemePreview: React.FC<{ theme: 'light' | 'dark'; isSelected: boolean; onSelect: () => void }> = ({ 
+    theme, 
+    isSelected, 
+    onSelect 
+  }) => (
+    <button
+      onClick={onSelect}
+      className={`relative w-full p-6 rounded-xl border-2 transition-all duration-300 text-left group hover:scale-105 ${
+        isSelected
+          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg scale-105'
+          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
+      }`}
+    >
+      {/* Selected indicator */}
+      {isSelected && (
+        <div className="absolute -top-2 -right-2 bg-blue-500 rounded-full p-1">
+          <CheckCircle className="w-4 h-4 text-white" />
+        </div>
+      )}
       
-      {/* Modal Content */}
-      <div className="relative bg-white dark:bg-calm-800 rounded-xl shadow-2xl dark:shadow-gentle-dark max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-calm-200 dark:border-calm-700 transform transition-all duration-300 scale-100">
+      {/* Theme icon */}
+      <div className={`inline-flex p-3 rounded-xl mb-4 shadow-lg ${
+        theme === 'light' 
+          ? 'bg-gradient-to-r from-yellow-400 to-orange-500' 
+          : 'bg-gradient-to-r from-indigo-500 to-purple-600'
+      }`}>
+        {theme === 'light' ? (
+          <Calendar className="w-6 h-6 text-white" />
+        ) : (
+          <Watch className="w-6 h-6 text-white" />
+        )}
+      </div>
+      
+      {/* Theme info */}
+      <div className="space-y-3">
+        <div>
+          <h4 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-1">
+            {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
+          </h4>
+          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+            {theme === 'light' 
+              ? 'Clean and bright interface perfect for daytime use' 
+              : 'Easy on the eyes with reduced strain for extended sessions'
+            }
+          </p>
+        </div>
+      </div>
+    </button>
+  );
+
+  return (
+    <div className="modal-overlay-critical flex items-center justify-center p-4">
+      <div 
+        className="relative bg-white dark:bg-calm-800 rounded-xl shadow-2xl dark:shadow-gentle-dark max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-calm-200 dark:border-calm-700"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-calm-700">
           <div className="flex items-center space-x-3">

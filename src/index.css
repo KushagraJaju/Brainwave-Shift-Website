@@ -255,6 +255,24 @@
   .text-responsive-base {
     @apply text-sm md:text-base lg:text-lg;
   }
+
+  /* CRITICAL: Modal overlay z-index fix */
+  .modal-overlay-fix {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 9998 !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  /* Ensure modal content is above overlay */
+  .modal-content-fix {
+    position: relative !important;
+    z-index: 9999 !important;
+  }
 }
 
 /* Performance optimizations */
@@ -330,24 +348,6 @@
     .desktop-grid {
       @apply grid-cols-3;
     }
-  }
-
-  /* CRITICAL: Modal overlay z-index fix */
-  .modal-overlay-fix {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    z-index: 9998 !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-  }
-
-  /* Ensure modal content is above overlay */
-  .modal-content-fix {
-    position: relative !important;
-    z-index: 9999 !important;
   }
 }
 
