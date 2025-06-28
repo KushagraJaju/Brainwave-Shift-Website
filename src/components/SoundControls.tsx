@@ -98,8 +98,9 @@ export const SoundControls: React.FC<SoundControlsProps> = ({
                 className="flex-1 form-select text-sm min-h-[44px] focus-ring"
                 aria-label="Select focus completion sound"
               >
+                <option value="success">Success Tone</option>
                 <option value="chime">Gentle Chime</option>
-                <option value="bell">Meditation Bell</option>
+                <option value="pop">Soft Pop</option>
               </select>
               <div className="flex items-center justify-center">
                 <button
@@ -127,9 +128,9 @@ export const SoundControls: React.FC<SoundControlsProps> = ({
                 className="flex-1 form-select text-sm min-h-[44px] focus-ring"
                 aria-label="Select break completion sound"
               >
+                <option value="notification">Water Drop</option>
                 <option value="chime">Gentle Chime</option>
-                <option value="notification">Soft Notification</option>
-                <option value="bell">Light Bell</option>
+                <option value="pop">Soft Pop</option>
               </select>
               <div className="flex items-center justify-center">
                 <button
@@ -148,7 +149,7 @@ export const SoundControls: React.FC<SoundControlsProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Subtle Tick Sound</span>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Very quiet tick every second</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Soft wooden tick every second</p>
             </div>
             <div className="flex items-center space-x-3">
               <button
@@ -193,7 +194,7 @@ export const SoundControls: React.FC<SoundControlsProps> = ({
               <ul className="space-y-1 text-blue-600 dark:text-blue-400">
                 <li>• Pleasant, non-jarring notification sounds</li>
                 <li>• Different tones for focus vs break completion</li>
-                <li>• Generated using Web Audio API for quality</li>
+                <li>• Optional subtle tick for time awareness</li>
                 <li>• Respects browser autoplay policies</li>
               </ul>
             </div>

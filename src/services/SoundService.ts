@@ -11,8 +11,8 @@ export class SoundService {
   private settings: SoundSettings = {
     enabled: true,
     volume: 0.7,
-    focusCompleteSound: 'chime',
-    breakCompleteSound: 'chime'
+    focusCompleteSound: 'success',
+    breakCompleteSound: 'notification'
   };
 
   constructor() {
@@ -30,8 +30,8 @@ export class SoundService {
     }
   }
 
-  // Generate pleasant bell sound using Web Audio API
-  private createBellSound(frequency: number = 800, duration: number = 2): void {
+  // Generate success sound (rising tone with harmonics)
+  private createSuccessSound(): void {
     if (!this.audioContext || !this.settings.enabled) return;
 
     try {
@@ -40,39 +40,48 @@ export class SoundService {
         this.audioContext.resume();
       }
 
-      const oscillator = this.audioContext.createOscillator();
+      // Create oscillators for a rich sound
+      const oscillator1 = this.audioContext.createOscillator();
+      const oscillator2 = this.audioContext.createOscillator();
       const gainNode = this.audioContext.createGain();
       const filterNode = this.audioContext.createBiquadFilter();
 
       // Connect nodes
-      oscillator.connect(filterNode);
+      oscillator1.connect(filterNode);
+      oscillator2.connect(filterNode);
       filterNode.connect(gainNode);
       gainNode.connect(this.audioContext.destination);
 
-      // Configure oscillator for bell-like sound
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(frequency * 0.5, this.audioContext.currentTime + duration);
+      // Configure oscillators for a pleasant rising tone
+      oscillator1.type = 'sine';
+      oscillator1.frequency.setValueAtTime(440, this.audioContext.currentTime);
+      oscillator1.frequency.exponentialRampToValueAtTime(880, this.audioContext.currentTime + 0.5);
+
+      oscillator2.type = 'triangle';
+      oscillator2.frequency.setValueAtTime(550, this.audioContext.currentTime);
+      oscillator2.frequency.exponentialRampToValueAtTime(1100, this.audioContext.currentTime + 0.5);
 
       // Configure filter for warmth
       filterNode.type = 'lowpass';
       filterNode.frequency.setValueAtTime(2000, this.audioContext.currentTime);
       filterNode.Q.setValueAtTime(1, this.audioContext.currentTime);
 
-      // Configure envelope for natural decay
+      // Configure envelope for natural sound
       gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
-      gainNode.gain.linearRampToValueAtTime(this.settings.volume * 0.3, this.audioContext.currentTime + 0.01);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + duration);
+      gainNode.gain.linearRampToValueAtTime(this.settings.volume * 0.3, this.audioContext.currentTime + 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 1.2);
 
       // Play sound
-      oscillator.start(this.audioContext.currentTime);
-      oscillator.stop(this.audioContext.currentTime + duration);
+      oscillator1.start(this.audioContext.currentTime);
+      oscillator2.start(this.audioContext.currentTime);
+      oscillator1.stop(this.audioContext.currentTime + 1.2);
+      oscillator2.stop(this.audioContext.currentTime + 1.2);
     } catch (error) {
-      console.error('Failed to create bell sound:', error);
+      console.error('Failed to create success sound:', error);
     }
   }
 
-  // Generate gentle chime sound
+  // Generate gentle chime sound with harmonics
   private createChimeSound(): void {
     if (!this.audioContext || !this.settings.enabled) return;
 
@@ -82,7 +91,8 @@ export class SoundService {
         this.audioContext.resume();
       }
 
-      const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5 chord
+      // Create a chord with harmonics for a rich chime sound
+      const frequencies = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 chord
       const duration = 1.5;
 
       frequencies.forEach((freq, index) => {
@@ -94,15 +104,16 @@ export class SoundService {
         filterNode.connect(gainNode);
         gainNode.connect(this.audioContext!.destination);
 
-        oscillator.type = 'sine';
+        // Mix sine and triangle waves for richer tone
+        oscillator.type = index % 2 === 0 ? 'sine' : 'triangle';
         oscillator.frequency.setValueAtTime(freq, this.audioContext!.currentTime);
 
         filterNode.type = 'lowpass';
         filterNode.frequency.setValueAtTime(3000, this.audioContext!.currentTime);
 
-        const startTime = this.audioContext!.currentTime + (index * 0.1);
+        const startTime = this.audioContext!.currentTime + (index * 0.08);
         gainNode.gain.setValueAtTime(0, startTime);
-        gainNode.gain.linearRampToValueAtTime(this.settings.volume * 0.2, startTime + 0.05);
+        gainNode.gain.linearRampToValueAtTime(this.settings.volume * 0.15, startTime + 0.05);
         gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
 
         oscillator.start(startTime);
@@ -113,7 +124,7 @@ export class SoundService {
     }
   }
 
-  // Generate subtle notification sound
+  // Generate water drop notification sound
   private createNotificationSound(): void {
     if (!this.audioContext || !this.settings.enabled) return;
 
@@ -123,24 +134,149 @@ export class SoundService {
         this.audioContext.resume();
       }
 
+      // Create oscillator for the main tone
       const oscillator = this.audioContext.createOscillator();
       const gainNode = this.audioContext.createGain();
+      const filterNode = this.audioContext.createBiquadFilter();
 
-      oscillator.connect(gainNode);
+      // Connect nodes
+      oscillator.connect(filterNode);
+      filterNode.connect(gainNode);
       gainNode.connect(this.audioContext.destination);
 
+      // Configure for water drop sound
       oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(600, this.audioContext.currentTime);
-      oscillator.frequency.linearRampToValueAtTime(800, this.audioContext.currentTime + 0.1);
+      oscillator.frequency.setValueAtTime(1200, this.audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.1);
 
+      // Filter for warmth
+      filterNode.type = 'lowpass';
+      filterNode.frequency.setValueAtTime(3000, this.audioContext.currentTime);
+      filterNode.Q.setValueAtTime(8, this.audioContext.currentTime);
+
+      // Envelope for pluck effect
       gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
-      gainNode.gain.linearRampToValueAtTime(this.settings.volume * 0.15, this.audioContext.currentTime + 0.05);
+      gainNode.gain.linearRampToValueAtTime(this.settings.volume * 0.2, this.audioContext.currentTime + 0.01);
       gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.3);
 
+      // Play sound
       oscillator.start(this.audioContext.currentTime);
       oscillator.stop(this.audioContext.currentTime + 0.3);
+
+      // Add a subtle echo
+      setTimeout(() => {
+        if (!this.audioContext) return;
+        
+        const echoOsc = this.audioContext.createOscillator();
+        const echoGain = this.audioContext.createGain();
+        const echoFilter = this.audioContext.createBiquadFilter();
+        
+        echoOsc.connect(echoFilter);
+        echoFilter.connect(echoGain);
+        echoGain.connect(this.audioContext.destination);
+        
+        echoOsc.type = 'sine';
+        echoOsc.frequency.setValueAtTime(800, this.audioContext.currentTime);
+        echoOsc.frequency.exponentialRampToValueAtTime(300, this.audioContext.currentTime + 0.1);
+        
+        echoFilter.type = 'lowpass';
+        echoFilter.frequency.setValueAtTime(2000, this.audioContext.currentTime);
+        
+        echoGain.gain.setValueAtTime(0, this.audioContext.currentTime);
+        echoGain.gain.linearRampToValueAtTime(this.settings.volume * 0.05, this.audioContext.currentTime + 0.01);
+        echoGain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.2);
+        
+        echoOsc.start(this.audioContext.currentTime);
+        echoOsc.stop(this.audioContext.currentTime + 0.2);
+      }, 150);
     } catch (error) {
       console.error('Failed to create notification sound:', error);
+    }
+  }
+
+  // Generate a soft pop sound
+  private createPopSound(): void {
+    if (!this.audioContext || !this.settings.enabled) return;
+
+    try {
+      // Resume audio context if suspended
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume();
+      }
+
+      // Create oscillator for the main tone
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      const filterNode = this.audioContext.createBiquadFilter();
+
+      // Connect nodes
+      oscillator.connect(filterNode);
+      filterNode.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+
+      // Configure for pop sound
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(150, this.audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(80, this.audioContext.currentTime + 0.2);
+
+      // Filter for warmth
+      filterNode.type = 'lowpass';
+      filterNode.frequency.setValueAtTime(1000, this.audioContext.currentTime);
+      filterNode.Q.setValueAtTime(2, this.audioContext.currentTime);
+
+      // Envelope for pop effect
+      gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(this.settings.volume * 0.3, this.audioContext.currentTime + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.2);
+
+      // Play sound
+      oscillator.start(this.audioContext.currentTime);
+      oscillator.stop(this.audioContext.currentTime + 0.2);
+    } catch (error) {
+      console.error('Failed to create pop sound:', error);
+    }
+  }
+
+  // Generate a soft wooden tick sound
+  private createWoodTickSound(): void {
+    if (!this.audioContext || !this.settings.enabled) return;
+
+    try {
+      // Resume audio context if suspended
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume();
+      }
+
+      // Create oscillator for the main tone
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      const filterNode = this.audioContext.createBiquadFilter();
+
+      // Connect nodes
+      oscillator.connect(filterNode);
+      filterNode.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+
+      // Configure for wooden tick sound
+      oscillator.type = 'triangle';
+      oscillator.frequency.setValueAtTime(180, this.audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(120, this.audioContext.currentTime + 0.03);
+
+      // Filter for wooden quality
+      filterNode.type = 'bandpass';
+      filterNode.frequency.setValueAtTime(800, this.audioContext.currentTime);
+      filterNode.Q.setValueAtTime(1.5, this.audioContext.currentTime);
+
+      // Very short envelope for tick effect
+      gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(this.settings.volume * 0.08, this.audioContext.currentTime + 0.005);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.05);
+
+      // Play sound
+      oscillator.start(this.audioContext.currentTime);
+      oscillator.stop(this.audioContext.currentTime + 0.05);
+    } catch (error) {
+      console.error('Failed to create wood tick sound:', error);
     }
   }
 
@@ -157,14 +293,17 @@ export class SoundService {
     }
 
     switch (this.settings.focusCompleteSound) {
-      case 'bell':
-        this.createBellSound(800, 2.5);
+      case 'success':
+        this.createSuccessSound();
         break;
       case 'chime':
         this.createChimeSound();
         break;
+      case 'pop':
+        this.createPopSound();
+        break;
       default:
-        this.createChimeSound(); // Default to chime
+        this.createSuccessSound(); // Default to success sound
     }
   }
 
@@ -185,11 +324,11 @@ export class SoundService {
       case 'notification':
         this.createNotificationSound();
         break;
-      case 'bell':
-        this.createBellSound(600, 1.5);
+      case 'pop':
+        this.createPopSound();
         break;
       default:
-        this.createChimeSound(); // Default to chime
+        this.createNotificationSound(); // Default to notification sound
     }
   }
 
@@ -204,25 +343,7 @@ export class SoundService {
     }
 
     // Very subtle tick sound
-    try {
-      const oscillator = this.audioContext!.createOscillator();
-      const gainNode = this.audioContext!.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(this.audioContext!.destination);
-
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(1000, this.audioContext!.currentTime);
-
-      gainNode.gain.setValueAtTime(0, this.audioContext!.currentTime);
-      gainNode.gain.linearRampToValueAtTime(this.settings.volume * 0.05, this.audioContext!.currentTime + 0.01);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext!.currentTime + 0.05);
-
-      oscillator.start(this.audioContext!.currentTime);
-      oscillator.stop(this.audioContext!.currentTime + 0.05);
-    } catch (error) {
-      console.error('Failed to create tick sound:', error);
-    }
+    this.createWoodTickSound();
   }
 
   // Settings management

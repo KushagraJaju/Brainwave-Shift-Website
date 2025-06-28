@@ -61,7 +61,7 @@ export const useSoundSettings = () => {
     };
   }, []);
 
-  const updateSettings = (updates: Partial<SoundSettings>) => {
+  const updateSettings = (updates: Partial<SoundSettings>): void => {
     soundService.updateSettings(updates);
     userDataManager.updateSoundSettings(updates);
     setSettings(soundService.getSettings());
