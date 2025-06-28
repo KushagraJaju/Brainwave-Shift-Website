@@ -357,18 +357,25 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           }`}>
             {sessionType} Session
           </span>
-          {/* Sound Toggle Button */}
-          <button
-            onClick={toggleSound}
-            className={`p-2 rounded-lg transition-colors duration-200 focus-ring touch-target ${
-              soundSettings.enabled 
-                ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50' 
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'
-            }`}
-            title={soundSettings.enabled ? 'Sound notifications enabled' : 'Sound notifications disabled'}
-          >
-            {soundSettings.enabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-          </button>
+          {/* FIXED: Sound Toggle Button with Perfect Centering */}
+          <div className="flex items-center justify-center">
+            <button
+              onClick={toggleSound}
+              className={`flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 focus-ring touch-target ${
+                soundSettings.enabled 
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50 border border-green-200 dark:border-green-800' 
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+              }`}
+              title={soundSettings.enabled ? 'Sound notifications enabled' : 'Sound notifications disabled'}
+              aria-label={soundSettings.enabled ? 'Disable sound notifications' : 'Enable sound notifications'}
+            >
+              {soundSettings.enabled ? (
+                <Volume2 className="w-4 h-4" />
+              ) : (
+                <VolumeX className="w-4 h-4" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
