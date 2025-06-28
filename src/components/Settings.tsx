@@ -16,13 +16,15 @@ import {
   Settings as SettingsIcon,
   Eye,
   EyeOff,
-  Palette
+  Palette,
+  RotateCw
 } from 'lucide-react';
 import { UserPreferences } from '../types';
 import { useDeviceIntegration } from '../hooks/useDeviceIntegration';
 import { DeviceConnectionModal } from './DeviceConnectionModal';
 import { ThemeSelector } from './ThemeToggle';
 import { SoundControls } from './SoundControls';
+import { useOnboarding } from '../hooks/useOnboarding';
 
 interface SettingsProps {
   preferences: UserPreferences;
@@ -51,6 +53,8 @@ export const Settings: React.FC<SettingsProps> = ({
     updatePrivacyLevel
   } = useDeviceIntegration();
 
+  const { resetOnboarding } = useOnboarding();
+
   const handleSave = async () => {
     setIsSaving(true);
     // Simulate save delay
@@ -70,6 +74,14 @@ export const Settings: React.FC<SettingsProps> = ({
       return await connectSmartwatch(provider);
     } else {
       return await connectCalendar(provider);
+    }
+  };
+
+  const handleRestartOnboarding = () => {
+    if (confirm('This will restart the onboarding tour. Are you sure?')) {
+      resetOnboarding();
+      // The app will automatically show onboarding when the page reloads
+      window.location.reload();
     }
   };
 
@@ -446,6 +458,42 @@ export const Settings: React.FC<SettingsProps> = ({
                   </button>
                 </div>
               )}
+            </div>
+          </SettingCard>
+
+          {/* Onboarding Settings */}
+          <SettingCard
+            icon={<RotateCw className="w-5 h-5" />}
+            title="Onboarding & Help"
+            description="Restart the welcome tour or access help resources"
+          >
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Welcome Tour</label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Restart the onboarding flow to learn about features</p>
+                </div>
+                <button
+                  onClick={handleRestartOnboarding}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors border border-purple-200 dark:border-purple-800"
+                >
+                  <RotateCw className="w-4 h-4" />
+                  <span className="text-sm font-medium">Restart Tour</span>
+                </button>
+              </div>
+              
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                <div className="flex items-start space-x-3">
+                  <Eye className="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-1">Need Help?</h4>
+                    <p className="text-sm text-blue-700 dark:text-blue-400">
+                      The welcome tour provides a comprehensive overview of all Brainwave Shift features, 
+                      including cognitive monitoring, focus timer, digital wellness tracking, and analytics.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </SettingCard>
         </div>

@@ -11,11 +11,13 @@ import { MonitoringMetrics } from './components/MonitoringMetrics';
 import { DigitalWellnessIntervention } from './components/DigitalWellnessIntervention';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { OnboardingFlow } from './components/OnboardingFlow';
 import { useCognitiveState } from './hooks/useCognitiveState';
 import { useAnalytics } from './hooks/useAnalytics';
 import { useSettings } from './hooks/useSettings';
 import { useDigitalWellness } from './hooks/useDigitalWellness';
 import { useTheme } from './hooks/useTheme';
+import { useOnboarding } from './hooks/useOnboarding';
 
 // Loading component for better UX
 const LoadingScreen: React.FC = () => (
@@ -34,6 +36,14 @@ function App() {
   // Initialize theme hook to set up dark mode
   useTheme();
   
+  // Initialize onboarding hook
+  const { 
+    hasCompletedOnboarding, 
+    isLoading: onboardingLoading, 
+    completeOnboarding, 
+    skipOnboarding 
+  } = useOnboarding();
+  
   const { cognitiveState, isMonitoring, toggleMonitoring } = useCognitiveState();
   const { preferences, updatePreferences, resetPreferences, isLoading } = useSettings();
   const analyticsData = useAnalytics(cognitiveState);
@@ -47,9 +57,21 @@ function App() {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // Show loading state while preferences are being loaded
-  if (isLoading) {
+  // Show loading state while preferences or onboarding status are being loaded
+  if (isLoading || onboardingLoading) {
     return <LoadingScreen />;
+  }
+
+  // Show onboarding flow for first-time users
+  if (!hasCompletedOnboarding) {
+    return (
+      <ErrorBoundary>
+        <OnboardingFlow 
+          onComplete={completeOnboarding}
+          onSkip={skipOnboarding}
+        />
+      </ErrorBoundary>
+    );
   }
 
   const renderContent = () => {
