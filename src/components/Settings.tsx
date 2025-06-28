@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Monitor, 
   Bell, 
@@ -45,6 +45,10 @@ export const Settings: React.FC<SettingsProps> = ({
     deviceType: 'smartwatch' | 'calendar';
   }>({ isOpen: false, deviceType: 'smartwatch' });
   const [activeSection, setActiveSection] = useState<'general' | 'data'>('general');
+  
+  // Ref to maintain scroll position
+  const settingsContainerRef = useRef<HTMLDivElement>(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
 
   const {
     integrations,
@@ -57,7 +61,34 @@ export const Settings: React.FC<SettingsProps> = ({
 
   const { resetOnboarding } = useOnboarding();
 
+  // Save scroll position before any state update
+  useEffect(() => {
+    const saveScrollPosition = () => {
+      if (settingsContainerRef.current) {
+        setScrollPosition(settingsContainerRef.current.scrollTop);
+      }
+    };
+
+    const container = settingsContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', saveScrollPosition);
+      return () => container.removeEventListener('scroll', saveScrollPosition);
+    }
+  }, []);
+
+  // Restore scroll position after render
+  useEffect(() => {
+    if (settingsContainerRef.current) {
+      settingsContainerRef.current.scrollTop = scrollPosition;
+    }
+  }, [scrollPosition, preferences, activeSection, showSaveConfirmation]);
+
   const handleSave = async () => {
+    // Save current scroll position
+    if (settingsContainerRef.current) {
+      setScrollPosition(settingsContainerRef.current.scrollTop);
+    }
+    
     setIsSaving(true);
     // Simulate save delay
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -67,6 +98,11 @@ export const Settings: React.FC<SettingsProps> = ({
   };
 
   const handleReset = () => {
+    // Save current scroll position
+    if (settingsContainerRef.current) {
+      setScrollPosition(settingsContainerRef.current.scrollTop);
+    }
+    
     onResetPreferences();
     setShowSaveConfirmation(false);
   };
@@ -102,6 +138,14 @@ export const Settings: React.FC<SettingsProps> = ({
     return integration?.lastSync;
   };
 
+  const handleSectionChange = (section: 'general' | 'data') => {
+    // Save current scroll position before changing section
+    if (settingsContainerRef.current) {
+      setScrollPosition(0); // Reset to top for new section
+    }
+    setActiveSection(section);
+  };
+
   const SettingCard: React.FC<{
     icon: React.ReactNode;
     title: string;
@@ -125,7 +169,7 @@ export const Settings: React.FC<SettingsProps> = ({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" ref={settingsContainerRef}>
       <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-calm-200 dark:border-calm-700">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Settings</h2>
@@ -157,7 +201,7 @@ export const Settings: React.FC<SettingsProps> = ({
         {/* Section Tabs */}
         <div className="flex space-x-1 mb-6 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
           <button
-            onClick={() => setActiveSection('general')}
+            onClick={() => handleSectionChange('general')}
             className={`flex-1 flex items-center justify-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 focus-ring ${
               activeSection === 'general'
                 ? 'bg-white dark:bg-calm-700 text-blue-600 dark:text-blue-400 shadow-sm'
@@ -168,7 +212,7 @@ export const Settings: React.FC<SettingsProps> = ({
             <span>General Settings</span>
           </button>
           <button
-            onClick={() => setActiveSection('data')}
+            onClick={() => handleSectionChange('data')}
             className={`flex-1 flex items-center justify-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 focus-ring ${
               activeSection === 'data'
                 ? 'bg-white dark:bg-calm-700 text-blue-600 dark:text-blue-400 shadow-sm'
@@ -198,31 +242,6 @@ export const Settings: React.FC<SettingsProps> = ({
               description="Configure audio notifications for timer events and focus sessions"
             >
               <SoundControls showAdvanced={true} />
-            </SettingCard>
-
-            <SettingCard
-              icon={<Monitor className="w-5 h-5" />}
-              title="Cognitive Monitoring"
-              description="Configure how your cognitive state is tracked and analyzed"
-            >
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Intervention Frequency
-                  </label>
-                  <select
-                    value={preferences.interventionFrequency}
-                    onChange={(e) => onUpdatePreferences({
-                      interventionFrequency: e.target.value as UserPreferences['interventionFrequency']
-                    })}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-calm-700 text-gray-900 dark:text-gray-100 form-select"
-                  >
-                    <option value="Minimal">Minimal - Only critical interventions</option>
-                    <option value="Normal">Normal - Balanced approach</option>
-                    <option value="Frequent">Frequent - Proactive wellness</option>
-                  </select>
-                </div>
-              </div>
             </SettingCard>
 
             <SettingCard
@@ -271,6 +290,31 @@ export const Settings: React.FC<SettingsProps> = ({
                       }`}
                     />
                   </button>
+                </div>
+              </div>
+            </SettingCard>
+
+            <SettingCard
+              icon={<Monitor className="w-5 h-5" />}
+              title="Cognitive Monitoring"
+              description="Configure how your cognitive state is tracked and analyzed"
+            >
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Intervention Frequency
+                  </label>
+                  <select
+                    value={preferences.interventionFrequency}
+                    onChange={(e) => onUpdatePreferences({
+                      interventionFrequency: e.target.value as UserPreferences['interventionFrequency']
+                    })}
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-calm-700 text-gray-900 dark:text-gray-100 form-select"
+                  >
+                    <option value="Minimal">Minimal - Only critical interventions</option>
+                    <option value="Normal">Normal - Balanced approach</option>
+                    <option value="Frequent">Frequent - Proactive wellness</option>
+                  </select>
                 </div>
               </div>
             </SettingCard>
