@@ -7,6 +7,8 @@ export interface TimerState {
   time: number;
   initialTime: number;
   startTime?: Date;
+  currentFocusSession: number;
+  totalFocusSessions: number;
 }
 
 export interface TimerSettings {
@@ -14,6 +16,7 @@ export interface TimerSettings {
   breakLength: number;
   breakReminders: boolean;
   tickSound?: boolean;
+  numberOfBreaks?: number;
 }
 
 export class TimerService {
@@ -29,7 +32,8 @@ export class TimerService {
       focusSessionLength: 25,
       breakLength: 5,
       breakReminders: true,
-      tickSound: false
+      tickSound: false,
+      numberOfBreaks: 1
     };
     
     this.state = {
@@ -37,7 +41,9 @@ export class TimerService {
       isPaused: false,
       sessionType: 'Focus',
       time: this.settings.focusSessionLength * 60,
-      initialTime: this.settings.focusSessionLength * 60
+      initialTime: this.settings.focusSessionLength * 60,
+      currentFocusSession: 1,
+      totalFocusSessions: 1
     };
   }
 
@@ -59,6 +65,11 @@ export class TimerService {
     // Update tick sound setting
     if (newSettings.tickSound !== undefined) {
       this.tickSoundEnabled = newSettings.tickSound;
+    }
+    
+    // Update total focus sessions if number of breaks changed
+    if (newSettings.numberOfBreaks !== undefined) {
+      this.state.totalFocusSessions = newSettings.numberOfBreaks + 1;
     }
     
     // Check if focus or break length changed
@@ -154,6 +165,11 @@ export class TimerService {
         this.state.time = newTime;
         this.state.initialTime = newTime;
       }
+      
+      // Reset focus session counter
+      this.state.currentFocusSession = 1;
+      this.state.totalFocusSessions = (this.settings.numberOfBreaks || 1) + 1;
+      
       this.notifyListeners();
     }
   }
@@ -204,18 +220,32 @@ export class TimerService {
       this.showNotification();
     }
 
-    // Auto-switch between focus and break
+    // Multi-break logic
     setTimeout(() => {
       if (this.state.sessionType === 'Focus') {
+        // Focus session completed, switch to break
         this.state.sessionType = 'Break';
         const breakTime = this.settings.breakLength * 60;
         this.state.time = breakTime;
         this.state.initialTime = breakTime;
       } else {
-        this.state.sessionType = 'Focus';
-        const focusTime = this.settings.focusSessionLength * 60;
-        this.state.time = focusTime;
-        this.state.initialTime = focusTime;
+        // Break session completed
+        // Check if we need to start another focus session or if we're done with all sessions
+        if (this.state.currentFocusSession < this.state.totalFocusSessions) {
+          // More focus sessions to go
+          this.state.currentFocusSession++;
+          this.state.sessionType = 'Focus';
+          const focusTime = this.settings.focusSessionLength * 60;
+          this.state.time = focusTime;
+          this.state.initialTime = focusTime;
+        } else {
+          // All focus sessions completed, reset to first session
+          this.state.currentFocusSession = 1;
+          this.state.sessionType = 'Focus';
+          const focusTime = this.settings.focusSessionLength * 60;
+          this.state.time = focusTime;
+          this.state.initialTime = focusTime;
+        }
       }
       this.notifyListeners();
     }, 100);
@@ -241,10 +271,17 @@ export class TimerService {
           icon: '/BrainwaveShift.png'
         });
       } else {
-        new Notification('Break time over!', {
-          body: 'Ready to start another focus session?',
-          icon: '/BrainwaveShift.png'
-        });
+        if (this.state.currentFocusSession < this.state.totalFocusSessions) {
+          new Notification('Break time over!', {
+            body: `Ready to start focus session ${this.state.currentFocusSession + 1} of ${this.state.totalFocusSessions}?`,
+            icon: '/BrainwaveShift.png'
+          });
+        } else {
+          new Notification('All sessions complete!', {
+            body: 'You have completed all your planned focus sessions.',
+            icon: '/BrainwaveShift.png'
+          });
+        }
       }
     }
   }

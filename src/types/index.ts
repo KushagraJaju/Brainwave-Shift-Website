@@ -45,6 +45,8 @@ export interface UserPreferences {
   socialMediaTimeLimit?: number;
   mindfulnessReminders?: boolean;
   focusModeSchedule?: { start: string; end: string }[];
+  // Multi-break support
+  numberOfBreaks?: number;
 }
 
 export interface FocusPreset {

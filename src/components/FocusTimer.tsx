@@ -58,6 +58,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     sessionType,
     formattedTime,
     progress,
+    currentFocusSession,
+    totalFocusSessions,
     start,
     pause,
     resume,
@@ -72,7 +74,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   // Custom settings state
   const [customFocusTime, setCustomFocusTime] = useState(preferences?.focusSessionLength || 25);
   const [customBreakTime, setCustomBreakTime] = useState(preferences?.breakLength || 5);
-  const [customNumberOfBreaks, setCustomNumberOfBreaks] = useState(1);
+  const [customNumberOfBreaks, setCustomNumberOfBreaks] = useState(preferences?.numberOfBreaks || 1);
   
   // Sound settings hook
   const { settings: soundSettings, toggleSound } = useSoundSettings();
@@ -82,8 +84,9 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     if (preferences) {
       setCustomFocusTime(preferences.focusSessionLength);
       setCustomBreakTime(preferences.breakLength || 5);
+      setCustomNumberOfBreaks(preferences.numberOfBreaks || 1);
     }
-  }, [preferences?.focusSessionLength, preferences?.breakLength]);
+  }, [preferences?.focusSessionLength, preferences?.breakLength, preferences?.numberOfBreaks]);
 
   const handlePresetSelect = (preset: FocusPreset) => {
     if (onUpdatePreferences) {
@@ -92,7 +95,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         focusSessionLength: preset.focusMinutes,
         breakLength: preset.breakMinutes,
         selectedPreset: preset.id,
-        breakReminders: true // Enable break reminders when selecting a preset
+        breakReminders: true, // Enable break reminders when selecting a preset
+        numberOfBreaks: 1 // Reset to single break for presets
       });
     }
     
@@ -105,7 +109,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         focusSessionLength: customFocusTime,
         breakLength: customBreakTime,
         selectedPreset: undefined, // Clear preset when using custom
-        breakReminders: true
+        breakReminders: true,
+        numberOfBreaks: customNumberOfBreaks // Save the number of breaks
       });
     }
     
@@ -192,6 +197,15 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     return `Total session: ${totalSessionTime} minutes (${customFocusTime}m work + ${totalBreakTime}m breaks)`;
   };
 
+  // Get session progress text
+  const getSessionProgressText = () => {
+    if (sessionType === 'Focus') {
+      return `Focus Session ${currentFocusSession} of ${totalFocusSessions}`;
+    } else {
+      return `Break ${currentFocusSession} of ${totalFocusSessions}`;
+    }
+  };
+
   return (
     <div className="card-primary h-full flex flex-col">
       {/* Header Section */}
@@ -204,7 +218,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300' 
               : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
           }`}>
-            {sessionType} Session
+            {getSessionProgressText()}
           </span>
           
           {/* Sound Toggle Button */}
@@ -449,13 +463,13 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                   {/* Number of Breaks Setting */}
                   <div>
                     <label htmlFor="break-count" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                      Number of Breaks
+                      Number of Focus Sessions
                     </label>
                     <div className="flex items-center space-x-4">
                       <button
                         onClick={() => adjustCustomTime('breaks', 'down')}
                         className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target focus-ring"
-                        aria-label="Decrease number of breaks"
+                        aria-label="Decrease number of focus sessions"
                       >
                         <Minus className="w-4 h-4" aria-hidden="true" />
                       </button>
@@ -468,14 +482,14 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                           value={customNumberOfBreaks}
                           onChange={(e) => setCustomNumberOfBreaks(Math.max(1, Math.min(5, parseInt(e.target.value) || 1)))}
                           className="w-20 text-center text-lg font-bold bg-white dark:bg-calm-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 form-input focus-ring"
-                          aria-label="Number of breaks"
+                          aria-label="Number of focus sessions"
                         />
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">1-5 breaks</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">1-5 sessions</div>
                       </div>
                       <button
                         onClick={() => adjustCustomTime('breaks', 'up')}
                         className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-target focus-ring"
-                        aria-label="Increase number of breaks"
+                        aria-label="Increase number of focus sessions"
                       >
                         <Plus className="w-4 h-4" aria-hidden="true" />
                       </button>
@@ -559,6 +573,12 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                 <div className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">
                   {sessionType} Time
                 </div>
+                {/* Session counter */}
+                {totalFocusSessions > 1 && (
+                  <div className="mt-2 text-xs text-blue-600 dark:text-blue-400 font-medium">
+                    Session {currentFocusSession} of {totalFocusSessions}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -635,6 +655,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
             <div className="flex items-center space-x-4">
               <span className="font-medium text-gray-800 dark:text-gray-200">
                 {preferences.focusSessionLength}m focus / {preferences.breakLength || 5}m break
+                {preferences.numberOfBreaks && preferences.numberOfBreaks > 1 ? 
+                  ` × ${preferences.numberOfBreaks} sessions` : ''}
               </span>
               <div className="flex items-center space-x-3">
                 {preferences.breakReminders && (

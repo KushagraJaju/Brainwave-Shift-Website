@@ -22,13 +22,19 @@ export const useSharedTimer = (preferences?: UserPreferences) => {
       timerService.updateSettings({
         focusSessionLength: preferences.focusSessionLength,
         breakLength: preferences.breakLength || 5,
-        breakReminders: preferences.breakReminders
+        breakReminders: preferences.breakReminders,
+        numberOfBreaks: preferences.numberOfBreaks || 1
       });
       
       // Force update the timer to reflect new settings immediately
       timerService.forceUpdateToCurrentSettings();
     }
-  }, [preferences?.focusSessionLength, preferences?.breakLength, preferences?.breakReminders]);
+  }, [
+    preferences?.focusSessionLength, 
+    preferences?.breakLength, 
+    preferences?.breakReminders,
+    preferences?.numberOfBreaks
+  ]);
 
   // Request notification permission when break reminders are enabled
   useEffect(() => {
@@ -62,6 +68,8 @@ export const useSharedTimer = (preferences?: UserPreferences) => {
     sessionType: timerState.sessionType,
     time: timerState.time,
     initialTime: timerState.initialTime,
+    currentFocusSession: timerState.currentFocusSession,
+    totalFocusSessions: timerState.totalFocusSessions,
     
     // Computed values
     formattedTime: formatTime(timerState.time),
