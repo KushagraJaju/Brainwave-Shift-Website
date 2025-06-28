@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Square, Clock, Settings, Timer, Zap, Target, Plus, Minus, Save, X } from 'lucide-react';
 import { UserPreferences, FocusPreset } from '../types';
 
@@ -46,6 +46,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   onUpdatePreferences 
 }) => {
   const [isActive, setIsActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [sessionType, setSessionType] = useState<'Focus' | 'Break'>('Focus');
   const [showOptions, setShowOptions] = useState(false);
   const [optionsMode, setOptionsMode] = useState<'presets' | 'custom'>('presets');
@@ -60,6 +61,15 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   
   const [time, setTime] = useState(defaultFocusTime);
   const [initialTime, setInitialTime] = useState(defaultFocusTime);
+  
+  // Use ref to track the interval and prevent auto-restart issues
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isActiveRef = useRef(isActive);
+
+  // Update refs when state changes
+  useEffect(() => {
+    isActiveRef.current = isActive;
+  }, [isActive]);
 
   // Update custom settings when preferences change
   useEffect(() => {
@@ -69,7 +79,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     }
   }, [preferences?.focusSessionLength, preferences?.breakLength]);
 
-  // Update timer when preferences change
+  // Update timer when preferences change (only if not active)
   useEffect(() => {
     if (preferences && !isActive) {
       const newFocusTime = preferences.focusSessionLength * 60;
@@ -85,47 +95,78 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     }
   }, [preferences?.focusSessionLength, preferences?.breakLength, isActive, sessionType]);
 
+  // Fixed timer logic to prevent auto-restart
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    if (isActive && time > 0) {
-      interval = setInterval(() => {
-        setTime(time => time - 1);
-      }, 1000);
-    } else if (time === 0) {
-      setIsActive(false);
-      
-      // Show notification if break reminders are enabled
-      if (preferences?.breakReminders) {
-        if (sessionType === 'Focus') {
-          new Notification('Focus session complete!', {
-            body: `Time for a ${preferences.breakLength || 5}-minute break.`,
-            icon: '/BrainwaveShift.png'
-          });
-        } else {
-          new Notification('Break time over!', {
-            body: 'Ready to start another focus session?',
-            icon: '/BrainwaveShift.png'
-          });
-        }
-      }
-      
-      // Auto-switch between focus and break
-      if (sessionType === 'Focus') {
-        setSessionType('Break');
-        const breakTime = (preferences?.breakLength || 5) * 60;
-        setTime(breakTime);
-        setInitialTime(breakTime);
-      } else {
-        setSessionType('Focus');
-        const focusTime = (preferences?.focusSessionLength || 25) * 60;
-        setTime(focusTime);
-        setInitialTime(focusTime);
-      }
+    // Clear any existing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
 
-    return () => clearInterval(interval);
-  }, [isActive, time, sessionType, preferences?.breakReminders, preferences?.focusSessionLength, preferences?.breakLength]);
+    // Only start interval if timer is active and not paused
+    if (isActive && !isPaused && time > 0) {
+      intervalRef.current = setInterval(() => {
+        setTime(prevTime => {
+          const newTime = prevTime - 1;
+          
+          // Check if timer reached zero
+          if (newTime <= 0) {
+            // Clear interval immediately
+            if (intervalRef.current) {
+              clearInterval(intervalRef.current);
+              intervalRef.current = null;
+            }
+            
+            // Stop the timer
+            setIsActive(false);
+            setIsPaused(false);
+            
+            // Show notification if break reminders are enabled
+            if (preferences?.breakReminders) {
+              if (sessionType === 'Focus') {
+                new Notification('Focus session complete!', {
+                  body: `Time for a ${preferences.breakLength || 5}-minute break.`,
+                  icon: '/BrainwaveShift.png'
+                });
+              } else {
+                new Notification('Break time over!', {
+                  body: 'Ready to start another focus session?',
+                  icon: '/BrainwaveShift.png'
+                });
+              }
+            }
+            
+            // Auto-switch between focus and break
+            setTimeout(() => {
+              if (sessionType === 'Focus') {
+                setSessionType('Break');
+                const breakTime = (preferences?.breakLength || 5) * 60;
+                setTime(breakTime);
+                setInitialTime(breakTime);
+              } else {
+                setSessionType('Focus');
+                const focusTime = (preferences?.focusSessionLength || 25) * 60;
+                setTime(focusTime);
+                setInitialTime(focusTime);
+              }
+            }, 100);
+            
+            return 0;
+          }
+          
+          return newTime;
+        });
+      }, 1000);
+    }
+
+    // Cleanup function
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isActive, isPaused, time, sessionType, preferences?.breakReminders, preferences?.focusSessionLength, preferences?.breakLength]);
 
   // Request notification permission on component mount
   useEffect(() => {
@@ -201,11 +242,23 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   };
 
   const toggleTimer = () => {
-    setIsActive(!isActive);
+    if (isActive) {
+      // Pause the timer
+      setIsActive(false);
+      setIsPaused(true);
+    } else {
+      // Start or resume the timer
+      setIsActive(true);
+      setIsPaused(false);
+    }
   };
 
   const resetTimer = () => {
+    // Stop the timer completely
     setIsActive(false);
+    setIsPaused(false);
+    
+    // Reset to initial time based on current session type
     if (sessionType === 'Focus') {
       const focusTime = (preferences?.focusSessionLength || 25) * 60;
       setTime(focusTime);
@@ -223,7 +276,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const progress = ((initialTime - time) / initialTime) * 100;
+  const progress = initialTime > 0 ? ((initialTime - time) / initialTime) * 100 : 0;
 
   // Get current preset info
   const getCurrentPreset = () => {
@@ -266,8 +319,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
         </div>
       </div>
 
-      {/* Quick Preset Buttons */}
-      {!isActive && (
+      {/* Quick Preset Buttons - Only show when timer is not active */}
+      {!isActive && !isPaused && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Quick Presets:</span>
@@ -481,25 +534,25 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
       <div className="flex-1 flex flex-col justify-center">
         <div className="text-center mb-8">
           {/* Circular Progress */}
-          <div className="relative w-40 h-40 mx-auto mb-6">
-            <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 160 160">
+          <div className="relative w-48 h-48 mx-auto mb-6">
+            <svg className="w-48 h-48 transform -rotate-90" viewBox="0 0 200 200">
               <circle
-                cx="80"
-                cy="80"
-                r="70"
+                cx="100"
+                cy="100"
+                r="85"
                 stroke="currentColor"
-                strokeWidth="8"
+                strokeWidth="10"
                 fill="none"
                 className="text-gray-200 dark:text-gray-700"
               />
               <circle
-                cx="80"
-                cy="80"
-                r="70"
+                cx="100"
+                cy="100"
+                r="85"
                 stroke="currentColor"
-                strokeWidth="8"
+                strokeWidth="10"
                 fill="none"
-                strokeDasharray={`${progress * 4.4} 440`}
+                strokeDasharray={`${progress * 5.34} 534`}
                 className={`transition-all duration-1000 ease-out ${
                   sessionType === 'Focus' ? 'text-blue-500 dark:text-blue-400' : 'text-green-500 dark:text-green-400'
                 }`}
@@ -510,12 +563,15 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-mono font-bold text-gray-800 dark:text-gray-200 mb-1">
-                {formatTime(time)}
-              </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                {sessionType} Time
-              </span>
+              {/* Fixed Timer Text Display */}
+              <div className="text-center">
+                <div className="text-5xl font-mono font-bold text-gray-900 dark:text-white mb-2 tracking-tight leading-none">
+                  {formatTime(time)}
+                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">
+                  {sessionType} Time
+                </div>
+              </div>
             </div>
           </div>
 
@@ -523,19 +579,21 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
           <div className="flex items-center justify-center space-x-4 mb-6">
             <button
               onClick={toggleTimer}
-              className={`flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
+              className={`flex items-center justify-center w-14 h-14 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-opacity-50 ${
                 isActive
-                  ? 'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white'
-                  : 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white'
+                  ? 'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white focus:ring-red-300'
+                  : 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white focus:ring-blue-300'
               }`}
+              aria-label={isActive ? 'Pause timer' : 'Start timer'}
             >
-              {isActive ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
+              {isActive ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-1" />}
             </button>
             <button
               onClick={resetTimer}
-              className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+              className="flex items-center justify-center w-14 h-14 rounded-full bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-50"
+              aria-label="Reset timer"
             >
-              <Square className="w-5 h-5" />
+              <Square className="w-6 h-6" />
             </button>
           </div>
 
@@ -545,6 +603,11 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-sm font-medium">Session in progress</span>
+              </div>
+            ) : isPaused ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                <span className="text-sm font-medium">Timer paused - click play to resume</span>
               </div>
             ) : (
               <span className="text-sm">Click play to start your {sessionType.toLowerCase()} session</span>
