@@ -13,13 +13,8 @@ import {
   Play,
   Sparkles,
   Target,
-  Activity,
-  Palette,
-  Sun,
-  Moon,
-  Monitor
+  Activity
 } from 'lucide-react';
-import { useTheme } from '../hooks/useTheme';
 
 interface OnboardingStep {
   id: string;
@@ -38,93 +33,12 @@ interface OnboardingFlowProps {
 export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSkip }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark' | 'system'>('system');
-  
-  const { setTheme } = useTheme();
 
   useEffect(() => {
     // Animate in after a short delay
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
-
-  const ThemeSelector: React.FC = () => {
-    const themeOptions = [
-      {
-        value: 'light' as const,
-        label: 'Light',
-        icon: <Sun className="w-6 h-6" />,
-        description: 'Clean and bright interface',
-        preview: 'bg-white border-gray-200 text-gray-900'
-      },
-      {
-        value: 'dark' as const,
-        label: 'Dark',
-        icon: <Moon className="w-6 h-6" />,
-        description: 'Easy on the eyes in low light',
-        preview: 'bg-gray-900 border-gray-700 text-white'
-      },
-      {
-        value: 'system' as const,
-        label: 'System',
-        icon: <Monitor className="w-6 h-6" />,
-        description: 'Matches your device settings',
-        preview: 'bg-gradient-to-r from-white to-gray-900 border-gray-400 text-gray-600'
-      }
-    ];
-
-    return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 gap-4">
-          {themeOptions.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => {
-                setSelectedTheme(option.value);
-                setTheme(option.value);
-              }}
-              className={`
-                flex items-center space-x-4 p-4 rounded-xl border-2 transition-all duration-200 text-left
-                ${selectedTheme === option.value
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md'
-                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-calm-800 hover:border-gray-300 dark:hover:border-gray-600'
-                }
-              `}
-            >
-              <div className={`p-3 rounded-lg ${
-                selectedTheme === option.value 
-                  ? 'bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-400' 
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
-              }`}>
-                {option.icon}
-              </div>
-              <div className="flex-1">
-                <div className="font-semibold text-gray-800 dark:text-gray-200">{option.label}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">{option.description}</div>
-              </div>
-              <div className={`w-8 h-8 rounded-lg border-2 ${option.preview}`}></div>
-              {selectedTheme === option.value && (
-                <CheckCircle className="w-5 h-5 text-blue-500 dark:text-blue-400" />
-              )}
-            </button>
-          ))}
-        </div>
-        
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-          <div className="flex items-start space-x-3">
-            <Palette className="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-            <div>
-              <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-1">Theme Preference</h4>
-              <p className="text-sm text-blue-700 dark:text-blue-400">
-                You can change your theme preference anytime in Settings. The system option will automatically 
-                switch between light and dark modes based on your device settings.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   const steps: OnboardingStep[] = [
     {
@@ -158,28 +72,6 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
               </div>
             </div>
           </div>
-        </div>
-      )
-    },
-    {
-      id: 'theme-selection',
-      title: 'Choose Your Theme',
-      description: 'Customize your visual experience',
-      icon: <Palette className="w-8 h-8" />,
-      content: (
-        <div className="space-y-6">
-          <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Palette className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">
-              Personalize Your Experience
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-              Choose a theme that's comfortable for your eyes and matches your workflow preferences.
-            </p>
-          </div>
-          <ThemeSelector />
         </div>
       )
     },
@@ -465,8 +357,8 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
                 <span className="text-sm font-medium text-blue-600 dark:text-blue-400">25 minutes</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                <span className="text-sm text-gray-700 dark:text-gray-300">Theme Preference</span>
-                <span className="text-sm font-medium text-green-600 dark:text-green-400 capitalize">{selectedTheme}</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">Break Reminders</span>
+                <span className="text-sm font-medium text-green-600 dark:text-green-400">Enabled</span>
               </div>
             </div>
           </div>
@@ -520,10 +412,6 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                   <span>Review analytics to identify patterns</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  <span>Your {selectedTheme} theme is ready to go!</span>
-                </div>
               </div>
             </div>
           </div>
@@ -537,9 +425,6 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
 
   const handleNext = () => {
     if (isLastStep) {
-      // Apply the selected theme before completing onboarding
-      setTheme(selectedTheme);
-      // Complete onboarding and redirect to dashboard
       onComplete();
     } else {
       setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
@@ -551,8 +436,6 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
   };
 
   const handleSkip = () => {
-    // Apply the selected theme before skipping
-    setTheme(selectedTheme);
     onSkip();
   };
 

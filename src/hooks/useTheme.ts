@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useUserData } from './useUserData';
 
 export type Theme = 'light' | 'dark' | 'system';
 
 export const useTheme = () => {
-  const { userData, updatePreferences } = useUserData();
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<Theme>(() => {
+    const savedTheme = localStorage.getItem('brainwave-shift-theme') as Theme;
+    return savedTheme || 'system';
+  });
 
-  // Get theme from user data or default to system
-  const theme: Theme = userData?.preferences?.theme || 'system';
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -50,19 +50,26 @@ export const useTheme = () => {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
+  useEffect(() => {
+    localStorage.setItem('brainwave-shift-theme', theme);
+  }, [theme]);
+
   const toggleTheme = () => {
-    const newTheme: Theme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
-    setTheme(newTheme);
+    setTheme(prev => {
+      if (prev === 'light') return 'dark';
+      if (prev === 'dark') return 'system';
+      return 'light';
+    });
   };
 
-  const setTheme = (newTheme: Theme) => {
-    updatePreferences({ theme: newTheme });
+  const setThemeMode = (newTheme: Theme) => {
+    setTheme(newTheme);
   };
 
   return {
     theme,
     resolvedTheme,
     toggleTheme,
-    setTheme
+    setTheme: setThemeMode
   };
 };
