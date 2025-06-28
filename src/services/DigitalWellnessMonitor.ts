@@ -92,12 +92,16 @@ export class DigitalWellnessMonitor {
   private dailyData: DigitalWellnessData;
   private settings: DigitalWellnessSettings;
   private isMonitoring: boolean = false;
+  private isPaused: boolean = false;
   private listeners: ((data: DigitalWellnessData) => void)[] = [];
   private interventionListeners: ((intervention: any) => void)[] = [];
   private scrollBuffer: { timestamp: number; scrollY: number }[] = [];
   private lastInterventionTime: Date = new Date(0);
   private interventionEscalationLevel: number = 0;
   private sessionEngagementScores: number[] = [];
+  private intervals: NodeJS.Timeout[] = [];
+  private lastSaveTime: number = 0;
+  private readonly STORAGE_KEY = 'brainwave-shift-digital-wellness';
 
   // Updated timing constants for 15-second monitoring cycle
   private readonly FOCUS_MODE_CHECK_INTERVAL = 15000; // 15 seconds (updated from 30 seconds)
@@ -110,6 +114,7 @@ export class DigitalWellnessMonitor {
     this.settings = this.getDefaultSettings();
     this.loadHistoricalData();
     this.setupEventListeners();
+    this.restoreDataFromStorage();
   }
 
   private getInitialData(): DigitalWellnessData {
@@ -342,7 +347,7 @@ export class DigitalWellnessMonitor {
     // Monitor scrolling behavior
     let scrollTimeout: NodeJS.Timeout;
     window.addEventListener('scroll', () => {
-      if (!this.isMonitoring || !this.currentActivity) return;
+      if (!this.isMonitoring || this.isPaused || !this.currentActivity) return;
 
       const now = Date.now();
       const scrollY = window.scrollY;
@@ -367,7 +372,7 @@ export class DigitalWellnessMonitor {
 
     // Monitor clicks and interactions
     document.addEventListener('click', () => {
-      if (!this.isMonitoring || !this.currentActivity) return;
+      if (!this.isMonitoring || this.isPaused || !this.currentActivity) return;
       
       this.currentActivity.clickEvents++;
       this.updateEngagementScore();
@@ -376,21 +381,61 @@ export class DigitalWellnessMonitor {
     // Monitor focus/blur for session tracking
     window.addEventListener('blur', () => {
       this.endCurrentSession();
+      
+      // Save state when window loses focus
+      this.saveDataToStorage();
     });
 
     window.addEventListener('focus', () => {
       this.checkCurrentUrl();
+      
+      // Sync from storage when window gets focus
+      this.syncFromStorage();
     });
-
+    
+    // Monitor visibility change
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        this.endCurrentSession();
+        this.saveDataToStorage();
+      } else {
+        this.checkCurrentUrl();
+        this.syncFromStorage();
+      }
+    });
+    
+    // Monitor storage events for cross-tab communication
+    window.addEventListener('storage', (event) => {
+      if (event.key === this.STORAGE_KEY) {
+        this.syncFromStorage();
+      }
+    });
+  }
+  
+  private startIntervals(): void {
+    // Clear any existing intervals
+    this.clearIntervals();
+    
     // Check for focus mode violations - updated to 15-second intervals
-    setInterval(() => {
-      this.checkFocusMode();
+    const focusModeInterval = setInterval(() => {
+      if (this.isMonitoring && !this.isPaused) {
+        this.checkFocusMode();
+      }
     }, this.FOCUS_MODE_CHECK_INTERVAL);
 
     // Update peak usage hours
-    setInterval(() => {
-      this.updatePeakUsageHours();
+    const peakUsageInterval = setInterval(() => {
+      if (this.isMonitoring && !this.isPaused) {
+        this.updatePeakUsageHours();
+      }
     }, this.PEAK_USAGE_CHECK_INTERVAL);
+    
+    this.intervals.push(focusModeInterval, peakUsageInterval);
+  }
+  
+  private clearIntervals(): void {
+    this.intervals.forEach(interval => clearInterval(interval));
+    this.intervals = [];
   }
 
   private updatePeakUsageHours(): void {
@@ -415,7 +460,7 @@ export class DigitalWellnessMonitor {
   }
 
   private checkCurrentUrl(): void {
-    if (!this.settings.enableMonitoring) return;
+    if (!this.settings.enableMonitoring || this.isPaused) return;
 
     const currentDomain = this.extractDomain(window.location.href);
     const platform = this.socialMediaPlatforms.get(currentDomain);
@@ -456,7 +501,7 @@ export class DigitalWellnessMonitor {
 
     // Start session timer
     const sessionTimer = setInterval(() => {
-      if (!this.currentActivity) {
+      if (!this.isMonitoring || this.isPaused || !this.currentActivity) {
         clearInterval(sessionTimer);
         return;
       }
@@ -465,6 +510,9 @@ export class DigitalWellnessMonitor {
       this.updateDailyData();
       this.checkTimeThresholds();
     }, 1000);
+    
+    // Add to intervals for cleanup
+    this.intervals.push(sessionTimer);
   }
 
   private endCurrentSession(): void {
@@ -495,6 +543,9 @@ export class DigitalWellnessMonitor {
     this.currentActivity = null;
     this.scrollBuffer = [];
     this.notifyListeners();
+    
+    // Save data to storage
+    this.saveDataToStorage();
   }
 
   private calculateScrollVelocity(): void {
@@ -720,20 +771,136 @@ export class DigitalWellnessMonitor {
     
     this.dailyData.cognitiveImpactScore = Math.max(0, Math.min(100, impactScore));
   }
+  
+  private saveDataToStorage(): void {
+    try {
+      const dataToSave = {
+        dailyData: this.dailyData,
+        settings: this.settings,
+        isMonitoring: this.isMonitoring,
+        isPaused: this.isPaused,
+        currentActivity: this.currentActivity,
+        interventionEscalationLevel: this.interventionEscalationLevel,
+        sessionEngagementScores: this.sessionEngagementScores,
+        lastInterventionTime: this.lastInterventionTime.toISOString(),
+        timestamp: Date.now()
+      };
+      
+      // Convert Maps to arrays for JSON serialization
+      const serializedData = JSON.stringify(dataToSave, (key, value) => {
+        if (value instanceof Map) {
+          return {
+            dataType: 'Map',
+            value: Array.from(value.entries())
+          };
+        }
+        return value;
+      });
+      
+      localStorage.setItem(this.STORAGE_KEY, serializedData);
+      this.lastSaveTime = Date.now();
+    } catch (error) {
+      console.error('Failed to save digital wellness data to storage:', error);
+    }
+  }
+  
+  private syncFromStorage(): void {
+    try {
+      const savedData = localStorage.getItem(this.STORAGE_KEY);
+      if (!savedData) return;
+      
+      // Parse data with Map restoration
+      const parsedData = JSON.parse(savedData, (key, value) => {
+        if (value && typeof value === 'object' && value.dataType === 'Map') {
+          return new Map(value.value);
+        }
+        return value;
+      });
+      
+      // Only sync if the saved data is newer than our last sync
+      if (parsedData.timestamp <= this.lastSaveTime) return;
+      
+      // Update monitoring state
+      this.isMonitoring = parsedData.isMonitoring;
+      this.isPaused = parsedData.isPaused;
+      this.interventionEscalationLevel = parsedData.interventionEscalationLevel;
+      this.sessionEngagementScores = parsedData.sessionEngagementScores;
+      this.lastInterventionTime = new Date(parsedData.lastInterventionTime);
+      
+      // Update settings
+      this.settings = parsedData.settings;
+      
+      // Update daily data
+      this.dailyData = parsedData.dailyData;
+      
+      // Update current activity
+      if (parsedData.currentActivity) {
+        this.currentActivity = parsedData.currentActivity;
+        this.currentActivity.lastActivity = new Date(this.currentActivity.lastActivity);
+        this.currentActivity.sessionStart = new Date(this.currentActivity.sessionStart);
+      } else {
+        this.currentActivity = null;
+      }
+      
+      // Notify listeners
+      this.notifyListeners();
+    } catch (error) {
+      console.error('Failed to sync digital wellness data from storage:', error);
+    }
+  }
+  
+  private restoreDataFromStorage(): void {
+    this.syncFromStorage();
+  }
 
   // Public methods
   public startMonitoring(): void {
     this.isMonitoring = true;
+    this.isPaused = false;
     this.checkCurrentUrl();
+    this.startIntervals();
+    this.notifyListeners();
+    
+    // Save state to storage
+    this.saveDataToStorage();
   }
 
   public stopMonitoring(): void {
     this.isMonitoring = false;
+    this.isPaused = false;
     this.endCurrentSession();
+    this.clearIntervals();
+    this.notifyListeners();
+    
+    // Save state to storage
+    this.saveDataToStorage();
+  }
+  
+  public pauseMonitoring(): void {
+    if (!this.isMonitoring) return;
+    
+    this.isPaused = true;
+    this.endCurrentSession();
+    this.notifyListeners();
+    
+    // Save state to storage
+    this.saveDataToStorage();
+  }
+  
+  public resumeMonitoring(): void {
+    if (!this.isMonitoring) return;
+    
+    this.isPaused = false;
+    this.checkCurrentUrl();
+    this.notifyListeners();
   }
 
   public isActive(): boolean {
     return this.isMonitoring;
+  }
+  
+  public isPausing(): boolean {
+    return this.isPaused;
   }
 
   public getData(): DigitalWellnessData {
@@ -750,6 +917,9 @@ export class DigitalWellnessMonitor {
 
   public updateSettings(updates: Partial<DigitalWellnessSettings>): void {
     this.settings = { ...this.settings, ...updates };
+    
+    // Save settings to storage
+    this.saveDataToStorage();
   }
 
   public recordMindfulBreak(): void {
@@ -765,6 +935,9 @@ export class DigitalWellnessMonitor {
     
     this.calculateWeeklyTrends();
     this.notifyListeners();
+    
+    // Save data to storage
+    this.saveDataToStorage();
   }
 
   public subscribe(callback: (data: DigitalWellnessData) => void): () => void {
@@ -791,6 +964,9 @@ export class DigitalWellnessMonitor {
     this.sessionEngagementScores = [];
     this.loadHistoricalData(); // Reload weekly data
     this.notifyListeners();
+    
+    // Save reset state to storage
+    this.saveDataToStorage();
   }
 
   // Getter for monitoring intervals (for UI display)

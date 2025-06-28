@@ -52,6 +52,7 @@ export interface DataSourceStatus {
 export class CognitiveMonitor {
   private data: MonitoringData;
   private isMonitoring: boolean = false;
+  private isPaused: boolean = false;
   private listeners: ((data: MonitoringData) => void)[] = [];
   private statusListeners: ((status: DataSourceStatus) => void)[] = [];
   private intervals: NodeJS.Timeout[] = [];
@@ -61,16 +62,19 @@ export class CognitiveMonitor {
   private sessionStartTime: Date = new Date();
   private lastTabFocusTime: Date = new Date();
   private totalFocusTime: number = 0;
+  private lastSaveTime: number = 0;
 
   // Configuration constants - Updated to 15-second intervals
   private readonly MONITORING_INTERVAL = 15000; // 15 seconds (updated from 30 seconds)
   private readonly FOCUS_UPDATE_INTERVAL = 1000; // 1 second for focus time updates
   private readonly DIGITAL_WELLNESS_CHECK_INTERVAL = 30000; // 30 seconds for digital wellness checks
   private readonly PEAK_USAGE_CHECK_INTERVAL = 60000; // 1 minute for peak usage tracking
+  private readonly STORAGE_KEY = 'brainwave-shift-cognitive-data';
 
   constructor() {
     this.data = this.getInitialData();
     this.setupEventListeners();
+    this.restoreDataFromStorage();
   }
 
   private getInitialData(): MonitoringData {
@@ -129,6 +133,16 @@ export class CognitiveMonitor {
     // Mouse activity tracking
     document.addEventListener('mousemove', this.handleMouseMove.bind(this));
     document.addEventListener('click', this.handleMouseClick.bind(this));
+    
+    // Storage event for cross-tab synchronization
+    window.addEventListener('storage', this.handleStorageChange.bind(this));
+  }
+  
+  private handleStorageChange(event: StorageEvent): void {
+    if (event.key === this.STORAGE_KEY) {
+      // Another tab has updated the cognitive data
+      this.syncFromStorage();
+    }
   }
 
   private handleVisibilityChange(): void {
@@ -143,9 +157,15 @@ export class CognitiveMonitor {
       const focusTime = now.getTime() - this.lastTabFocusTime.getTime();
       this.totalFocusTime += focusTime;
       this.tabSwitchCount++;
+      
+      // Save state when tab becomes inactive
+      this.saveDataToStorage();
     } else if (!wasActive && isActive) {
       // Tab became active
       this.lastTabFocusTime = now;
+      
+      // Sync from storage when tab becomes active
+      this.syncFromStorage();
     }
 
     this.data.browserActivity.isTabActive = isActive;
@@ -158,6 +178,14 @@ export class CognitiveMonitor {
     if (!this.isMonitoring) return;
     this.lastTabFocusTime = new Date();
     this.data.browserActivity.isTabActive = true;
+    
+    // Sync from storage when window gets focus
+    this.syncFromStorage();
+    
+    // Resume monitoring if it was paused
+    if (this.isPaused) {
+      this.resumeMonitoring();
+    }
   }
 
   private handleWindowBlur(): void {
@@ -169,6 +197,9 @@ export class CognitiveMonitor {
     this.data.browserActivity.isTabActive = false;
     this.data.browserActivity.tabSwitches = this.tabSwitchCount;
     this.data.browserActivity.totalActiveTime = this.totalFocusTime;
+    
+    // Save state when window loses focus
+    this.saveDataToStorage();
   }
 
   private handleKeydown(event: KeyboardEvent): void {
@@ -423,21 +454,27 @@ export class CognitiveMonitor {
       ...this.data.cognitiveMetrics,
       ...newMetrics
     };
+    
+    // Save data to storage for cross-tab sync
+    this.saveDataToStorage();
   }
 
   public startMonitoring(): void {
     if (this.isMonitoring) return;
 
     this.isMonitoring = true;
+    this.isPaused = false;
     this.sessionStartTime = new Date();
     this.lastTabFocusTime = new Date();
     this.tabSwitchCount = 0;
     this.totalFocusTime = 0;
-    this.data = this.getInitialData();
+    
+    // Try to restore data from storage first
+    this.syncFromStorage();
 
     // Update cognitive metrics every 15 seconds (updated from 30 seconds)
     const metricsInterval = setInterval(() => {
-      if (!this.isMonitoring) return;
+      if (!this.isMonitoring || this.isPaused) return;
       
       this.calculateCognitiveMetrics();
       this.notifyListeners();
@@ -445,7 +482,7 @@ export class CognitiveMonitor {
 
     // Update focus time every second when tab is active
     const focusInterval = setInterval(() => {
-      if (!this.isMonitoring) return;
+      if (!this.isMonitoring || this.isPaused) return;
       
       if (this.data.browserActivity.isTabActive) {
         const now = new Date();
@@ -460,13 +497,39 @@ export class CognitiveMonitor {
 
   public stopMonitoring(): void {
     this.isMonitoring = false;
+    this.isPaused = false;
     this.intervals.forEach(interval => clearInterval(interval));
     this.intervals = [];
+    this.notifyStatusListeners();
+    
+    // Save final state to storage
+    this.saveDataToStorage();
+  }
+  
+  public pauseMonitoring(): void {
+    if (!this.isMonitoring) return;
+    
+    this.isPaused = true;
+    this.notifyStatusListeners();
+    
+    // Save state to storage
+    this.saveDataToStorage();
+  }
+  
+  public resumeMonitoring(): void {
+    if (!this.isMonitoring) return;
+    
+    this.isPaused = false;
+    this.lastTabFocusTime = new Date(); // Reset focus time
     this.notifyStatusListeners();
   }
 
   public isActive(): boolean {
     return this.isMonitoring;
+  }
+  
+  public isPausing(): boolean {
+    return this.isPaused;
   }
 
   public getData(): MonitoringData {
@@ -475,9 +538,9 @@ export class CognitiveMonitor {
 
   public getDataSourceStatus(): DataSourceStatus {
     return {
-      browserActivity: this.isMonitoring ? 'Active' : 'Disconnected',
-      keyboardPatterns: this.isMonitoring ? 'Active' : 'Disconnected',
-      mouseMovement: this.isMonitoring ? 'Active' : 'Disconnected',
+      browserActivity: this.isMonitoring && !this.isPaused ? 'Active' : 'Disconnected',
+      keyboardPatterns: this.isMonitoring && !this.isPaused ? 'Active' : 'Disconnected',
+      mouseMovement: this.isMonitoring && !this.isPaused ? 'Active' : 'Disconnected',
       smartwatch: 'Disconnected' // Will be updated by device integration service
     };
   }
@@ -512,6 +575,58 @@ export class CognitiveMonitor {
     this.keystrokeTimestamps = [];
     this.mouseMovements = [];
     this.data = this.getInitialData();
+    
+    // Save reset state to storage
+    this.saveDataToStorage();
+  }
+  
+  private saveDataToStorage(): void {
+    try {
+      const dataToSave = {
+        data: this.data,
+        isMonitoring: this.isMonitoring,
+        isPaused: this.isPaused,
+        tabSwitchCount: this.tabSwitchCount,
+        totalFocusTime: this.totalFocusTime,
+        sessionStartTime: this.sessionStartTime.toISOString(),
+        lastTabFocusTime: this.lastTabFocusTime.toISOString(),
+        timestamp: Date.now()
+      };
+      
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(dataToSave));
+      this.lastSaveTime = Date.now();
+    } catch (error) {
+      console.error('Failed to save cognitive data to storage:', error);
+    }
+  }
+  
+  private syncFromStorage(): void {
+    try {
+      const savedData = localStorage.getItem(this.STORAGE_KEY);
+      if (!savedData) return;
+      
+      const parsedData = JSON.parse(savedData);
+      
+      // Only sync if the saved data is newer than our last sync
+      if (parsedData.timestamp <= this.lastSaveTime) return;
+      
+      // Update monitoring state
+      this.isMonitoring = parsedData.isMonitoring;
+      this.isPaused = parsedData.isPaused;
+      this.tabSwitchCount = parsedData.tabSwitchCount;
+      this.totalFocusTime = parsedData.totalFocusTime;
+      this.sessionStartTime = new Date(parsedData.sessionStartTime);
+      this.lastTabFocusTime = new Date(parsedData.lastTabFocusTime);
+      
+      // Update data
+      this.data = parsedData.data;
+      
+      // Notify listeners
+      this.notifyListeners();
+      this.notifyStatusListeners();
+    } catch (error) {
+      console.error('Failed to sync cognitive data from storage:', error);
+    }
   }
 
   // Getter for monitoring interval (for UI display)

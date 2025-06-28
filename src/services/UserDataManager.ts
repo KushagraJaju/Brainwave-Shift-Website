@@ -131,6 +131,7 @@ export class UserDataManager {
   private listeners: ((data: UserData) => void)[] = [];
   private saveTimeout: NodeJS.Timeout | null = null;
   private _isInitialized = false;
+  private lastSaveTime: number = 0;
 
   private constructor() {
     this.userData = this.getDefaultUserData();
@@ -299,6 +300,7 @@ export class UserDataManager {
       
       // Save to localStorage
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.userData));
+      this.lastSaveTime = Date.now();
       
       // Create backup periodically
       await this.createBackup();
@@ -321,6 +323,37 @@ export class UserDataManager {
         console.error('Debounced save failed:', error);
       }
     }, 1000); // Save after 1 second of inactivity
+  }
+
+  // Force an immediate save - useful for tab switching
+  public forceSave(): void {
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+      this.saveTimeout = null;
+    }
+    
+    this.saveUserData().catch(error => {
+      console.error('Force save failed:', error);
+    });
+  }
+
+  // Reload data from storage - useful for tab switching
+  public reloadFromStorage(): void {
+    try {
+      const savedData = localStorage.getItem(this.STORAGE_KEY);
+      if (savedData) {
+        const parsedData = JSON.parse(savedData) as UserData;
+        
+        // Only reload if the saved data is newer than our last save
+        const savedTimestamp = new Date(parsedData.analytics.lastUpdated).getTime();
+        if (savedTimestamp > this.lastSaveTime) {
+          this.userData = this.migrateUserData(parsedData);
+          this.notifyListeners();
+        }
+      }
+    } catch (error) {
+      console.error('Failed to reload user data from storage:', error);
+    }
   }
 
   private async createBackup(): Promise<void> {
@@ -459,6 +492,13 @@ export class UserDataManager {
     const intervention = this.userData.interventions.find(i => i.id === id);
     if (intervention) {
       Object.assign(intervention, updates);
+      
+      // If marking as completed, update analytics
+      if (updates.completed && !intervention.completedAt) {
+        intervention.completedAt = new Date().toISOString();
+        this.userData.analytics.completedInterventions++;
+      }
+      
       this.debouncedSave();
       this.notifyListeners();
     }

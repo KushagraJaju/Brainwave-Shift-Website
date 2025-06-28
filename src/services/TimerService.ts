@@ -10,6 +10,7 @@ export interface TimerState {
   currentFocusSession: number;
   totalFocusSessions: number;
   taskName?: string;
+  lastUpdated: number;
 }
 
 export interface TimerSettings {
@@ -28,6 +29,7 @@ export class TimerService {
   private listeners: ((state: TimerState) => void)[] = [];
   private intervalRef: NodeJS.Timeout | null = null;
   private tickSoundEnabled: boolean = false;
+  private lastSyncTime: number = 0;
 
   private constructor() {
     this.settings = {
@@ -47,8 +49,12 @@ export class TimerService {
       initialTime: this.settings.focusSessionLength * 60,
       currentFocusSession: 1,
       totalFocusSessions: 1,
-      taskName: ''
+      taskName: '',
+      lastUpdated: Date.now()
     };
+    
+    // Try to restore state from localStorage
+    this.restoreStateFromStorage();
   }
 
   public static getInstance(): TimerService {
@@ -91,14 +97,19 @@ export class TimerService {
         const newTime = this.settings.focusSessionLength * 60;
         this.state.time = newTime;
         this.state.initialTime = newTime;
+        this.state.lastUpdated = Date.now();
         this.notifyListeners();
       } else if (this.state.sessionType === 'Break' && breakChanged) {
         const newTime = this.settings.breakLength * 60;
         this.state.time = newTime;
         this.state.initialTime = newTime;
+        this.state.lastUpdated = Date.now();
         this.notifyListeners();
       }
     }
+    
+    // Save state to localStorage
+    this.saveStateToStorage();
   }
 
   public start(): void {
@@ -107,9 +118,11 @@ export class TimerService {
     this.state.isActive = true;
     this.state.isPaused = false;
     this.state.startTime = new Date();
+    this.state.lastUpdated = Date.now();
     
     this.startInterval();
     this.notifyListeners();
+    this.saveStateToStorage();
   }
 
   public pause(): void {
@@ -117,9 +130,11 @@ export class TimerService {
 
     this.state.isActive = false;
     this.state.isPaused = true;
+    this.state.lastUpdated = Date.now();
     
     this.clearInterval();
     this.notifyListeners();
+    this.saveStateToStorage();
   }
 
   public resume(): void {
@@ -127,9 +142,11 @@ export class TimerService {
 
     this.state.isActive = true;
     this.state.isPaused = false;
+    this.state.lastUpdated = Date.now();
     
     this.startInterval();
     this.notifyListeners();
+    this.saveStateToStorage();
   }
 
   public reset(): void {
@@ -146,8 +163,10 @@ export class TimerService {
       this.state.initialTime = newTime;
     }
     
+    this.state.lastUpdated = Date.now();
     this.clearInterval();
     this.notifyListeners();
+    this.saveStateToStorage();
   }
 
   public toggle(): void {
@@ -182,8 +201,35 @@ export class TimerService {
       // Update task name
       this.state.taskName = this.settings.currentTaskName || '';
       
+      this.state.lastUpdated = Date.now();
       this.notifyListeners();
+      this.saveStateToStorage();
     }
+  }
+
+  // Sync state from another tab or source
+  public syncState(newState: TimerState): void {
+    // Only sync if the new state is newer than our last sync
+    if (newState.lastUpdated <= this.lastSyncTime) {
+      return;
+    }
+    
+    // Update last sync time
+    this.lastSyncTime = newState.lastUpdated;
+    
+    // Stop current interval if running
+    this.clearInterval();
+    
+    // Update state
+    this.state = { ...newState };
+    
+    // Restart interval if needed
+    if (this.state.isActive) {
+      this.startInterval();
+    }
+    
+    // Notify listeners
+    this.notifyListeners();
   }
 
   private startInterval(): void {
@@ -202,6 +248,7 @@ export class TimerService {
       }
 
       this.state.time -= 1;
+      this.state.lastUpdated = Date.now();
 
       if (this.state.time <= 0) {
         this.handleTimerComplete();
@@ -221,6 +268,7 @@ export class TimerService {
   private handleTimerComplete(): void {
     this.state.isActive = false;
     this.state.isPaused = false;
+    this.state.lastUpdated = Date.now();
     
     this.clearInterval();
 
@@ -259,7 +307,10 @@ export class TimerService {
           this.state.initialTime = focusTime;
         }
       }
+      
+      this.state.lastUpdated = Date.now();
       this.notifyListeners();
+      this.saveStateToStorage();
     }, 100);
   }
 
@@ -325,6 +376,49 @@ export class TimerService {
         console.error('Error in timer listener:', error);
       }
     });
+  }
+
+  private saveStateToStorage(): void {
+    try {
+      localStorage.setItem('brainwave-shift-timer-state', JSON.stringify(this.state));
+    } catch (error) {
+      console.error('Failed to save timer state to storage:', error);
+    }
+  }
+
+  private restoreStateFromStorage(): void {
+    try {
+      const savedState = localStorage.getItem('brainwave-shift-timer-state');
+      if (savedState) {
+        const parsedState = JSON.parse(savedState) as TimerState;
+        
+        // Only restore if the saved state is less than 1 hour old
+        const now = Date.now();
+        const stateAge = now - parsedState.lastUpdated;
+        
+        if (stateAge < 60 * 60 * 1000) { // 1 hour
+          this.state = parsedState;
+          
+          // If timer was active, check if we need to adjust the time
+          if (this.state.isActive) {
+            // Calculate how much time has passed since the state was saved
+            const secondsPassed = Math.floor(stateAge / 1000);
+            
+            // Adjust the time
+            this.state.time = Math.max(0, this.state.time - secondsPassed);
+            
+            // If time would have expired, handle completion
+            if (this.state.time <= 0) {
+              this.state.isActive = false;
+              this.state.isPaused = false;
+              this.handleTimerComplete();
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to restore timer state from storage:', error);
+    }
   }
 
   public cleanup(): void {

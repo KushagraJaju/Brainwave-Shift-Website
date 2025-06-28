@@ -81,6 +81,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                 className={`border-2 rounded-lg p-4 transition-all duration-200 ${getPriorityColor(intervention.priority)}`}
                 role="region"
                 aria-label={`${intervention.priority} priority ${intervention.type} recommendation`}
+                data-intervention-id={intervention.id}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3 flex-1">
