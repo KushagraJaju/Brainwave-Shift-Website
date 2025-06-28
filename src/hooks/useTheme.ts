@@ -1,14 +1,32 @@
 import { useState, useEffect } from 'react';
+import { userDataManager } from '../services/UserDataManager';
 
 export type Theme = 'light' | 'dark' | 'system';
 
 export const useTheme = () => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem('brainwave-shift-theme') as Theme;
-    return savedTheme || 'system';
-  });
-
+  const [theme, setThemeState] = useState<Theme>('system');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    // Wait for user data manager to initialize
+    const checkInitialization = () => {
+      if (userDataManager.isInitialized()) {
+        const userData = userDataManager.getUserData();
+        setThemeState(userData.appState.theme);
+      } else {
+        setTimeout(checkInitialization, 100);
+      }
+    };
+
+    checkInitialization();
+
+    // Subscribe to data changes
+    const unsubscribe = userDataManager.subscribe((userData) => {
+      setThemeState(userData.appState.theme);
+    });
+
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -50,26 +68,19 @@ export const useTheme = () => {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
-  useEffect(() => {
-    localStorage.setItem('brainwave-shift-theme', theme);
-  }, [theme]);
-
   const toggleTheme = () => {
-    setTheme(prev => {
-      if (prev === 'light') return 'dark';
-      if (prev === 'dark') return 'system';
-      return 'light';
-    });
+    const newTheme: Theme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
+    setTheme(newTheme);
   };
 
-  const setThemeMode = (newTheme: Theme) => {
-    setTheme(newTheme);
+  const setTheme = (newTheme: Theme) => {
+    userDataManager.setTheme(newTheme);
   };
 
   return {
     theme,
     resolvedTheme,
     toggleTheme,
-    setTheme: setThemeMode
+    setTheme
   };
 };

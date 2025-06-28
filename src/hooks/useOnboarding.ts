@@ -1,48 +1,42 @@
 import { useState, useEffect } from 'react';
-
-const ONBOARDING_STORAGE_KEY = 'brainwave-shift-onboarding-completed';
+import { userDataManager } from '../services/UserDataManager';
 
 export const useOnboarding = () => {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user has completed onboarding
-    try {
-      const completed = localStorage.getItem(ONBOARDING_STORAGE_KEY);
-      setHasCompletedOnboarding(completed === 'true');
-    } catch (error) {
-      console.error('Failed to check onboarding status:', error);
-      // If localStorage fails, assume first-time user
-      setHasCompletedOnboarding(false);
-    } finally {
-      setIsLoading(false);
-    }
+    // Wait for user data manager to initialize
+    const checkInitialization = () => {
+      if (userDataManager.isInitialized()) {
+        const userData = userDataManager.getUserData();
+        setHasCompletedOnboarding(userData.appState.onboardingCompleted);
+        setIsLoading(false);
+      } else {
+        setTimeout(checkInitialization, 100);
+      }
+    };
+
+    checkInitialization();
+
+    // Subscribe to data changes
+    const unsubscribe = userDataManager.subscribe((userData) => {
+      setHasCompletedOnboarding(userData.appState.onboardingCompleted);
+    });
+
+    return unsubscribe;
   }, []);
 
   const completeOnboarding = () => {
-    try {
-      localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
-      setHasCompletedOnboarding(true);
-    } catch (error) {
-      console.error('Failed to save onboarding completion:', error);
-      // Still mark as completed in state even if localStorage fails
-      setHasCompletedOnboarding(true);
-    }
+    userDataManager.completeOnboarding();
   };
 
   const resetOnboarding = () => {
-    try {
-      localStorage.removeItem(ONBOARDING_STORAGE_KEY);
-      setHasCompletedOnboarding(false);
-    } catch (error) {
-      console.error('Failed to reset onboarding status:', error);
-    }
+    userDataManager.resetOnboarding();
   };
 
   const skipOnboarding = () => {
-    // Same as completing onboarding - mark as done
-    completeOnboarding();
+    userDataManager.completeOnboarding();
   };
 
   return {

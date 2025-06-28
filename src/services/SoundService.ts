@@ -11,13 +11,12 @@ export class SoundService {
   private settings: SoundSettings = {
     enabled: true,
     volume: 0.7,
-    focusCompleteSound: 'chime', // Changed default to 'chime'
-    breakCompleteSound: 'chime'  // Changed default to 'chime'
+    focusCompleteSound: 'chime',
+    breakCompleteSound: 'chime'
   };
 
   constructor() {
     this.initializeAudioContext();
-    this.loadSettings();
   }
 
   private initializeAudioContext(): void {
@@ -25,25 +24,6 @@ export class SoundService {
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     } catch (error) {
       console.warn('Web Audio API not supported:', error);
-    }
-  }
-
-  private loadSettings(): void {
-    try {
-      const savedSettings = localStorage.getItem('brainwave-shift-sound-settings');
-      if (savedSettings) {
-        this.settings = { ...this.settings, ...JSON.parse(savedSettings) };
-      }
-    } catch (error) {
-      console.error('Failed to load sound settings:', error);
-    }
-  }
-
-  private saveSettings(): void {
-    try {
-      localStorage.setItem('brainwave-shift-sound-settings', JSON.stringify(this.settings));
-    } catch (error) {
-      console.error('Failed to save sound settings:', error);
     }
   }
 
@@ -225,18 +205,15 @@ export class SoundService {
 
   public updateSettings(updates: Partial<SoundSettings>): void {
     this.settings = { ...this.settings, ...updates };
-    this.saveSettings();
   }
 
   public toggleSound(): boolean {
     this.settings.enabled = !this.settings.enabled;
-    this.saveSettings();
     return this.settings.enabled;
   }
 
   public setVolume(volume: number): void {
     this.settings.volume = Math.max(0, Math.min(1, volume));
-    this.saveSettings();
   }
 
   // Test sounds for settings
