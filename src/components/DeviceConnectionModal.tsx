@@ -131,60 +131,10 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
       : ['Meeting schedule analysis', 'Focus time optimization', 'Deadline tracking', 'Cognitive load prediction'];
   };
 
-  const ThemePreview: React.FC<{ theme: 'light' | 'dark'; isSelected: boolean; onSelect: () => void }> = ({ 
-    theme, 
-    isSelected, 
-    onSelect 
-  }) => (
-    <button
-      onClick={onSelect}
-      className={`relative w-full p-6 rounded-xl border-2 transition-all duration-300 text-left group hover:scale-105 ${
-        isSelected
-          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg scale-105'
-          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
-      }`}
-    >
-      {/* Selected indicator */}
-      {isSelected && (
-        <div className="absolute -top-2 -right-2 bg-blue-500 rounded-full p-1">
-          <CheckCircle className="w-4 h-4 text-white" />
-        </div>
-      )}
-      
-      {/* Theme icon */}
-      <div className={`inline-flex p-3 rounded-xl mb-4 shadow-lg ${
-        theme === 'light' 
-          ? 'bg-gradient-to-r from-yellow-400 to-orange-500' 
-          : 'bg-gradient-to-r from-indigo-500 to-purple-600'
-      }`}>
-        {theme === 'light' ? (
-          <Calendar className="w-6 h-6 text-white" />
-        ) : (
-          <Watch className="w-6 h-6 text-white" />
-        )}
-      </div>
-      
-      {/* Theme info */}
-      <div className="space-y-3">
-        <div>
-          <h4 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-1">
-            {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
-          </h4>
-          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-            {theme === 'light' 
-              ? 'Clean and bright interface perfect for daytime use' 
-              : 'Easy on the eyes with reduced strain for extended sessions'
-            }
-          </p>
-        </div>
-      </div>
-    </button>
-  );
-
   return (
     <div className="modal-overlay-critical flex items-center justify-center p-4">
       <div 
-        className="relative bg-white dark:bg-calm-800 rounded-xl shadow-2xl dark:shadow-gentle-dark max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-calm-200 dark:border-calm-700"
+        className="modal-content-fix relative bg-white dark:bg-calm-800 rounded-xl shadow-2xl dark:shadow-gentle-dark max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-calm-200 dark:border-calm-700"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -200,7 +150,8 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-calm-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-calm-700 rounded-lg transition-colors focus-ring"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
@@ -237,7 +188,7 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
                     key={provider.id}
                     onClick={() => isEnabled && setSelectedProvider(provider.id)}
                     disabled={!isEnabled}
-                    className={`w-full p-4 rounded-lg border-2 transition-all duration-200 text-left ${
+                    className={`w-full p-4 rounded-lg border-2 transition-all duration-200 text-left focus-ring ${
                       !isEnabled
                         ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 opacity-60 cursor-not-allowed'
                         : selectedProvider === provider.id
@@ -341,7 +292,7 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
             <div className="flex items-center justify-between">
               <button
                 onClick={onClose}
-                className="px-6 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                className="px-6 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors focus-ring"
               >
                 Cancel
               </button>
@@ -349,7 +300,7 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
                 <button
                   onClick={handleConnect}
                   disabled={!selectedProvider || !providers.find(p => p.id === selectedProvider && ('enabled' in p ? p.enabled : true))}
-                  className="px-6 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                  className="px-6 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors focus-ring"
                 >
                   {selectedProvider && providers.find(p => p.id === selectedProvider && ('oauth' in p ? p.oauth : false))
                     ? `Connect via OAuth`

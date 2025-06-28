@@ -69,7 +69,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
   }) => (
     <button
       onClick={onSelect}
-      className={`relative w-full p-6 rounded-xl border-2 transition-all duration-300 text-left group hover:scale-105 ${
+      className={`relative w-full p-6 rounded-xl border-2 transition-all duration-300 text-left group hover:scale-105 focus-ring ${
         isSelected
           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg scale-105'
           : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
@@ -612,9 +612,9 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+    <div className="modal-overlay-critical flex items-center justify-center p-4">
       <div className={`
-        bg-white dark:bg-calm-800 rounded-2xl shadow-2xl dark:shadow-gentle-dark max-w-4xl w-full max-h-[90vh] overflow-hidden
+        modal-content-fix bg-white dark:bg-calm-800 rounded-2xl shadow-2xl dark:shadow-gentle-dark max-w-4xl w-full max-h-[90vh] overflow-hidden
         transform transition-all duration-500 ease-out border border-calm-200 dark:border-calm-700
         ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}
       `}>
@@ -632,7 +632,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
             </div>
             <button
               onClick={handleSkip}
-              className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+              className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors focus-ring"
               aria-label="Skip onboarding"
             >
               <X className="w-5 h-5" />
@@ -672,7 +672,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
               <button
                 key={step.id}
                 onClick={() => handleStepClick(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                className={`w-3 h-3 rounded-full transition-all duration-200 focus-ring ${
                   index === currentStep
                     ? 'bg-blue-500 dark:bg-blue-400 scale-125'
                     : index < currentStep
@@ -691,7 +691,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
             <button
               onClick={handlePrevious}
               disabled={currentStep === 0}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors focus-ring ${
                 currentStep === 0
                   ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700'
@@ -703,7 +703,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
             
             <button
               onClick={handleSkip}
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-sm transition-colors"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-sm transition-colors focus-ring"
             >
               Skip Tour
             </button>
@@ -711,7 +711,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
           
           <button
             onClick={handleNext}
-            className="flex items-center space-x-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg transition-colors font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="flex items-center space-x-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg transition-colors font-medium shadow-lg hover:shadow-xl transform hover:scale-105 focus-ring"
           >
             <span>{isLastStep ? 'Get Started' : 'Next'}</span>
             {isLastStep ? (

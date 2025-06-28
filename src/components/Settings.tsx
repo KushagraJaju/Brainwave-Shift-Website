@@ -140,7 +140,7 @@ export const Settings: React.FC<SettingsProps> = ({
             )}
             <button
               onClick={handleReset}
-              className="flex items-center space-x-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors focus-ring"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Reset</span>
@@ -148,7 +148,7 @@ export const Settings: React.FC<SettingsProps> = ({
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center space-x-2 px-6 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center space-x-2 px-6 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 focus-ring"
             >
               <Save className="w-4 h-4" />
               <span>{isSaving ? 'Saving...' : 'Save'}</span>
@@ -160,7 +160,7 @@ export const Settings: React.FC<SettingsProps> = ({
         <div className="flex space-x-1 mb-6 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
           <button
             onClick={() => setActiveSection('general')}
-            className={`flex-1 flex items-center justify-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+            className={`flex-1 flex items-center justify-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 focus-ring ${
               activeSection === 'general'
                 ? 'bg-white dark:bg-calm-700 text-blue-600 dark:text-blue-400 shadow-sm'
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
@@ -171,7 +171,7 @@ export const Settings: React.FC<SettingsProps> = ({
           </button>
           <button
             onClick={() => setActiveSection('data')}
-            className={`flex-1 flex items-center justify-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+            className={`flex-1 flex items-center justify-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 focus-ring ${
               activeSection === 'data'
                 ? 'bg-white dark:bg-calm-700 text-blue-600 dark:text-blue-400 shadow-sm'
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
@@ -247,7 +247,7 @@ export const Settings: React.FC<SettingsProps> = ({
                       onChange={(e) => onUpdatePreferences({
                         focusSessionLength: parseInt(e.target.value)
                       })}
-                      className="flex-1"
+                      className="flex-1 slider"
                     />
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[60px]">
                       {preferences.focusSessionLength} min
@@ -275,7 +275,7 @@ export const Settings: React.FC<SettingsProps> = ({
                     onClick={() => onUpdatePreferences({
                       breakReminders: !preferences.breakReminders
                     })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-ring ${
                       preferences.breakReminders ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
                     }`}
                   >
@@ -296,7 +296,7 @@ export const Settings: React.FC<SettingsProps> = ({
                     onClick={() => onUpdatePreferences({
                       ambientNotifications: !preferences.ambientNotifications
                     })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-ring ${
                       preferences.ambientNotifications ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
                     }`}
                   >
@@ -353,7 +353,7 @@ export const Settings: React.FC<SettingsProps> = ({
                         <Wifi className="w-4 h-4 text-green-500" />
                         <button 
                           onClick={() => disconnectDevice('smartwatch')}
-                          className="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium"
+                          className="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium focus-ring"
                         >
                           Disconnect
                         </button>
@@ -363,7 +363,7 @@ export const Settings: React.FC<SettingsProps> = ({
                         <WifiOff className="w-4 h-4 text-gray-400" />
                         <button 
                           onClick={() => setConnectionModal({ isOpen: true, deviceType: 'smartwatch' })}
-                          className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
+                          className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium focus-ring"
                           disabled={isConnecting === 'smartwatch'}
                         >
                           {isConnecting === 'smartwatch' ? 'Connecting...' : 'Connect'}
@@ -402,7 +402,7 @@ export const Settings: React.FC<SettingsProps> = ({
                         <Wifi className="w-4 h-4 text-green-500" />
                         <button 
                           onClick={() => disconnectDevice('calendar')}
-                          className="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium"
+                          className="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium focus-ring"
                         >
                           Disconnect
                         </button>
@@ -412,7 +412,7 @@ export const Settings: React.FC<SettingsProps> = ({
                         <WifiOff className="w-4 h-4 text-gray-400" />
                         <button 
                           onClick={() => setConnectionModal({ isOpen: true, deviceType: 'calendar' })}
-                          className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
+                          className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium focus-ring"
                           disabled={isConnecting === 'calendar'}
                         >
                           {isConnecting === 'calendar' ? 'Connecting...' : 'Connect'}
@@ -458,7 +458,7 @@ export const Settings: React.FC<SettingsProps> = ({
                     onClick={() => onUpdatePreferences({
                       dataSharing: !preferences.dataSharing
                     })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-ring ${
                       preferences.dataSharing ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
                     }`}
                   >
@@ -480,7 +480,7 @@ export const Settings: React.FC<SettingsProps> = ({
                       onClick={() => onUpdatePreferences({
                         smartwatchDataSharing: !preferences.smartwatchDataSharing
                       })}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-ring ${
                         preferences.smartwatchDataSharing ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
                       }`}
                     >
@@ -503,7 +503,7 @@ export const Settings: React.FC<SettingsProps> = ({
                       onClick={() => onUpdatePreferences({
                         calendarDataSharing: !preferences.calendarDataSharing
                       })}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-ring ${
                         preferences.calendarDataSharing ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
                       }`}
                     >
@@ -532,7 +532,7 @@ export const Settings: React.FC<SettingsProps> = ({
                   </div>
                   <button
                     onClick={handleRestartOnboarding}
-                    className="flex items-center space-x-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors border border-purple-200 dark:border-purple-800"
+                    className="flex items-center space-x-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors border border-purple-200 dark:border-purple-800 focus-ring"
                   >
                     <RotateCcw className="w-4 h-4" />
                     <span className="text-sm font-medium">Restart Tour</span>
