@@ -1,43 +1,25 @@
 import { useState, useEffect } from 'react';
-
-const ONBOARDING_STORAGE_KEY = 'brainwave-shift-onboarding-completed';
+import { useUserData } from './useUserData';
 
 export const useOnboarding = () => {
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
+  const { userData, completeOnboarding: completeUserOnboarding, resetOnboarding: resetUserOnboarding, isLoading: userDataLoading } = useUserData();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user has completed onboarding
-    try {
-      const completed = localStorage.getItem(ONBOARDING_STORAGE_KEY);
-      setHasCompletedOnboarding(completed === 'true');
-    } catch (error) {
-      console.error('Failed to check onboarding status:', error);
-      // If localStorage fails, assume first-time user
-      setHasCompletedOnboarding(false);
-    } finally {
+    // Once user data is loaded, we're ready
+    if (!userDataLoading) {
       setIsLoading(false);
     }
-  }, []);
+  }, [userDataLoading]);
+
+  const hasCompletedOnboarding = userData?.onboardingCompleted ?? false;
 
   const completeOnboarding = () => {
-    try {
-      localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
-      setHasCompletedOnboarding(true);
-    } catch (error) {
-      console.error('Failed to save onboarding completion:', error);
-      // Still mark as completed in state even if localStorage fails
-      setHasCompletedOnboarding(true);
-    }
+    completeUserOnboarding();
   };
 
   const resetOnboarding = () => {
-    try {
-      localStorage.removeItem(ONBOARDING_STORAGE_KEY);
-      setHasCompletedOnboarding(false);
-    } catch (error) {
-      console.error('Failed to reset onboarding status:', error);
-    }
+    resetUserOnboarding();
   };
 
   const skipOnboarding = () => {

@@ -1,58 +1,47 @@
 import { useState, useEffect } from 'react';
 import { UserPreferences } from '../types';
+import { useUserData } from './useUserData';
 
 const DEFAULT_PREFERENCES: UserPreferences = {
   interventionFrequency: 'Normal',
-  focusSessionLength: 25, // Changed to 25 minutes (Pomodoro default)
+  focusSessionLength: 25,
   breakReminders: true,
   ambientNotifications: false,
   dataSharing: false,
-  breakLength: 5, // Changed to 5 minutes (Pomodoro default)
-  selectedPreset: 'pomodoro', // Set Pomodoro as default preset
-  // Device integration preferences
+  breakLength: 5,
+  selectedPreset: 'pomodoro',
   smartwatchDataSharing: true,
   calendarDataSharing: true,
   physiologicalMonitoring: true,
-  calendarInsights: true
+  calendarInsights: true,
+  digitalWellnessEnabled: true,
+  mindfulnessReminders: true,
+  focusModeSchedule: [
+    { start: '09:00', end: '12:00' },
+    { start: '14:00', end: '17:00' }
+  ]
 };
 
 export const useSettings = () => {
-  const [preferences, setPreferences] = useState<UserPreferences>(DEFAULT_PREFERENCES);
+  const { userData, updatePreferences: updateUserPreferences, isLoading: userDataLoading } = useUserData();
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load settings from localStorage on mount
+  // Get preferences from user data or use defaults
+  const preferences = userData?.preferences || DEFAULT_PREFERENCES;
+
   useEffect(() => {
-    try {
-      const savedPreferences = localStorage.getItem('brainwave-shift-preferences');
-      if (savedPreferences) {
-        const parsed = JSON.parse(savedPreferences);
-        // Merge with defaults to ensure all new properties are included
-        setPreferences({ ...DEFAULT_PREFERENCES, ...parsed });
-      }
-    } catch (error) {
-      console.error('Failed to load preferences from localStorage:', error);
-    } finally {
+    // Once user data is loaded, we're ready
+    if (!userDataLoading) {
       setIsLoading(false);
     }
-  }, []);
-
-  // Save settings to localStorage whenever preferences change
-  useEffect(() => {
-    if (!isLoading) {
-      try {
-        localStorage.setItem('brainwave-shift-preferences', JSON.stringify(preferences));
-      } catch (error) {
-        console.error('Failed to save preferences to localStorage:', error);
-      }
-    }
-  }, [preferences, isLoading]);
+  }, [userDataLoading]);
 
   const updatePreferences = (updates: Partial<UserPreferences>) => {
-    setPreferences(prev => ({ ...prev, ...updates }));
+    updateUserPreferences(updates);
   };
 
   const resetPreferences = () => {
-    setPreferences(DEFAULT_PREFERENCES);
+    updateUserPreferences(DEFAULT_PREFERENCES);
   };
 
   return {
