@@ -203,9 +203,9 @@ export class UserDataManager {
       },
       soundSettings: {
         enabled: true,
-        volume: 0.7,
-        focusCompleteSound: 'success',
-        breakCompleteSound: 'notification'
+        volume: 0.5, // Default to 50% volume
+        focusCompleteSound: 'chime', // Default to gentle chime for focus
+        breakCompleteSound: 'pop' // Default to soft pop for break
       }
     };
   }
