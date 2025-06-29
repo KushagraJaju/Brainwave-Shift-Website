@@ -19,20 +19,6 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
   const [connectionStep, setConnectionStep] = useState<'select' | 'connecting' | 'success'>('select');
 
-  // CRITICAL: Add/remove body class for modal state
-  React.useEffect(() => {
-    if (isOpen) {
-      document.body.classList.add('modal-open');
-    } else {
-      document.body.classList.remove('modal-open');
-    }
-
-    // Cleanup on unmount
-    return () => {
-      document.body.classList.remove('modal-open');
-    };
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
   const smartwatchProviders = [
@@ -147,7 +133,7 @@ export const DeviceConnectionModal: React.FC<DeviceConnectionModalProps> = ({
 
   return (
     <div 
-      className="modal-overlay-critical modal-open flex items-center justify-center p-4" 
+      className="modal-overlay-critical flex items-center justify-center p-4" 
       role="dialog" 
       aria-modal="true" 
       aria-labelledby="connection-modal-title"

@@ -29,17 +29,9 @@ export const DigitalWellnessIntervention: React.FC<DigitalWellnessInterventionPr
   const [breathingCount, setBreathingCount] = useState(0);
   const [isBreathing, setIsBreathing] = useState(false);
 
-  // CRITICAL: Add/remove body class for modal state
   useEffect(() => {
-    document.body.classList.add('modal-open');
-    
     // Animate in
     setTimeout(() => setIsVisible(true), 100);
-
-    // Cleanup on unmount
-    return () => {
-      document.body.classList.remove('modal-open');
-    };
   }, []);
 
   const formatTime = (milliseconds?: number) => {
@@ -107,7 +99,7 @@ export const DigitalWellnessIntervention: React.FC<DigitalWellnessInterventionPr
 
   return (
     <div 
-      className="modal-overlay-critical modal-open flex items-center justify-center p-4" 
+      className="modal-overlay-critical modal-open flex items-center justify-center p-4 backdrop-blur-sm" 
       role="dialog" 
       aria-modal="true" 
       aria-labelledby="intervention-title"

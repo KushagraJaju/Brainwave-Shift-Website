@@ -29,7 +29,7 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [cycleCount, setCycleCount] = useState(0);
   const [totalCycles, setTotalCycles] = useState(5);
-  const [soundEnabled, setSoundEnabled] = useState(false); // FIXED: Default to false
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -52,20 +52,6 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
 
   const currentPattern = breathingPatterns[type];
   const currentPhaseData = currentPattern[currentPhase];
-
-  // CRITICAL: Add/remove body class for modal state
-  useEffect(() => {
-    if (isOpen) {
-      document.body.classList.add('modal-open');
-    } else {
-      document.body.classList.remove('modal-open');
-    }
-
-    // Cleanup on unmount
-    return () => {
-      document.body.classList.remove('modal-open');
-    };
-  }, [isOpen]);
 
   // Initialize audio context
   useEffect(() => {
@@ -219,7 +205,7 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
   const overallProgress = totalCycles > 0 ? 
     ((cycleCount * currentPattern.length + currentPhase) / (totalCycles * currentPattern.length)) * 100 : 0;
 
-  // Visual breathing guide scale - FIXED: Reduced maximum scale
+  // Visual breathing guide scale
   const getBreathingScale = () => {
     if (!isActive || isPaused) return 1;
     
@@ -227,11 +213,11 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
     
     switch (currentPhaseData.name) {
       case 'Inhale':
-        return 1 + (progress * 0.3); // FIXED: Scale from 1 to 1.3 (reduced from 1.5)
+        return 1 + (progress * 0.5); // Scale from 1 to 1.5
       case 'Exhale':
-        return 1.3 - (progress * 0.3); // FIXED: Scale from 1.3 to 1 (reduced from 1.5)
+        return 1.5 - (progress * 0.5); // Scale from 1.5 to 1
       case 'Hold':
-        return currentPhase === 1 ? 1.3 : 1; // FIXED: Stay at reduced size during hold
+        return currentPhase === 1 ? 1.5 : 1; // Stay at current size during hold
       default:
         return 1;
     }
@@ -253,7 +239,7 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay-critical modal-open flex items-center justify-center p-4">
+    <div className="modal-overlay-critical modal-open flex items-center justify-center p-4 backdrop-blur-sm">
       <div className="modal-content-fix bg-white dark:bg-calm-800 rounded-2xl shadow-2xl dark:shadow-gentle-dark max-w-lg w-full border border-calm-200 dark:border-calm-700">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-calm-200 dark:border-calm-700">
@@ -329,11 +315,11 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
           </div>
         )}
 
-        {/* FIXED: Better spaced content area */}
+        {/* Main Exercise Area */}
         <div className="p-6 text-center">
-          {/* FIXED: Improved Progress Indicator with better spacing */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-3">
+          {/* Progress Indicator */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
               <span>Cycle {cycleCount + 1} of {totalCycles}</span>
               <span>{Math.round(overallProgress)}% Complete</span>
             </div>
@@ -345,36 +331,36 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
             </div>
           </div>
 
-          {/* FIXED: Breathing Visual Guide with reduced size and better spacing */}
-          <div className="my-8 flex items-center justify-center">
+          {/* Breathing Visual Guide */}
+          <div className="my-12 flex items-center justify-center">
             <div 
-              className={`w-32 h-32 rounded-full bg-gradient-to-br ${getPhaseColor()} flex items-center justify-center transition-all duration-1000 ease-in-out shadow-xl`}
+              className={`w-40 h-40 rounded-full bg-gradient-to-br ${getPhaseColor()} flex items-center justify-center transition-all duration-1000 ease-in-out shadow-xl`}
               style={{ 
                 transform: `scale(${getBreathingScale()})`,
-                filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.15))'
+                filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.15))'
               }}
             >
               <div className="text-center text-white">
                 {isActive && currentPhaseData && (
                   <>
-                    <div className="text-xl font-bold mb-1">{currentPhaseData.name}</div>
-                    <div className="text-3xl font-bold">{timeRemaining}</div>
-                    <div className="text-xs mt-2 opacity-90 max-w-24 mx-auto leading-tight">
+                    <div className="text-2xl font-bold mb-1">{currentPhaseData.name}</div>
+                    <div className="text-4xl font-bold">{timeRemaining}</div>
+                    <div className="text-xs mt-2 opacity-90 max-w-28 mx-auto leading-tight">
                       {currentPhaseData.instruction}
                     </div>
                   </>
                 )}
                 {!isActive && (
-                  <div className="text-xl font-bold">Ready</div>
+                  <div className="text-2xl font-bold">Ready</div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* FIXED: Phase Progress with better spacing */}
+          {/* Phase Progress */}
           {isActive && currentPhaseData && (
-            <div className="mb-6 mt-4">
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+            <div className="mb-8 mt-4">
+              <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
                 {currentPhaseData.name} Progress
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -430,16 +416,18 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({
             )}
           </div>
 
-          {/* FIXED: Sound Status with updated default text */}
-          {soundEnabled ? (
+          {/* Sound Status */}
+          {soundEnabled && (
             <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
               <Volume2 className="w-4 h-4" />
               <span>Sound guidance enabled</span>
             </div>
-          ) : (
+          )}
+          
+          {!soundEnabled && (
             <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-500">
               <VolumeX className="w-4 h-4" />
-              <span>Sound guidance disabled</span>
+              <span>Sound off (toggle in settings)</span>
             </div>
           )}
         </div>
