@@ -36,7 +36,7 @@ export const DigitalWellnessIntervention: React.FC<DigitalWellnessInterventionPr
 
   const formatTime = (milliseconds?: number) => {
     if (!milliseconds) return '';
-    const minutes = Math.floor(milliseconds / (1000 * 60));
+    const minutes = Math.floor(milliseconds / (1000));
     return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
   };
 
