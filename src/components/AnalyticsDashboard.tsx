@@ -16,7 +16,8 @@ import {
   ArrowUp,
   ArrowDown,
   Minus,
-  Activity
+  Activity,
+  Info
 } from 'lucide-react';
 import { AnalyticsData } from '../types';
 import { DigitalWellnessData } from '../services/DigitalWellnessMonitor';
@@ -149,6 +150,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
     const sign = change > 0 ? '+' : '';
     return `${sign}${change}%`;
   };
+
+  // Check if we have enough data for weekly analytics
+  const hasEnoughWeeklyData = digitalData.weeklyData.length >= 4;
 
   return (
     <div className="space-y-6">
@@ -422,170 +426,198 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
         ) : (
           /* Weekly Digital Wellness View */
           <>
-            {/* EXPANDED GRID for Weekly View with Focus Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-              {/* Row 1: Focus Metrics */}
-              <StatCard
-                icon={<Calendar className="w-6 h-6 text-white" />}
-                title="Weekly Focus"
-                value={formatTime(analyticsData.weeklyFocusTime)}
-                subtitle="Total focus time this week"
-                color="bg-blue-500"
-                trend="stable"
-                trendValue="±2%"
-              />
-              
-              <StatCard
-                icon={<Brain className="w-6 h-6 text-white" />}
-                title="Focus Quality"
-                value={`${analyticsData.averageFocusQuality}%`}
-                subtitle="Weekly average performance"
-                color="bg-green-500"
-                trend={analyticsData.averageFocusQuality > 75 ? 'up' : analyticsData.averageFocusQuality < 60 ? 'down' : 'stable'}
-                trendValue={analyticsData.averageFocusQuality > 75 ? '+8%' : analyticsData.averageFocusQuality < 60 ? '-5%' : '±1%'}
-              />
-              
-              <StatCard
-                icon={<BarChart3 className="w-6 h-6 text-white" />}
-                title="Weekly Average"
-                value={formatTimeShort(weeklyAverageMinutes)}
-                subtitle="Daily social media usage"
-                color="bg-purple-500"
-                trend={weeklyTrends.usageTrend === 'increasing' ? 'up' : weeklyTrends.usageTrend === 'decreasing' ? 'down' : 'stable'}
-                trendValue={weeklyTrends.usageTrend === 'stable' ? 'Stable' : weeklyTrends.usageTrend === 'increasing' ? 'Rising' : 'Falling'}
-              />
-              
-              <StatCard
-                icon={<Target className="w-6 h-6 text-white" />}
-                title="Most Used Platform"
-                value={weeklyTrends.mostUsedPlatform || 'None'}
-                subtitle="Top platform this week"
-                color="bg-orange-500"
-              />
-            </div>
-
-            {/* Second row of weekly metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-              <StatCard
-                icon={<Heart className="w-6 h-6 text-white" />}
-                title="Weekly Mindful Breaks"
-                value={weeklyTrends.weeklyMindfulBreaks.toString()}
-                subtitle="Conscious pause moments"
-                color="bg-emerald-500"
-                trend="up"
-                trendValue="+15 this week"
-              />
-              
-              <StatCard
-                icon={<Activity className="w-6 h-6 text-white" />}
-                title="Cognitive Impact"
-                value={`${Math.round(weeklyTrends.averageCognitiveImpact)}`}
-                subtitle="Weekly average score"
-                color="bg-teal-500"
-                trend={weeklyTrends.averageCognitiveImpact > 80 ? 'up' : weeklyTrends.averageCognitiveImpact < 60 ? 'down' : 'stable'}
-                trendValue={weeklyTrends.averageCognitiveImpact > 80 ? 'Excellent' : weeklyTrends.averageCognitiveImpact < 60 ? 'Needs Work' : 'Good'}
-              />
-              
-              <StatCard
-                icon={<Eye className="w-6 h-6 text-white" />}
-                title="Mindless Sessions"
-                value={weeklyTrends.weeklyMindlessSessions.toString()}
-                subtitle="Weekly total"
-                color="bg-red-500"
-                trend={weeklyTrends.weeklyMindlessSessions > 15 ? 'up' : 'down'}
-                trendValue={weeklyTrends.weeklyMindlessSessions > 15 ? 'High' : 'Good'}
-              />
-              
-              <StatCard
-                icon={<Clock className="w-6 h-6 text-white" />}
-                title="Peak Usage Days"
-                value={weeklyTrends.peakUsageDays.length.toString()}
-                subtitle="Days above average"
-                color="bg-indigo-500"
-                trend="stable"
-                trendValue="Normal"
-              />
-            </div>
-
-            {/* Weekly Usage Trend Chart */}
-            <div className="mb-6">
-              <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-4">Daily Usage Trend (Past 7 Days)</h4>
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                <div className="flex items-end justify-between space-x-2 h-32">
-                  {digitalData.weeklyData.map((day, index) => {
-                    const dayMinutes = Math.round(day.totalSocialMediaTime / (1000 * 60));
-                    const maxUsage = Math.max(...digitalData.weeklyData.map(d => d.totalSocialMediaTime));
-                    const height = maxUsage > 0 ? (day.totalSocialMediaTime / maxUsage) * 100 : 0;
-                    const dayName = new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' });
-                    
-                    return (
-                      <div key={day.date} className="flex flex-col items-center flex-1">
-                        <div className="w-full bg-purple-200 dark:bg-purple-800 rounded-t-lg relative" style={{ height: '100px' }}>
-                          <div 
-                            className="bg-purple-500 dark:bg-purple-400 rounded-t-lg w-full absolute bottom-0 transition-all duration-500"
-                            style={{ height: `${height}%` }}
-                          ></div>
-                        </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
-                          <div className="font-medium">{dayName}</div>
-                          <div>{dayMinutes}m</div>
-                        </div>
-                      </div>
-                    );
-                  })}
+            {!hasEnoughWeeklyData ? (
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-800 text-center">
+                <div className="flex justify-center mb-4">
+                  <Info className="w-12 h-12 text-blue-500 dark:text-blue-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-300 mb-2">
+                  Not Enough Data for Weekly Analytics
+                </h3>
+                <p className="text-blue-700 dark:text-blue-400 mb-4 max-w-lg mx-auto">
+                  Weekly analytics require at least 4 days of usage data to provide meaningful insights. 
+                  Continue using the app to unlock comprehensive weekly trends and patterns.
+                </p>
+                <div className="bg-white dark:bg-blue-900/40 p-4 rounded-lg inline-block">
+                  <p className="text-blue-600 dark:text-blue-300 font-medium">
+                    {digitalData.weeklyData.length} of 4 days collected
+                  </p>
+                  <div className="w-64 h-2 bg-blue-200 dark:bg-blue-800 rounded-full mt-2 mx-auto">
+                    <div 
+                      className="h-2 bg-blue-500 dark:bg-blue-400 rounded-full"
+                      style={{ width: `${Math.min(100, (digitalData.weeklyData.length / 4) * 100)}%` }}
+                    ></div>
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <>
+                {/* EXPANDED GRID for Weekly View with Focus Metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+                  {/* Row 1: Focus Metrics */}
+                  <StatCard
+                    icon={<Calendar className="w-6 h-6 text-white" />}
+                    title="Weekly Focus"
+                    value={formatTime(analyticsData.weeklyFocusTime)}
+                    subtitle="Total focus time this week"
+                    color="bg-blue-500"
+                    trend="stable"
+                    trendValue="±2%"
+                  />
+                  
+                  <StatCard
+                    icon={<Brain className="w-6 h-6 text-white" />}
+                    title="Focus Quality"
+                    value={`${analyticsData.averageFocusQuality}%`}
+                    subtitle="Weekly average performance"
+                    color="bg-green-500"
+                    trend={analyticsData.averageFocusQuality > 75 ? 'up' : analyticsData.averageFocusQuality < 60 ? 'down' : 'stable'}
+                    trendValue={analyticsData.averageFocusQuality > 75 ? '+8%' : analyticsData.averageFocusQuality < 60 ? '-5%' : '±1%'}
+                  />
+                  
+                  <StatCard
+                    icon={<BarChart3 className="w-6 h-6 text-white" />}
+                    title="Weekly Average"
+                    value={formatTimeShort(weeklyAverageMinutes)}
+                    subtitle="Daily social media usage"
+                    color="bg-purple-500"
+                    trend={weeklyTrends.usageTrend === 'increasing' ? 'up' : weeklyTrends.usageTrend === 'decreasing' ? 'down' : 'stable'}
+                    trendValue={weeklyTrends.usageTrend === 'stable' ? 'Stable' : weeklyTrends.usageTrend === 'increasing' ? 'Rising' : 'Falling'}
+                  />
+                  
+                  <StatCard
+                    icon={<Target className="w-6 h-6 text-white" />}
+                    title="Most Used Platform"
+                    value={weeklyTrends.mostUsedPlatform || 'None'}
+                    subtitle="Top platform this week"
+                    color="bg-orange-500"
+                  />
+                </div>
 
-            {/* Weekly Insights */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-4 border border-blue-100 dark:border-blue-800">
-                <h5 className="font-semibold text-gray-800 dark:text-gray-200 mb-3 flex items-center space-x-2">
-                  <TrendingUp className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-                  <span>Usage Patterns</span>
-                </h5>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Peak usage day:</span>
-                    <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.mostUsedDay}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Lowest usage day:</span>
-                    <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.leastUsedDay}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Weekly trend:</span>
-                    <div className="flex items-center space-x-1">
-                      {getTrendIcon(weeklyTrends.usageTrend)}
-                      <span className={`font-medium capitalize ${getTrendColor(weeklyTrends.usageTrend)}`}>
-                        {weeklyTrends.usageTrend}
-                      </span>
+                {/* Second row of weekly metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+                  <StatCard
+                    icon={<Heart className="w-6 h-6 text-white" />}
+                    title="Weekly Mindful Breaks"
+                    value={weeklyTrends.weeklyMindfulBreaks.toString()}
+                    subtitle="Conscious pause moments"
+                    color="bg-emerald-500"
+                    trend="up"
+                    trendValue="+15 this week"
+                  />
+                  
+                  <StatCard
+                    icon={<Activity className="w-6 h-6 text-white" />}
+                    title="Cognitive Impact"
+                    value={`${Math.round(weeklyTrends.averageCognitiveImpact)}`}
+                    subtitle="Weekly average score"
+                    color="bg-teal-500"
+                    trend={weeklyTrends.averageCognitiveImpact > 80 ? 'up' : weeklyTrends.averageCognitiveImpact < 60 ? 'down' : 'stable'}
+                    trendValue={weeklyTrends.averageCognitiveImpact > 80 ? 'Excellent' : weeklyTrends.averageCognitiveImpact < 60 ? 'Needs Work' : 'Good'}
+                  />
+                  
+                  <StatCard
+                    icon={<Eye className="w-6 h-6 text-white" />}
+                    title="Mindless Sessions"
+                    value={weeklyTrends.weeklyMindlessSessions.toString()}
+                    subtitle="Weekly total"
+                    color="bg-red-500"
+                    trend={weeklyTrends.weeklyMindlessSessions > 15 ? 'up' : 'down'}
+                    trendValue={weeklyTrends.weeklyMindlessSessions > 15 ? 'High' : 'Good'}
+                  />
+                  
+                  <StatCard
+                    icon={<Clock className="w-6 h-6 text-white" />}
+                    title="Peak Usage Days"
+                    value={weeklyTrends.peakUsageDays.length.toString()}
+                    subtitle="Days above average"
+                    color="bg-indigo-500"
+                    trend="stable"
+                    trendValue="Normal"
+                  />
+                </div>
+
+                {/* Weekly Usage Trend Chart */}
+                <div className="mb-6">
+                  <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-4">Daily Usage Trend (Past 7 Days)</h4>
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                    <div className="flex items-end justify-between space-x-2 h-32">
+                      {digitalData.weeklyData.map((day, index) => {
+                        const dayMinutes = Math.round(day.totalSocialMediaTime / (1000 * 60));
+                        const maxUsage = Math.max(...digitalData.weeklyData.map(d => d.totalSocialMediaTime));
+                        const height = maxUsage > 0 ? (day.totalSocialMediaTime / maxUsage) * 100 : 0;
+                        const dayName = new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' });
+                        
+                        return (
+                          <div key={day.date} className="flex flex-col items-center flex-1">
+                            <div className="w-full bg-purple-200 dark:bg-purple-800 rounded-t-lg relative" style={{ height: '100px' }}>
+                              <div 
+                                className="bg-purple-500 dark:bg-purple-400 rounded-t-lg w-full absolute bottom-0 transition-all duration-500"
+                                style={{ height: `${height}%` }}
+                              ></div>
+                            </div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
+                              <div className="font-medium">{dayName}</div>
+                              <div>{dayMinutes}m</div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-4 border border-green-100 dark:border-green-800">
-                <h5 className="font-semibold text-gray-800 dark:text-gray-200 mb-3 flex items-center space-x-2">
-                  <Heart className="w-4 h-4 text-green-500 dark:text-green-400" />
-                  <span>Wellness Metrics</span>
-                </h5>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Mindless sessions:</span>
-                    <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.weeklyMindlessSessions}</span>
+                {/* Weekly Insights */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-4 border border-blue-100 dark:border-blue-800">
+                    <h5 className="font-semibold text-gray-800 dark:text-gray-200 mb-3 flex items-center space-x-2">
+                      <TrendingUp className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                      <span>Usage Patterns</span>
+                    </h5>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Peak usage day:</span>
+                        <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.mostUsedDay}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Lowest usage day:</span>
+                        <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.leastUsedDay}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Weekly trend:</span>
+                        <div className="flex items-center space-x-1">
+                          {getTrendIcon(weeklyTrends.usageTrend)}
+                          <span className={`font-medium capitalize ${getTrendColor(weeklyTrends.usageTrend)}`}>
+                            {weeklyTrends.usageTrend}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Mindful breaks:</span>
-                    <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.weeklyMindfulBreaks}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Peak usage days:</span>
-                    <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.peakUsageDays.length}</span>
+
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-4 border border-green-100 dark:border-green-800">
+                    <h5 className="font-semibold text-gray-800 dark:text-gray-200 mb-3 flex items-center space-x-2">
+                      <Heart className="w-4 h-4 text-green-500 dark:text-green-400" />
+                      <span>Wellness Metrics</span>
+                    </h5>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Mindless sessions:</span>
+                        <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.weeklyMindlessSessions}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Mindful breaks:</span>
+                        <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.weeklyMindfulBreaks}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Peak usage days:</span>
+                        <span className="font-medium text-gray-800 dark:text-gray-200">{weeklyTrends.peakUsageDays.length}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
           </>
         )}
       </div>

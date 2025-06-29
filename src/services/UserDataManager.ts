@@ -56,11 +56,15 @@ export interface UserData {
     dailySocialMediaTime: number;
     weeklyData: {
       date: string;
-      totalTime: number;
+      totalSocialMediaTime: number;
       platformBreakdown: Record<string, number>;
       mindlessScrollingSessions: number;
       mindfulBreaksTaken: number;
+      longestSession: number;
+      averageSessionLength: number;
       cognitiveImpactScore: number;
+      peakUsageHours: number[];
+      sessionCount: number;
     }[];
     platformLimits: Record<string, number>;
     interventionHistory: {
@@ -186,7 +190,7 @@ export class UserDataManager {
       focusSessions: [],
       digitalWellness: {
         dailySocialMediaTime: 0,
-        weeklyData: [],
+        weeklyData: [], // Start with empty array - no mock data
         platformLimits: {},
         interventionHistory: []
       },
@@ -229,7 +233,7 @@ export class UserDataManager {
     try {
       const savedData = localStorage.getItem(this.STORAGE_KEY);
       if (savedData) {
-        const parsedData = JSON.parse(savedData) as UserData;
+        const parsedData = JSON.parse(savedData, this.jsonReviver) as UserData;
         
         // Validate and migrate data if necessary
         this.userData = this.migrateUserData(parsedData);
@@ -258,6 +262,25 @@ export class UserDataManager {
     }
   }
 
+  private jsonReviver(key: string, value: any): any {
+    // Handle Map objects during JSON parsing
+    if (value && typeof value === 'object' && value.__type === 'Map') {
+      return new Map(value.entries);
+    }
+    return value;
+  }
+
+  private jsonReplacer(key: string, value: any): any {
+    // Handle Map objects during JSON stringification
+    if (value instanceof Map) {
+      return {
+        __type: 'Map',
+        entries: Array.from(value.entries())
+      };
+    }
+    return value;
+  }
+
   private migrateUserData(data: any): UserData {
     const defaultData = this.getDefaultUserData();
     
@@ -276,6 +299,11 @@ export class UserDataManager {
       migratedData.appState.theme = savedTheme || 'system';
     }
     
+    // Ensure weeklyData is an array
+    if (!Array.isArray(migratedData.digitalWellness.weeklyData)) {
+      migratedData.digitalWellness.weeklyData = [];
+    }
+    
     return migratedData;
   }
 
@@ -284,7 +312,14 @@ export class UserDataManager {
     
     for (const key in source) {
       if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-        result[key] = this.deepMerge(target[key] || {}, source[key]);
+        // Handle Map objects specially
+        if (source[key] instanceof Map) {
+          result[key] = new Map(source[key]);
+        } else if (source[key].__type === 'Map') {
+          result[key] = new Map(source[key].entries);
+        } else {
+          result[key] = this.deepMerge(target[key] || {}, source[key]);
+        }
       } else {
         result[key] = source[key];
       }
@@ -298,8 +333,8 @@ export class UserDataManager {
       // Update last updated timestamp
       this.userData.analytics.lastUpdated = new Date().toISOString();
       
-      // Save to localStorage
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.userData));
+      // Save to localStorage with custom replacer for Maps
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.userData, this.jsonReplacer));
       this.lastSaveTime = Date.now();
       
       // Create backup periodically
@@ -342,7 +377,7 @@ export class UserDataManager {
     try {
       const savedData = localStorage.getItem(this.STORAGE_KEY);
       if (savedData) {
-        const parsedData = JSON.parse(savedData) as UserData;
+        const parsedData = JSON.parse(savedData, this.jsonReviver) as UserData;
         
         // Only reload if the saved data is newer than our last save
         const savedTimestamp = new Date(parsedData.analytics.lastUpdated).getTime();
@@ -365,7 +400,7 @@ export class UserDataManager {
         checksum: this.generateChecksum(this.userData)
       };
       
-      localStorage.setItem(this.BACKUP_KEY, JSON.stringify(backup));
+      localStorage.setItem(this.BACKUP_KEY, JSON.stringify(backup, this.jsonReplacer));
     } catch (error) {
       console.error('Failed to create backup:', error);
     }
@@ -373,7 +408,7 @@ export class UserDataManager {
 
   private generateChecksum(data: UserData): string {
     // Simple checksum for data integrity
-    const dataString = JSON.stringify(data);
+    const dataString = JSON.stringify(data, this.jsonReplacer);
     let hash = 0;
     for (let i = 0; i < dataString.length; i++) {
       const char = dataString.charCodeAt(i);
@@ -387,7 +422,7 @@ export class UserDataManager {
     try {
       const backupData = localStorage.getItem(this.BACKUP_KEY);
       if (backupData) {
-        const backup = JSON.parse(backupData) as DataBackup;
+        const backup = JSON.parse(backupData, this.jsonReviver) as DataBackup;
         
         // Verify checksum
         const expectedChecksum = this.generateChecksum(backup.userData);
@@ -518,6 +553,45 @@ export class UserDataManager {
     this.notifyListeners();
   }
 
+  public updateDailyDigitalWellness(dateString: string, updates: Partial<UserData['digitalWellness']['weeklyData'][0]>): void {
+    // Find existing entry for the date or create new one
+    let dayIndex = this.userData.digitalWellness.weeklyData.findIndex(day => day.date === dateString);
+    
+    if (dayIndex === -1) {
+      // Create new entry
+      const newDayData = {
+        date: dateString,
+        totalSocialMediaTime: 0,
+        platformBreakdown: {},
+        mindlessScrollingSessions: 0,
+        mindfulBreaksTaken: 0,
+        longestSession: 0,
+        averageSessionLength: 0,
+        cognitiveImpactScore: 0,
+        peakUsageHours: [],
+        sessionCount: 0,
+        ...updates
+      };
+      
+      this.userData.digitalWellness.weeklyData.push(newDayData);
+    } else {
+      // Update existing entry
+      this.userData.digitalWellness.weeklyData[dayIndex] = {
+        ...this.userData.digitalWellness.weeklyData[dayIndex],
+        ...updates
+      };
+    }
+    
+    // Keep only the last 8 days of data (7 days + current day)
+    this.userData.digitalWellness.weeklyData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    if (this.userData.digitalWellness.weeklyData.length > 8) {
+      this.userData.digitalWellness.weeklyData = this.userData.digitalWellness.weeklyData.slice(-8);
+    }
+    
+    this.debouncedSave();
+    this.notifyListeners();
+  }
+
   public updateDeviceIntegration(device: 'smartwatch' | 'calendar', updates: Partial<UserData['deviceIntegrations']['smartwatch']>): void {
     this.userData.deviceIntegrations[device] = { ...this.userData.deviceIntegrations[device], ...updates };
     this.debouncedSave();
@@ -575,7 +649,7 @@ export class UserDataManager {
         version: this.VERSION
       };
       
-      return JSON.stringify(exportData, null, 2);
+      return JSON.stringify(exportData, this.jsonReplacer, 2);
     } catch (error) {
       console.error('Failed to export data:', error);
       throw error;
@@ -584,7 +658,7 @@ export class UserDataManager {
 
   public async importData(jsonData: string): Promise<void> {
     try {
-      const importedData = JSON.parse(jsonData);
+      const importedData = JSON.parse(jsonData, this.jsonReviver);
       
       if (importedData.userData && importedData.version) {
         // Validate and migrate imported data
@@ -621,12 +695,12 @@ export class UserDataManager {
 
   public getDataSize(): { total: number; breakdown: Record<string, number> } {
     try {
-      const dataString = JSON.stringify(this.userData);
+      const dataString = JSON.stringify(this.userData, this.jsonReplacer);
       const totalSize = new Blob([dataString]).size;
       
       const breakdown: Record<string, number> = {};
       for (const [key, value] of Object.entries(this.userData)) {
-        breakdown[key] = new Blob([JSON.stringify(value)]).size;
+        breakdown[key] = new Blob([JSON.stringify(value, this.jsonReplacer)]).size;
       }
       
       return { total: totalSize, breakdown };
