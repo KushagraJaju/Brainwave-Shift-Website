@@ -38,8 +38,8 @@ export const DigitalWellnessPanel: React.FC = () => {
   }, []);
 
   const formatTime = (milliseconds: number) => {
-    const minutes = Math.floor(milliseconds / (1000 * 60));
-    const hours = Math.floor(minutes / 60);
+    const minutes = Math.floor(milliseconds / (1000));
+    const hours = Math.floor(minutes / 3600);
     const remainingMinutes = minutes % 60;
     
     if (hours > 0) {
@@ -49,7 +49,7 @@ export const DigitalWellnessPanel: React.FC = () => {
   };
 
   const formatTimeShort = (milliseconds: number) => {
-    const minutes = Math.floor(milliseconds / (1000 * 60));
+    const minutes = Math.floor(milliseconds / (1000));
     return `${minutes}m`;
   };
 
