@@ -36,7 +36,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
 
   const formatTimeMs = (milliseconds: number) => {
     const minutes = Math.floor(milliseconds / (1000));
-    const hours = Math.floor(minutes / 60);
+    const hours = Math.floor(minutes / 3600);
     const remainingMins = minutes % 60;
     if (hours > 0) {
       return remainingMins > 0 ? `${hours}h ${remainingMins}m` : `${hours}h`;
