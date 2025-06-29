@@ -44,13 +44,6 @@ export const useDigitalWellness = () => {
   };
 
   const dismissIntervention = (id: string) => {
-    // Store dismissed state in localStorage
-    const dismissedInterventions = JSON.parse(localStorage.getItem('dismissedDigitalInterventions') || '[]');
-    if (!dismissedInterventions.includes(id)) {
-      dismissedInterventions.push(id);
-      localStorage.setItem('dismissedDigitalInterventions', JSON.stringify(dismissedInterventions));
-    }
-    
     setInterventions(prev => prev.filter(intervention => intervention.id !== id));
   };
 
@@ -60,13 +53,6 @@ export const useDigitalWellness = () => {
       digitalWellnessMonitor.recordMindfulBreak();
     }
     
-    // Store completed action in localStorage
-    const completedInterventions = JSON.parse(localStorage.getItem('completedDigitalInterventions') || '[]');
-    if (!completedInterventions.includes(id)) {
-      completedInterventions.push(id);
-      localStorage.setItem('completedDigitalInterventions', JSON.stringify(completedInterventions));
-    }
-    
     // Remove the intervention
     dismissIntervention(id);
   };
@@ -74,19 +60,6 @@ export const useDigitalWellness = () => {
   const updateSettings = (updates: any) => {
     digitalWellnessMonitor.updateSettings(updates);
   };
-
-  // Filter out interventions that have been dismissed or completed
-  useEffect(() => {
-    const dismissedInterventions = JSON.parse(localStorage.getItem('dismissedDigitalInterventions') || '[]');
-    const completedInterventions = JSON.parse(localStorage.getItem('completedDigitalInterventions') || '[]');
-    
-    setInterventions(prev => 
-      prev.filter(intervention => 
-        !dismissedInterventions.includes(intervention.id) && 
-        !completedInterventions.includes(intervention.id)
-      )
-    );
-  }, []);
 
   return {
     data,

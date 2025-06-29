@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Clock, Target, Pause, Play, CheckCircle, AlertTriangle } from 'lucide-react';
 import { digitalWellnessMonitor } from '../services/DigitalWellnessMonitor';
-import { digitalWellnessMonitor } from '../services/DigitalWellnessMonitor';
 
 interface DigitalWellnessInterventionProps {
   intervention: {
@@ -69,7 +68,6 @@ export const DigitalWellnessIntervention: React.FC<DigitalWellnessInterventionPr
           clearInterval(breathingInterval);
           setIsBreathing(false);
           digitalWellnessMonitor.recordMindfulBreak();
-          digitalWellnessMonitor.recordMindfulBreak();
           onAction(intervention.id, 'breathing-complete');
           return prev;
         }
@@ -82,9 +80,6 @@ export const DigitalWellnessIntervention: React.FC<DigitalWellnessInterventionPr
     if (action === 'Take a breath' || action === 'Do breathing exercise') {
       handleBreathingExercise();
     } else {
-      if (action.includes('break') || action.includes('Break')) {
-        digitalWellnessMonitor.recordMindfulBreak();
-      }
       if (action.includes('break') || action.includes('Break')) {
         digitalWellnessMonitor.recordMindfulBreak();
       }

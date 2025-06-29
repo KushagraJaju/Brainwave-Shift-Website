@@ -54,8 +54,8 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
     }
   };
 
-  // Active interventions are already filtered in the hook
-  const activeInterventions = interventions;
+  // Filter out completed interventions
+  const activeInterventions = interventions.filter(i => !i.completed);
 
   return (
     <div className="h-full flex flex-col">
