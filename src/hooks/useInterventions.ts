@@ -7,6 +7,8 @@ export const useInterventions = (cognitiveState: CognitiveState, preferences: Us
   const [lastInterventionTime, setLastInterventionTime] = useState<Date>(new Date());
   const [hasInitialized, setHasInitialized] = useState(false);
   const [completedInterventionIds, setCompletedInterventionIds] = useState<Set<string>>(new Set());
+  const [hasInitialized, setHasInitialized] = useState(false);
+  const [completedInterventionIds, setCompletedInterventionIds] = useState<Set<string>>(new Set());
 
   const interventionTemplates = {
     Break: [
@@ -89,8 +91,70 @@ export const useInterventions = (cognitiveState: CognitiveState, preferences: Us
     return unsubscribe;
   }, []);
 
+  // Load completed interventions from user data
+  useEffect(() => {
+    const loadCompletedInterventions = () => {
+      if (userDataManager.isInitialized()) {
+        const userData = userDataManager.getUserData();
+        const completedIds = new Set<string>();
+        
+        // Get completed intervention IDs from user data
+        userData.interventions
+          .filter(i => i.completed)
+          .forEach(i => completedIds.add(i.id));
+        
+        setCompletedInterventionIds(completedIds);
+        return true;
+      }
+      return false;
+    };
+
+    // Try to load, and if not initialized yet, retry
+    if (!loadCompletedInterventions()) {
+      const checkInterval = setInterval(() => {
+        if (loadCompletedInterventions()) {
+          clearInterval(checkInterval);
+        }
+      }, 200);
+      
+      return () => clearInterval(checkInterval);
+    }
+  }, []);
+
+  // Subscribe to user data changes to keep completed interventions in sync
+  useEffect(() => {
+    const unsubscribe = userDataManager.subscribe((userData) => {
+      const completedIds = new Set<string>();
+      
+      userData.interventions
+        .filter(i => i.completed)
+        .forEach(i => completedIds.add(i.id));
+      
+      setCompletedInterventionIds(completedIds);
+      
+      // Update local interventions list to reflect completion status
+      setInterventions(prev => 
+        prev.map(intervention => ({
+          ...intervention,
+          completed: completedIds.has(intervention.id)
+        }))
+      );
+    });
+    
+    return unsubscribe;
+  }, []);
+
   // Initialize with some example interventions on first load
   useEffect(() => {
+    if (!hasInitialized) {
+      const now = new Date();
+      const exampleInterventions: Intervention[] = [
+        {
+          id: 'example-1',
+          type: 'Breathing',
+          title: 'Deep breathing exercise',
+          description: '4-7-8 breathing technique for relaxation and stress relief',
+          duration: 2,
     if (!hasInitialized) {
       const now = new Date();
       const exampleInterventions: Intervention[] = [
@@ -135,6 +199,8 @@ export const useInterventions = (cognitiveState: CognitiveState, preferences: Us
   }, [hasInitialized, completedInterventionIds]);
 
   useEffect(() => {
+    if (!hasInitialized) return;
+
     if (!hasInitialized) return;
 
     const checkForInterventions = () => {
@@ -193,7 +259,16 @@ export const useInterventions = (cognitiveState: CognitiveState, preferences: Us
           priority,
           timestamp: now,
           completed: false // Explicitly set to false
+          completed: false // Explicitly set to false
         };
+
+        // Add to user data manager for persistence
+        userDataManager.addIntervention({
+          type: interventionType,
+          title: template.title,
+          completed: false,
+          dismissed: false
+        });
 
         // Add to user data manager for persistence
         userDataManager.addIntervention({
@@ -215,6 +290,7 @@ export const useInterventions = (cognitiveState: CognitiveState, preferences: Us
 
   const completeIntervention = (id: string) => {
     // Update local state
+    // Update local state
     setInterventions(prev => 
       prev.map(intervention => 
         intervention.id === id 
@@ -222,6 +298,16 @@ export const useInterventions = (cognitiveState: CognitiveState, preferences: Us
           : intervention
       )
     );
+
+    // Add to completed set
+    setCompletedInterventionIds(prev => {
+      const newSet = new Set(prev);
+      newSet.add(id);
+      return newSet;
+    });
+
+    // Update in user data manager for persistence
+    userDataManager.completeIntervention(id);
 
     // Add to completed set
     setCompletedInterventionIds(prev => {
@@ -250,8 +336,21 @@ export const useInterventions = (cognitiveState: CognitiveState, preferences: Us
     }
     
     // Remove from local state
+    // Update in user data manager
+    const userData = userDataManager.getUserData();
+    const intervention = userData.interventions.find(i => i.id === id);
+    
+    if (intervention) {
+      intervention.dismissed = true;
+      userDataManager.updateIntervention(id, { dismissed: true });
+    }
+    
+    // Remove from local state
     setInterventions(prev => prev.filter(intervention => intervention.id !== id));
   };
+
+  // Filter out completed interventions for display
+  const activeInterventions = interventions.filter(i => !completedInterventionIds.has(i.id));
 
   // Filter out completed interventions for display
   const activeInterventions = interventions.filter(i => !completedInterventionIds.has(i.id));

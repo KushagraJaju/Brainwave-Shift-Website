@@ -465,7 +465,7 @@ export class UserDataManager {
   public addIntervention(intervention: Omit<UserData['interventions'][0], 'id' | 'timestamp'>): void {
     const newIntervention = {
       ...intervention,
-      id: Date.now().toString(),
+      id: intervention.id || Date.now().toString(),
       timestamp: new Date().toISOString()
     };
     

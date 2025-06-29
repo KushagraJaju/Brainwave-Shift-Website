@@ -662,12 +662,26 @@ export class DigitalWellnessMonitor {
   private triggerMindfulnessIntervention(type: string): void {
     const interventions = this.generateInterventionOptions(type);
     const selectedIntervention = interventions[Math.floor(Math.random() * interventions.length)];
+    
+    // Generate a unique ID for the intervention
+    const interventionId = Date.now().toString();
+    
+    // Check if this intervention has been dismissed or completed already
+    const dismissedInterventions = JSON.parse(localStorage.getItem('dismissedDigitalInterventions') || '[]');
+    const completedInterventions = JSON.parse(localStorage.getItem('completedDigitalInterventions') || '[]');
+    
+    // Skip if already handled (using type as a proxy since IDs will be different)
+    // This is a simple approach - for more complex apps, you might want to use more specific criteria
+    if (dismissedInterventions.some((id: string) => id.includes(type)) || 
+        completedInterventions.some((id: string) => id.includes(type))) {
+      return;
+    }
 
     this.lastInterventionTime = new Date();
     
     // Notify intervention listeners
     this.interventionListeners.forEach(listener => listener({
-      id: Date.now().toString(),
+      id: interventionId,
       type: 'Digital Wellness',
       subtype: type,
       title: selectedIntervention.title,
@@ -893,6 +907,9 @@ export class DigitalWellnessMonitor {
     this.isPaused = false;
     this.checkCurrentUrl();
     this.notifyListeners();
+    
+    // Save data to storage
+    this.saveDataToStorage();
   }
 
   public isActive(): boolean {
@@ -925,6 +942,15 @@ export class DigitalWellnessMonitor {
   public recordMindfulBreak(): void {
     this.dailyData.mindfulBreaksTaken++;
     this.interventionEscalationLevel = Math.max(0, this.interventionEscalationLevel - 1);
+    
+    // Update today's data in weekly array
+    const today = new Date().toISOString().split('T')[0];
+    const todayIndex = this.dailyData.weeklyData.findIndex(day => day.date === today);
+    if (todayIndex >= 0) {
+      this.dailyData.weeklyData[todayIndex].mindfulBreaksTaken = this.dailyData.mindfulBreaksTaken;
+    }
+    
+    this.calculateWeeklyTrends();
     
     // Update today's data in weekly array
     const today = new Date().toISOString().split('T')[0];
