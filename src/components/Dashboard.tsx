@@ -1,7 +1,7 @@
 import React from 'react';
 import { CognitiveStateIndicator } from './CognitiveStateIndicator';
 import { FocusTimer } from './FocusTimer';
-import { InterventionPanel } from './InterventionPanel';
+import { EnhancedInterventionPanel } from './EnhancedInterventionPanel';
 import { PhysiologicalMetrics } from './PhysiologicalMetrics';
 import { CalendarInsights } from './CalendarInsights';
 import { useCognitiveState } from '../hooks/useCognitiveState';
@@ -72,10 +72,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ preferences }) => {
           </div>
         </div>
 
-        {/* Active Recommendations - Right Column */}
+        {/* Enhanced Recommendations - Right Column */}
         <div className="lg:col-span-1 h-full">
           <div className="card-primary p-6 h-full flex flex-col">
-            <InterventionPanel
+            <EnhancedInterventionPanel
               interventions={interventions}
               onComplete={completeIntervention}
               onDismiss={dismissIntervention}
