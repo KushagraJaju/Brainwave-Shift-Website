@@ -155,6 +155,9 @@ export const useInterventions = (cognitiveState: CognitiveState, preferences: Us
           title: 'Deep breathing exercise',
           description: '4-7-8 breathing technique for relaxation and stress relief',
           duration: 2,
+        }
+      ]
+    }
     if (!hasInitialized) {
       const now = new Date();
       const exampleInterventions: Intervention[] = [
