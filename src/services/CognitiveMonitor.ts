@@ -379,16 +379,13 @@ export class CognitiveMonitor {
 
   private calculateCognitiveMetrics(): void {
     const now = Date.now();
-    // FIXED: Properly calculate session duration in minutes
-    const sessionDuration = (now - this.sessionStartTime.getTime()) / (1000 * 60); // Convert ms to minutes
+    const sessionDuration = (now - this.sessionStartTime.getTime()) / 1000 / 60; // minutes
 
     // Focus Score Calculation
     let focusScore = 60; // Base score
     
     if (sessionDuration > 0) {
-      // FIXED: Properly calculate tab switch rate per minute
       const tabSwitchRate = this.tabSwitchCount / sessionDuration;
-      // FIXED: Properly calculate focus time ratio (ms to minutes conversion)
       const focusTimeRatio = this.totalFocusTime / (sessionDuration * 60 * 1000);
       
       // Reward sustained focus

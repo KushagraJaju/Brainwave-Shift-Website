@@ -36,15 +36,10 @@ export const useAnalytics = (cognitiveState: CognitiveState) => {
     const updateAnalytics = () => {
       const hour = new Date().getHours();
       
-      // FIXED: Time tracking calculation - properly track minutes
-      // Previously was adding 2 or 0.5 directly to dailyFocusTime without proper unit conversion
-      const focusTimeIncrement = cognitiveState.focusLevel === 'Deep' ? 2 : 0.5; // minutes
-      
       setAnalyticsData(prev => ({
         ...prev,
-        // FIXED: Properly accumulate minutes for focus time
-        dailyFocusTime: Math.min(480, prev.dailyFocusTime + focusTimeIncrement),
-        weeklyFocusTime: Math.min(2400, prev.weeklyFocusTime + focusTimeIncrement),
+        dailyFocusTime: Math.min(480, prev.dailyFocusTime + (cognitiveState.focusLevel === 'Deep' ? 2 : 0.5)),
+        weeklyFocusTime: Math.min(2400, prev.weeklyFocusTime + (cognitiveState.focusLevel === 'Deep' ? 2 : 0.5)),
         averageFocusQuality: Math.round((prev.averageFocusQuality + cognitiveState.score) / 2),
         totalInterventions: prev.totalInterventions + (Math.random() > 0.95 ? 1 : 0),
         streakDays: Math.min(30, prev.streakDays + (Math.random() > 0.98 ? 1 : 0)),
@@ -52,7 +47,6 @@ export const useAnalytics = (cognitiveState: CognitiveState) => {
           cognitiveState.score > 80 ? [...prev.peakHours, hour].slice(-5) : prev.peakHours,
         distractionTriggers: ['Email notifications', 'Social media', 'Meetings', 'Noise'],
         // Update digital wellness analytics from real data
-        // FIXED: Properly convert milliseconds to minutes
         dailySocialMediaTime: Math.round(digitalWellnessData.dailySocialMediaTime / (1000 * 60)), // Convert to minutes
         mindfulBreaksTaken: digitalWellnessData.mindfulBreaksTaken,
         digitalWellnessScore: digitalWellnessData.cognitiveImpactScore
