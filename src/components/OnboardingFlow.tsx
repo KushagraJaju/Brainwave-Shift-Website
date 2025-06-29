@@ -39,10 +39,18 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
   // FIXED: Start with dark theme as default to match app startup
   const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark'>('dark');
 
+  // CRITICAL: Add/remove body class for modal state
   useEffect(() => {
+    document.body.classList.add('modal-open');
+    
     // Animate in after a short delay
     const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove('modal-open');
+      clearTimeout(timer);
+    };
   }, []);
 
   const handleThemeSelect = (theme: 'light' | 'dark') => {
@@ -615,7 +623,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, onSk
   };
 
   return (
-    <div className={`modal-overlay-critical modal-open flex items-center justify-center p-4`} role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
+    <div className="modal-overlay-critical modal-open flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
       <div className={`
         modal-content-fix bg-white dark:bg-calm-800 rounded-2xl shadow-2xl dark:shadow-gentle-dark max-w-4xl w-full overflow-hidden
         transform transition-all duration-500 ease-out border border-calm-200 dark:border-calm-700
