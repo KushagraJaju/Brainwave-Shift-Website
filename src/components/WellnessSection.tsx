@@ -7,7 +7,7 @@ import {
   Clock,
   TrendingUp
 } from 'lucide-react';
-import { EnhancedInterventionPanel } from './EnhancedInterventionPanel';
+import { InterventionPanel } from './InterventionPanel';
 import { DigitalWellnessPanel } from './DigitalWellnessPanel';
 import { BreathingExercise, BreathingType } from './BreathingExercise';
 import { useInterventions } from '../hooks/useInterventions';
@@ -125,7 +125,7 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
 
       {/* Wellness Sections - Reordered 2x2 Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Row 1: Digital Wellness & Enhanced Wellness Interventions */}
+        {/* Row 1: Digital Wellness & Wellness Interventions */}
         <WellnessCard
           title="Digital Wellness"
           icon={<Smartphone className="w-5 h-5" />}
@@ -136,12 +136,12 @@ export const WellnessSection: React.FC<WellnessSectionProps> = ({
         </WellnessCard>
 
         <WellnessCard
-          title="Health Recommendations"
+          title="Wellness Interventions"
           icon={<Activity className="w-5 h-5" />}
-          description="Personalized wellness recommendations with persistent tracking"
+          description="Personalized wellness recommendations based on your cognitive state"
           badge={interventions.filter(i => !i.completed).length > 0 ? `${interventions.filter(i => !i.completed).length} pending` : undefined}
         >
-          <EnhancedInterventionPanel
+          <InterventionPanel
             interventions={interventions}
             onComplete={completeIntervention}
             onDismiss={dismissIntervention}
