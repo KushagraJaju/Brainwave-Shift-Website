@@ -411,6 +411,24 @@ export class DigitalWellnessMonitor {
         this.syncFromStorage();
       }
     });
+    
+    // Subscribe to UserDataManager updates
+    userDataManager.subscribe((userData) => {
+      // Update weekly data from UserDataManager
+      if (userData.digitalWellness.weeklyData && userData.digitalWellness.weeklyData.length > 0) {
+        // Convert stored data back to proper format with Maps
+        this.dailyData.weeklyData = userData.digitalWellness.weeklyData.map(day => ({
+          ...day,
+          platformBreakdown: new Map(Object.entries(day.platformBreakdown || {}))
+        }));
+        
+        // Recalculate weekly trends
+        this.calculateWeeklyTrends();
+        
+        // Notify listeners
+        this.notifyListeners();
+      }
+    });
   }
   
   private startIntervals(): void {
@@ -929,16 +947,6 @@ export class DigitalWellnessMonitor {
   public recordMindfulBreak(): void {
     this.dailyData.mindfulBreaksTaken++;
     this.interventionEscalationLevel = Math.max(0, this.interventionEscalationLevel - 1);
-    
-    // Update today's data in weekly array
-    const today = new Date().toISOString().split('T')[0];
-    const todayIndex = this.dailyData.weeklyData.findIndex(day => day.date === today);
-    if (todayIndex >= 0) {
-      this.dailyData.weeklyData[todayIndex].mindfulBreaksTaken = this.dailyData.mindfulBreaksTaken;
-    }
-    
-    this.calculateWeeklyTrends();
-    this.notifyListeners();
     
     // Persist data to user data manager
     this.persistDailyDataToUserDataManager();
