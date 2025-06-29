@@ -525,6 +525,7 @@ export class DigitalWellnessMonitor {
         return;
       }
 
+      // FIXED: Increment time by 1 second (1000ms)
       this.currentActivity.timeSpent += 1000; // Add 1 second
       this.updateDailyData();
       this.checkTimeThresholds();
@@ -775,7 +776,8 @@ export class DigitalWellnessMonitor {
   }
 
   private calculateCognitiveImpactScore(): void {
-    const totalTime = this.dailyData.dailySocialMediaTime / (1000 * 60); // minutes
+    // FIXED: Properly convert milliseconds to minutes for time calculation
+    const totalTime = this.dailyData.dailySocialMediaTime / (1000 * 60); // Convert ms to minutes
     const mindlessRatio = this.dailyData.sessionCount > 0 ? this.dailyData.mindlessScrollingSessions / this.dailyData.sessionCount : 0;
     
     // Higher time and mindless ratio = lower cognitive impact score

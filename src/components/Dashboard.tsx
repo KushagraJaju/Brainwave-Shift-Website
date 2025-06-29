@@ -21,6 +21,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ preferences }) => {
   const isSmartWatchConnected = integrations.find(i => i.type === 'smartwatch')?.status === 'connected';
   const isCalendarConnected = integrations.find(i => i.type === 'calendar')?.status === 'connected';
 
+  // FIXED: Format time function to properly display minutes
+  const formatTime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}m`;
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
