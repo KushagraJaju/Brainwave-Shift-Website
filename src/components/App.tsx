@@ -12,6 +12,7 @@ import { DigitalWellnessIntervention } from './DigitalWellnessIntervention';
 import { LoadingSpinner } from './LoadingSpinner';
 import { ErrorBoundary } from './ErrorBoundary';
 import { OnboardingFlow } from './OnboardingFlow';
+import { SystemDiagnostics } from './SystemDiagnostics';
 import { useCognitiveState } from '../hooks/useCognitiveState';
 import { useAnalytics } from '../hooks/useAnalytics';
 import { useSettings } from '../hooks/useSettings';
@@ -153,6 +154,12 @@ function App() {
               onUpdatePreferences={updatePreferences}
               onResetPreferences={resetPreferences}
             />
+          </div>
+        );
+      case 'diagnostics':
+        return (
+          <div className="animate-fade-in">
+            <SystemDiagnostics />
           </div>
         );
       default:

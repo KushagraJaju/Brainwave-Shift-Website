@@ -30,7 +30,8 @@ export const Navigation: React.FC<NavigationProps> = ({
     { id: 'focus', label: 'Focus Timer', icon: Timer },
     { id: 'interventions', label: 'Wellness', icon: Activity },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'diagnostics', label: 'Diagnostics', icon: Activity }
   ];
 
   const handleTabChange = (tabId: string) => {
