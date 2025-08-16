@@ -69,9 +69,16 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
       <div className="flex-1 flex flex-col">
         {activeInterventions.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-            <CheckCircle className="w-16 h-16 text-wellness-500 dark:text-wellness-400 mx-auto mb-4" aria-hidden="true" />
-            <h4 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-2">All Caught Up!</h4>
-            <p className="text-body text-calm-600 dark:text-calm-400">No interventions needed right now. We'll notify you when it's time for a break.</p>
+            <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <span className="text-3xl">🎉</span>
+            </div>
+            <h4 className="text-heading-4 text-calm-800 dark:text-calm-200 mb-2">You're Crushing It!</h4>
+            <p className="text-body text-calm-600 dark:text-calm-400 mb-4">No interventions needed right now. Your focus is on point!</p>
+            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 border border-green-200 dark:border-green-800">
+              <p className="text-sm text-green-700 dark:text-green-400">
+                🏆 Keep this momentum going to extend your focus streak
+              </p>
+            </div>
           </div>
         ) : (
           <div className="space-y-4 flex-1 overflow-y-auto">

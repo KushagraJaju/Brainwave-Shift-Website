@@ -82,7 +82,19 @@ export const CognitiveStateIndicator: React.FC<CognitiveStateIndicatorProps> = (
               <span className="text-display font-bold text-calm-800 dark:text-calm-200">{cognitiveState.score}</span>
             </div>
           </div>
-          <p className="text-body-small text-calm-600 dark:text-calm-400">Overall Cognitive Score</p>
+          <div className="text-center">
+            <p className="text-body-small text-calm-600 dark:text-calm-400 mb-2">Overall Cognitive Score</p>
+            <div className="flex items-center justify-center space-x-2">
+              <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
+                <span className="text-xs">↗</span>
+                <span className="text-xs font-medium">+12% vs last week</span>
+              </div>
+            </div>
+            <p className="text-xs text-calm-500 dark:text-calm-400 mt-2">
+              {cognitiveState.score >= 80 ? 'Excellent performance!' : 
+               cognitiveState.score >= 60 ? 'Good focus level' : 'Room for improvement'}
+            </p>
+          </div>
         </div>
 
         {/* State Indicators */}

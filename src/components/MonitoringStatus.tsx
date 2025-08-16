@@ -81,9 +81,15 @@ export const MonitoringStatus: React.FC = () => {
             Real-time monitoring active
           </span>
         </div>
-        <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-          Cognitive metrics update every {cognitiveMonitor.getMonitoringIntervalSeconds()} seconds
-        </p>
+        <div className="mt-2 space-y-1">
+          <p className="text-xs text-blue-600 dark:text-blue-400">
+            Cognitive metrics update every {cognitiveMonitor.getMonitoringIntervalSeconds()} seconds
+          </p>
+          <div className="flex items-center space-x-2 text-xs text-blue-500 dark:text-blue-300">
+            <span>🔒</span>
+            <span>We analyze typing rhythm to measure flow state. Data is private & secure.</span>
+          </div>
+        </div>
       </div>
     </div>
   );

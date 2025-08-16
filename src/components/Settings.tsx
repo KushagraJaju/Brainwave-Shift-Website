@@ -436,12 +436,12 @@ export const Settings: React.FC<SettingsProps> = ({
                   <div className="flex items-start space-x-3">
                     <ExternalLink className="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-1">Calendar Integration</h4>
+                      <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-1">🚀 Unlock Smart Scheduling</h4>
                       <p className="text-sm text-blue-700 dark:text-blue-400 mb-2">
-                        Google Calendar and Microsoft Calendar use secure OAuth 2.0 authentication for read-only access to your calendar data.
+                        Connect your calendar to get AI-powered focus time optimization and meeting density analysis.
                       </p>
                       <div className="text-xs text-blue-600 dark:text-blue-500 space-y-1">
-                        <div>• ✅ Google Calendar - OAuth 2.0 Ready</div>
+                        <div>• ✅ Google Calendar - Instant setup with OAuth 2.0</div>
                         <div>• ✅ Microsoft Calendar - Coming Soon</div>
                         <div>• ⏳ Apple Calendar - Coming Soon</div>
                         <div>• ⏳ Notion Calendar - Coming Soon</div>

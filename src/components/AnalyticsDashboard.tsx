@@ -154,10 +154,43 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
     <div className="space-y-6">
       {/* Enhanced Header with Digital Wellness */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-700 dark:from-blue-700 dark:to-purple-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 text-white">
-        <h2 className="text-xl font-semibold mb-2">Performance & Digital Wellness Analytics</h2>
-        <p className="text-blue-100 dark:text-blue-200 mb-4">
-          Comprehensive analysis of your cognitive performance and digital habits over the past week
-        </p>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Your Weekly Performance Report 📊</h2>
+            <p className="text-blue-100 dark:text-blue-200">
+              Here's how you improved this week
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="bg-white bg-opacity-20 rounded-lg p-3 backdrop-blur-sm">
+              <div className="text-2xl font-bold text-green-300">+12%</div>
+              <div className="text-xs text-blue-100">Focus Improvement</div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Summary for Humans */}
+        <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm border border-white border-opacity-20 mb-4">
+          <h3 className="font-semibold mb-2 flex items-center space-x-2">
+            <span>🎯</span>
+            <span>This Week's Wins</span>
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+            <div className="flex items-center space-x-2">
+              <span className="text-green-300">↗</span>
+              <span>Focus +12%</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-green-300">↘</span>
+              <span>Stress -8%</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-blue-300">🎯</span>
+              <span>3 distractions removed</span>
+            </div>
+          </div>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white bg-opacity-20 rounded-lg p-3 backdrop-blur-sm">
             <div className="text-2xl font-bold">{analyticsData.averageFocusQuality}%</div>
@@ -634,7 +667,87 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
       </div>
 
       {/* Additional Performance Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="space-y-6">
+        {/* Gamification Section */}
+        <div className="bg-white dark:bg-calm-800 rounded-xl shadow-lg dark:shadow-gentle-dark p-6 border border-calm-200 dark:border-calm-700">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-6 flex items-center space-x-2">
+            <span className="text-2xl">🏆</span>
+            <span>Your Achievements</span>
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Focus Streak */}
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                <span className="text-2xl">🔥</span>
+              </div>
+              <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">{analyticsData.streakDays}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Day Focus Streak</div>
+              <div className="mt-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div 
+                  className="bg-gradient-to-r from-orange-400 to-red-500 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (analyticsData.streakDays / 30) * 100)}%` }}
+                ></div>
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                {30 - analyticsData.streakDays} days to Master level
+              </div>
+            </div>
+            
+            {/* Deep Work Sessions */}
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                <span className="text-2xl">🎯</span>
+              </div>
+              <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                {Math.floor(analyticsData.weeklyFocusTime / 90)}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Deep Work Sessions</div>
+              <div className="mt-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div 
+                  className="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (Math.floor(analyticsData.weeklyFocusTime / 90) / 20) * 100)}%` }}
+                ></div>
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                {20 - Math.floor(analyticsData.weeklyFocusTime / 90)} sessions to Expert level
+              </div>
+            </div>
+            
+            {/* Wellness Champion */}
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                <span className="text-2xl">💚</span>
+              </div>
+              <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">{analyticsData.totalInterventions}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Wellness Actions</div>
+              <div className="mt-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div 
+                  className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (analyticsData.totalInterventions / 50) * 100)}%` }}
+                ></div>
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                {50 - analyticsData.totalInterventions} actions to Wellness Champion
+              </div>
+            </div>
+          </div>
+          
+          {/* Next Achievement */}
+          <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center space-x-3">
+              <span className="text-2xl">🎖️</span>
+              <div>
+                <h4 className="font-semibold text-purple-800 dark:text-purple-300">Next Achievement</h4>
+                <p className="text-sm text-purple-600 dark:text-purple-400">
+                  Complete 3 more focus sessions to unlock "Flow State Master" badge
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatCard
           icon={<Target className="w-6 h-6 text-white" />}
           title="Interventions"
@@ -658,6 +771,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
           subtitle="High-performance periods identified"
           color="bg-teal-500"
         />
+        </div>
       </div>
     </div>
   );

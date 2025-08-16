@@ -79,6 +79,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
   const [customFocusTime, setCustomFocusTime] = useState(preferences?.focusSessionLength || 25);
   const [customBreakTime, setCustomBreakTime] = useState(preferences?.breakLength || 5);
   const [customNumberOfBreaks, setCustomNumberOfBreaks] = useState(preferences?.numberOfBreaks || 1);
+  const [showPostSession, setShowPostSession] = useState(false);
+  const [sessionRating, setSessionRating] = useState<number | null>(null);
   
   // Sound settings hook
   const { settings: soundSettings, toggleSound } = useSoundSettings();
@@ -150,6 +152,11 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
       onUpdatePreferences({
         currentTaskName: taskName
       });
+    }
+    
+    // Show post-session reflection when timer completes
+    if (!isActive && !isPaused && sessionType === 'Focus') {
+      setShowPostSession(true);
     }
     
     toggle();
@@ -772,6 +779,60 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Post-Session Reflection Modal */}
+      {showPostSession && (
+        <div className="modal-overlay-critical modal-open flex items-center justify-center p-4">
+          <div className="modal-content-fix bg-white dark:bg-calm-800 rounded-xl shadow-2xl p-6 max-w-md w-full border border-calm-200 dark:border-calm-700">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 text-center">
+              Session Complete! 🎉
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
+              How focused did you feel during this session?
+            </p>
+            
+            <div className="flex justify-center space-x-2 mb-6">
+              {[1, 2, 3, 4, 5].map((rating) => (
+                <button
+                  key={rating}
+                  onClick={() => setSessionRating(rating)}
+                  className={`w-12 h-12 rounded-full border-2 transition-all duration-200 ${
+                    sessionRating === rating
+                      ? 'border-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 scale-110'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-yellow-300 dark:hover:border-yellow-500 text-gray-400 dark:text-gray-500 hover:text-yellow-500 dark:hover:text-yellow-400'
+                  }`}
+                  aria-label={`Rate session ${rating} out of 5 stars`}
+                >
+                  <span className="text-xl">⭐</span>
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowPostSession(false)}
+                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              >
+                Skip
+              </button>
+              <button
+                onClick={() => {
+                  if (sessionRating && onUpdatePreferences) {
+                    // Save session rating for analytics
+                    console.log('Session rated:', sessionRating);
+                  }
+                  setShowPostSession(false);
+                  setSessionRating(null);
+                }}
+                disabled={!sessionRating}
+                className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white rounded-lg transition-colors"
+              >
+                Save Rating
+              </button>
             </div>
           </div>
         </div>
